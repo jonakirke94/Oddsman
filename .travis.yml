@@ -4,4 +4,4 @@ dotnet: 2.0.0
 before_script: cd Scraper/Scraper
 script:
  - dotnet restore
- - dotnet xunit
+ - dotnet test
