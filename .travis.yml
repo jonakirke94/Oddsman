@@ -5,4 +5,5 @@ before_script: cd Scraper/Scraper
 script:
  - dotnet restore
  - dotnet build
- - dotnet test Scraper.Test.csproj
+ - cd Scraper.Test
+ - dotnet test
