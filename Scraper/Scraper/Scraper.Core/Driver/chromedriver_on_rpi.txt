@@ -1,0 +1,7 @@
+﻿1: https://www.raspberrypi.org/forums/viewtopic.php?t=194176
+2: https://www.reddit.com/r/selenium/comments/7341wt/success_how_to_run_selenium_chrome_webdriver_on/?st=jgeulyrj&sh=907e25ee
+
+
+
+Chromedriver Download Page:
+https://chromedriver.storage.googleapis.com/index.html
