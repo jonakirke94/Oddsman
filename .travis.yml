@@ -7,3 +7,6 @@ script:
  - dotnet build
  - cd Scraper.Test
  - dotnet test
+ 
+ notifications:
+  email: false
