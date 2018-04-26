@@ -1,6 +1,4 @@
 const mysql = require('mysql');
-const settings = require('./settings');
-const test = require('./test_settings');
 let config = require('config');
 
 exports.executeSql = function (sql, callback) {
