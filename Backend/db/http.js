@@ -1,8 +1,8 @@
 //success
-exports.show200 = function(req, res, next, data) {
+exports.show200 = function(req, res, msg, data) {
   res.status(200);
   res.json({
-    message: "Success",
+    msg: msg,
     data: data
   })
 };
@@ -17,6 +17,7 @@ exports.show404 = function(req, res, next) {
 
 //server error
 exports.show500 = function(req, res, err) {
+  console.log(err);
     res.status(500);
     res.json({
       error: {
