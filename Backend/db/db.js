@@ -3,16 +3,18 @@ const settings = require('./settings')
 
 exports.executeSql = function (sql, callback) {
 
+    console.log(settings.dbConfig);
+
     const conn = mysql.createConnection(settings.dbConfig);
     
-    con.connect(function(err) {
+    conn.connect(function(err) {
         if (err) {
-            callback(null, err);
+            return callback(null, err);
         }
 
-        con.query(sql, function (err, result) {
+        conn.query(sql, function (err, result) {
           if (err) {
-              callback(null, err);
+              return callback(null, err);
           }
 
           callback(result);

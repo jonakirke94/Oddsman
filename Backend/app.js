@@ -3,6 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 const http = require('./db/http');
+const userRoutes = require('./api/routes/user');
+
 
 //import routes const tokenRoutes = require('./api/routes/token');
 
@@ -23,7 +25,7 @@ app.use((req, res, next) => {
 });
 
 //set up routes
-//app.use('/token', tokenRoutes);
+app.use('/user', userRoutes);
 
 //error handling if no routing was hit
 app.use((req, res, next) => {

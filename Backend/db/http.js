@@ -1,8 +1,9 @@
 //success
-exports.show200 = function(req, res, next) {
+exports.show200 = function(req, res, next, data) {
   res.status(200);
   res.json({
-    message: "Success"
+    message: "Success",
+    data: data
   })
 };
 

@@ -5,6 +5,6 @@ const msg = require(".././../db/http");
 
 const userController = require('../controllers/user');
 
-router.post("/signup", userController.user_signup);
+router.get("/signup", userController.user_signup);
 
 module.exports = router;

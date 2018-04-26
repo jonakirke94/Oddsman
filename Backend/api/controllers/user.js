@@ -7,5 +7,16 @@ const baseUrl = 'http://localhost:4200/';
 
 
 exports.user_signup = (req, res, next) => {
-    msg.show200(req,res,next);
+    const sql = "SELECT * FROM Users";
+
+    db.executeSql(sql, function(data, err) {
+        if (err) {
+          return msg.show500(req, res, err);
+        } 
+         
+          msg.show200(req, res, next, data);            
+      }
+    );
+
+
 }
