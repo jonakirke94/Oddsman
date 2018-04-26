@@ -7,6 +7,12 @@ exports.show200 = function(req, res, msg, data) {
   })
 };
 
+//bad client request
+exports.show400 = function(req, res, err) {
+  res.status(400).json({
+    err: err
+  });
+};
 
 //not found
 exports.show404 = function(req, res, next) {
@@ -15,9 +21,15 @@ exports.show404 = function(req, res, next) {
     next(error);
 };
 
+//conflict
+exports.show409 = function(req, res, msg) {
+  res.status(409).json({
+    msg: msg
+  });
+};
+
 //server error
 exports.show500 = function(req, res, err) {
-  console.log(err);
     res.status(500);
     res.json({
       error: {

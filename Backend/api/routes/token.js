@@ -4,10 +4,8 @@ const db = require(".././../db/db");
 const msg = require(".././../db/http");
 const guard = require('../guards/authguard');
 
-const userController = require('../../controllers/user');
+const tokenController = require('../../controllers/token');
 
-router.get("/signup", userController.user_signup);
-router.get("/all", guard, userController.get_all);
-router.post("/", userController.user_signup);
+router.post("/", tokenController.refreshToken);
 
 module.exports = router;
