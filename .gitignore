@@ -1,4 +1,7 @@
 **/nodemon.json
+**/defeault.json
+**/test.json
+**/dev.json
 
 # Logs
 logs
