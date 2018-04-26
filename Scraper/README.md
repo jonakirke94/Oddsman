@@ -1,2 +1,1 @@
-"# test" 
-[![Build Status](https://travis-ci.org/jonakirke94/Oddsman.svg?branch=master)](https://travis-ci.org/jonakirke94/Oddsman)
+[![Build Status](https://travis-ci.org/jonakirke94/Oddsman.svg?branch=develop)](https://travis-ci.org/jonakirke94/Oddsman)
