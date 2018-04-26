@@ -6,7 +6,7 @@ const chaiHttp = require("chai-http");
 const server = require("../server");
 const should = chai.should();
 const db = require("../db/db");
-const assert = require('assert');
+
 
 
 const user = require("../controllers/user");
@@ -22,68 +22,51 @@ describe("Users", () => {
     });
   });
 
-  //Test the /GET route
+  /****************************** TESTING GETBYX *****************************/
   describe("/GET Users", () => {
-    it("it should GET a user by id 1", done => {
+    beforeEach(done => {
+      //Seed a user before all GETBYX tests
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
       chai
         .request(server)
         .post("/user/signup")
         .send(person)
         .end((err, res) => {
+          done();
+        })
+    });
+    it("it should GET a user by id 1", done => {    
           user.userById(1, function(data, err) {
             should.equal(err, undefined);
-            assert.equal(data.UserId, 1);
-            assert.equal(data.Name, "Kobe Bryan");
+            should.equal(data.UserId, 1);
+            should.equal(data.Name, "Kobe Bryan");
             done();
-          })     
         });
         
     });
     it("it should not GET anything with a crazy id", done => {
-      let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
-      chai
-        .request(server)
-        .post("/user/signup")
-        .send(person)
-        .end((err, res) => {
           user.userById(13249, function(data, err) {
             should.equal(data, undefined);
-            done();
-          })     
+            done();  
         });
     });
     it("it should GET a user by email correctly", done => {
-      let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
-      chai
-        .request(server)
-        .post("/user/signup")
-        .send(person)
-        .end((err, res) => {
           user.userByEmail('Bryan@email.dk', function(data, err) {
             should.equal(err, undefined);
-            assert.equal(data.UserId, 1);
-            assert.equal(data.Name, "Kobe Bryan");
+            should.equal(data.UserId, 1);
+            should.equal(data.Name, "Kobe Bryan");
             done();
-          })     
-        });
-        
+        });      
     });
     it("it should not GET anything with a crazy email", done => {
-      let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
-      chai
-        .request(server)
-        .post("/user/signup")
-        .send(person)
-        .end((err, res) => {
           user.userByEmail('asdasda@emsdail.dk', function(data, err) {
             should.equal(data, undefined);
-            done();
-          })     
+            done(); 
         });
     });
   });
 
+   /****************************** TESTING SIGNUP *****************************/
   describe("/POST Users/signup", () => {
     it("it should signup a user ", done => {
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
@@ -155,34 +138,61 @@ describe("Users", () => {
     });
   });
 
+  /****************************** TESTING LOGIN *****************************/
   describe("/POST Users/login", () => {
-    it("it should login a user ", done => {
+    beforeEach(done => {
+      //Before each test we empty the database
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email1.dk", password: "123456789"};
       chai
         .request(server)
         .post("/user/signup")
         .send(person)   
         .end((err, res) => {
+          done();
+        })
+    });
+    it("it should login a user ", done => {   
           let login = {email: "Bryan@email1.dk", password: "123456789"};
           chai
             .request(server)
             .post("/user/login")
             .send(login)
-            .end((err, res) => {
-              res.should.have.status(200);
-              //should.exist(res.body.data.accesstoken);
-              //should.exist(res.body.data.refreshtoken);
-              done();
-          })
+            .end((err, res) => {       
+              user.userById(1, function(data, err) {
+                res.should.have.status(200);
+                done();
+              })      
+        });
+    });
+    it("it should return generated tokens", done => {
+          let login = {email: "Bryan@email1.dk", password: "123456789"};
+          chai
+            .request(server)
+            .post("/user/login")
+            .send(login)
+            .end((err, res) => {       
+              user.userById(1, function(data, err) {
+                res.should.have.status(200);
+                should.exist(res.body.data.access_token);
+                should.exist(res.body.data.refresh_exp);          
+                done();
+              })                 
+        });
+    });
+    it("it should save a refresh token on login", done => {
+          let login = {email: "Bryan@email1.dk", password: "123456789"};
+          chai
+            .request(server)
+            .post("/user/login")
+            .send(login)
+            .end((err, res) => {       
+              user.userById(1, function(data, err) {  
+                should.not.equal(data.RefreshToken, null);     
+                done();
+              })             
         });
     });
     it("it should return 401 on invalid password", done => {
-      let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email1.dk", password: "123456789"};
-      chai
-        .request(server)
-        .post("/user/signup")
-        .send(person)   
-        .end((err, res) => {
           let login = {email: "Bryan@email1.dk", password: "123456"};
           chai
             .request(server)
@@ -191,16 +201,9 @@ describe("Users", () => {
             .end((err, res) => {
               res.should.have.status(401);
               done();
-          })
         });
     });
     it("it should return 401 on emails that don't exist", done => {
-      let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email1.dk", password: "123456789"};
-      chai
-        .request(server)
-        .post("/user/signup")
-        .send(person)   
-        .end((err, res) => {
           let login = {email: "Bryan@email2.dk", password: "123456789"};
           chai
             .request(server)
@@ -209,7 +212,6 @@ describe("Users", () => {
             .end((err, res) => {
               res.should.have.status(401);
               done();
-          })
         });
     });
 

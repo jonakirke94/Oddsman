@@ -4,6 +4,7 @@ const db = require("../db/db");
 const msg = require("../db/http");
 const mysql = require("mysql");
 const bcrypt = require("bcrypt");
+const tokenController = require('../controllers/token');
 
 
 exports.userById = (id, callback) => {
@@ -89,13 +90,19 @@ exports.user_login = (req, res, next) => {
         return msg.show500(req, res, err);
       }
       if (result) {
+
         //generate tokens
+        const tokens = tokenController.generateTokens(data);
 
+        tokenController.saveRefreshToken(data.UserId, tokens.refresh_token, function(data) {
+          const client_data = {
+            access_token: tokens.access_token,
+            refresh_exp: tokens.refresh_exp
+          }
+  
+          return msg.show200(req, res, "Success", client_data)
+        });
 
-        //save refreshtoken
-
-
-        return msg.show200(req, res, "Success", data)
       }  else {
         return msg.show401(req, res, next);
       }
