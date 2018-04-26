@@ -1,3 +1,10 @@
+//success
+exports.show200 = function(req, res, next) {
+  res.status(200);
+  res.json({
+    message: "Success"
+  })
+};
 
 
 //not found

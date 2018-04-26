@@ -1,0 +1,8 @@
+{
+    "env": {
+        "MYSQLSERVER": "123",
+        "MYSQLUSER": "123",
+        "MYSQLPASSWORD": "123",
+        "MYSQLDATABASE": "123"
+    }
+} 
