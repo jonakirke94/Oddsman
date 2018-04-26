@@ -7,9 +7,6 @@ const expressValidator = require('express-validator');
 const http = require('./db/http');
 const userRoutes = require('./api/routes/user');
 
-
-
-
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(expressValidator());
