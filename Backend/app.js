@@ -1,14 +1,12 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const morgan = require('morgan');
-let config = require('config');
 const expressValidator = require('express-validator');
 const http = require('./db/http');
 const userRoutes = require('./api/routes/user');
 
 
-
+//import routes const tokenRoutes = require('./api/routes/token');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -26,12 +24,6 @@ app.use((req, res, next) => {
     next();
 });
 
-//don't show the log when it is test
-/* if(config.util.getEnv('NODE_ENV') !== 'test') {
-    //use morgan to log at command line
-    app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
-} */
-
 //set up routes
 app.use('/user', userRoutes);
 
@@ -42,7 +34,6 @@ app.use((req, res, next) => {
 
 //internal server error
 app.use((error, req, res, next) => {
-    console.log(error);
     http.show500(req,res,error);
 });
 

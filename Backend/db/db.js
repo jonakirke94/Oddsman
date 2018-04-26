@@ -1,21 +1,24 @@
 const mysql = require('mysql');
-const settings = require('./settings');
-const test = require('./test_settings');
-let config = require('config');
+const settings = require('./settings')
 
 exports.executeSql = function (sql, callback) {
 
-    const conn = mysql.createConnection(config.DbSettings);
+    console.log(settings.dbConfig);
+
+    const conn = mysql.createConnection(settings.dbConfig);
     
     conn.connect(function(err) {
         if (err) {
             return callback(null, err);
         }
+
         conn.query(sql, function (err, result) {
           if (err) {
               return callback(null, err);
           }
-          callback(result);         
+
+          callback(result);
+          
         });
     });
         
