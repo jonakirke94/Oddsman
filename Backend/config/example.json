@@ -1,0 +1,11 @@
+{
+    "DbSettings": {
+      "host": "X",
+      "database": "X",
+      "user": "X",
+      "password": "X"
+    },
+    "JWT_ACCESS_SECRET": "X",
+    "JWT_REFRESH_SECRET": "X"
+  }
+  
