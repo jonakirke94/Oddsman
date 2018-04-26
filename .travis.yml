@@ -8,5 +8,5 @@ script:
  - cd Scraper.Test
  - dotnet test
  
- notifications:
-  email: false
+notifications:
+    email: false
