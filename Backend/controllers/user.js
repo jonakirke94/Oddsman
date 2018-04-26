@@ -3,6 +3,8 @@ const router = express.Router();
 const db = require("../db/db");
 const msg = require("../db/http");
 const mysql = require("mysql");
+const bcrypt = require("bcrypt");
+
 
 exports.userById = (id, callback) => {
   const sql = `SELECT * FROM Users WHERE UserId=${mysql.escape(id)}`;
@@ -68,3 +70,42 @@ exports.user_signup = (req, res, next) => {
   });
 };
 
+exports.user_login = (req, res, next) => {
+  const email = req.body.email;
+
+
+
+  module.exports.userByEmail(email, function(data) {
+
+    //check if the user exists
+    if (typeof data == 'undefined') {
+      return msg.show401(req, res, next);
+
+    }
+
+    //check if passwords match
+    bcrypt.compare(req.body.password, data.Password, (err, result) => {
+      if (err) {
+        return msg.show500(req, res, err);
+      }
+      if (result) {
+        //generate tokens
+
+
+        //save refreshtoken
+
+
+        return msg.show200(req, res, "Success", data)
+      }  else {
+        return msg.show401(req, res, next);
+      }
+    })
+
+
+
+
+
+
+
+  })
+}

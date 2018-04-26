@@ -6,8 +6,8 @@ const guard = require('../guards/authguard');
 
 const userController = require('../../controllers/user');
 
-router.get("/signup", userController.user_signup);
-router.get("/all", guard, userController.get_all);
-router.post("/", userController.user_signup);
+router.post("/signup", userController.user_signup);
+router.post("/login", userController.user_login)
 
 module.exports = router;
+  

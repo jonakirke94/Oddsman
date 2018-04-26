@@ -14,6 +14,12 @@ exports.show400 = function(req, res, err) {
   });
 };
 
+//unauthorized
+exports.show401 = function(req, res, next) {
+  res.status(401).json({});
+};
+
+
 //not found
 exports.show404 = function(req, res, next) {
     const error = new Error("Not Found");

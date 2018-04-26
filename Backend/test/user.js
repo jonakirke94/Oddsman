@@ -28,7 +28,7 @@ describe("Users", () => {
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
       chai
         .request(server)
-        .post("/user")
+        .post("/user/signup")
         .send(person)
         .end((err, res) => {
           user.userById(1, function(data, err) {
@@ -44,7 +44,7 @@ describe("Users", () => {
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
       chai
         .request(server)
-        .post("/user")
+        .post("/user/signup")
         .send(person)
         .end((err, res) => {
           user.userById(13249, function(data, err) {
@@ -57,7 +57,7 @@ describe("Users", () => {
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
       chai
         .request(server)
-        .post("/user")
+        .post("/user/signup")
         .send(person)
         .end((err, res) => {
           user.userByEmail('Bryan@email.dk', function(data, err) {
@@ -73,7 +73,7 @@ describe("Users", () => {
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
       chai
         .request(server)
-        .post("/user")
+        .post("/user/signup")
         .send(person)
         .end((err, res) => {
           user.userByEmail('asdasda@emsdail.dk', function(data, err) {
@@ -84,13 +84,12 @@ describe("Users", () => {
     });
   });
 
-  //Test the /Post route
-  describe("/POST Users", () => {
-    it("it should POST a user ", done => {
+  describe("/POST Users/signup", () => {
+    it("it should signup a user ", done => {
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
       chai
         .request(server)
-        .post("/user")
+        .post("/user/signup")
         .send(person)
         .end((err, res) => {
           res.should.have.status(200);
@@ -98,16 +97,16 @@ describe("Users", () => {
           done();
         });
     });
-    it("it should only post unique emails", done => {
+    it("it should only signup unique emails", done => {
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
       chai
         .request(server)
-        .post("/user")
+        .post("/user/signup")
         .send(person)
         .end((err, res) => {
             chai
               .request(server)
-              .post("/user")
+              .post("/user/signup")
               .send(person)
               .end((err, res) => {
                 res.should.have.status(409);
@@ -116,11 +115,11 @@ describe("Users", () => {
               })
         });
     });
-    it("it should not post invalid emails", done => {
+    it("it should not signup invalid emails", done => {
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryanemail.dk", password: "123456789"};
       chai
         .request(server)
-        .post("/user")
+        .post("/user/signup")
         .send(person)
         .end((err, res) => {
           res.should.have.status(400);
@@ -129,11 +128,11 @@ describe("Users", () => {
           done();
         });
     });
-    it("it should not post with a short password", done => {
+    it("it should not signup with a short password", done => {
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryanmail.dk", password: "1234567"};
       chai
         .request(server)
-        .post("/user")
+        .post("/user/signup")
         .send(person)
         .end((err, res) => {
           res.should.have.status(400);
@@ -142,11 +141,11 @@ describe("Users", () => {
           done();
         });
     });
-    it("it should NOT post with missing fields", done => {
+    it("it should NOT signup with missing fields", done => {
       let person = {name: "Kobe Bryan",  email: "Bryan@email.dk", password: "123456789"};
       chai
         .request(server)
-        .post("/user")
+        .post("/user/signup")
         .send(person)
         .end((err, res) => {
           res.should.have.status(500);
@@ -155,4 +154,66 @@ describe("Users", () => {
         });
     });
   });
+
+  describe("/POST Users/login", () => {
+    it("it should login a user ", done => {
+      let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email1.dk", password: "123456789"};
+      chai
+        .request(server)
+        .post("/user/signup")
+        .send(person)   
+        .end((err, res) => {
+          let login = {email: "Bryan@email1.dk", password: "123456789"};
+          chai
+            .request(server)
+            .post("/user/login")
+            .send(login)
+            .end((err, res) => {
+              res.should.have.status(200);
+              //should.exist(res.body.data.accesstoken);
+              //should.exist(res.body.data.refreshtoken);
+              done();
+          })
+        });
+    });
+    it("it should return 401 on invalid password", done => {
+      let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email1.dk", password: "123456789"};
+      chai
+        .request(server)
+        .post("/user/signup")
+        .send(person)   
+        .end((err, res) => {
+          let login = {email: "Bryan@email1.dk", password: "123456"};
+          chai
+            .request(server)
+            .post("/user/login")
+            .send(login)
+            .end((err, res) => {
+              res.should.have.status(401);
+              done();
+          })
+        });
+    });
+    it("it should return 401 on emails that don't exist", done => {
+      let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email1.dk", password: "123456789"};
+      chai
+        .request(server)
+        .post("/user/signup")
+        .send(person)   
+        .end((err, res) => {
+          let login = {email: "Bryan@email2.dk", password: "123456789"};
+          chai
+            .request(server)
+            .post("/user/login")
+            .send(login)
+            .end((err, res) => {
+              res.should.have.status(401);
+              done();
+          })
+        });
+    });
+
+  });
 });
+
+
