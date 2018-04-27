@@ -79,7 +79,7 @@ exports.user_login = (req, res, next) => {
   module.exports.userByEmail(email, function(data) {
 
     //check if the user exists
-    if (typeof data == 'undefined') {
+    if (typeof data == 'undefined' || req.body.password) {
       return msg.show401(req, res, next);
 
     }

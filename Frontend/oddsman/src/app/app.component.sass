@@ -1,12 +1,40 @@
 @import '../mq'
+@import '../variables'
 
 .nav
-  background-color: #565656
+  background-color: $gray
   a:hover
-    color: gray
+    color: $gray
+
+.navbar 
+  background-color: $gray
+
+.navbar-menu
+    padding: 0
+
+
+
+a.navbar-item
+  color: $white
+  &:hover
+    border-bottom: 5px solid $defaultblue
+    background: none
+  padding: 2em 3em 3em 3em
+  +tablet-only
+    background-color: $gray
+    padding: 0.5em 0.75em 0.75em 0.75em
+    &:hover
+      background: $gray
+      color: $defaultblue
+  +mobile 
+    background-color: $gray
+    padding: 0.5em 0.75em 0.75em 0.75em 
+    &:hover
+      background: $gray
+      color: $defaultblue
 
 .nav-left a 
-  color: #fff
+  color: $white
   font-weight: bold
 
 a.r-item
@@ -15,29 +43,20 @@ a.r-item
   +mobile
     color: gray
     &:hover
-      background-color: #F1F1F1
+      background-color: $white
+
 
 .nav-toggle span
   background-color: #C1C1C1
-
 
 footer
     position: fixed
     bottom: 0
     background-color: $primary
-    color: #fff
+    color: $white
     width: 100%
 
     .icon
-        color: #fff
+        color: $white
         margin-left: 20px
   
-/* .bd-tw-button
-    border-radius: 0 */
-
-.navbar-item 
-    padding: 2em 3em 3em 3em
-    +tablet-only
-        padding: 0.5em 0.75em 0.75em 0.75em
-    +mobile
-        padding: 0.5em 0.75em 0.75em 0.75em

@@ -16,7 +16,8 @@ exports.show400 = function(req, res, err) {
 
 //unauthorized
 exports.show401 = function(req, res, next) {
-  res.status(401).json({});
+  res.status(401);
+  res.end();
 };
 
 
@@ -33,6 +34,13 @@ exports.show409 = function(req, res, msg) {
     msg: msg
   });
 };
+
+//token refresh
+exports.show419 = function(req, res) { 
+  res.status(419);
+  res.statusMessage = "Refreshing token";
+  res.end();
+}
 
 //server error
 exports.show500 = function(req, res, err) {
