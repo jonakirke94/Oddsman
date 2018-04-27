@@ -15,7 +15,7 @@ namespace Scraper.Core.Scraper
     {
 
         private const string DenLange = "https://oddset.danskespil.dk/allekampe/den-lange";
-        private const string Resultater = "https://oddset.danskespil.dk/allekampe/resultater";
+        private const string Results = "https://oddset.danskespil.dk/allekampe/resultater";
         private const string ResultSearch = "https://oddset.danskespil.dk//results/list_retail/1/{0}/FOOTBALL/{1}"; // 0 = daterange | 1 = kampnummer
 
 
@@ -68,7 +68,14 @@ namespace Scraper.Core.Scraper
         {
             var doc = LoadHtmlPage(eventUrl);
 
-            return DanskeSpilParser.ParseSubmatchTest(doc);
+            return DanskeSpilParser.ParseSubMatches(doc);
+        }
+
+        public IList<MatchRound> GetMatchRounds()
+        {
+            var doc = LoadHtmlPage(Results);
+            
+            return DanskeSpilParser.ParseMatchRounds(doc);
         }
 
     }
