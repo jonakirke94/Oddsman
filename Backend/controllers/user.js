@@ -24,6 +24,8 @@ exports.userByEmail = (email, callback) => {
     if (err) {
       callback(null, err);
     } else {
+      console.log('¤¤¤¤¤¤¤¤¤¤¤')
+      console.log(data[0])
       callback(data[0]);
     }
   });
@@ -74,12 +76,11 @@ exports.user_signup = (req, res, next) => {
 exports.user_login = (req, res, next) => {
   const email = req.body.email;
 
-
-
-  module.exports.userByEmail(email, function(data) {
+  module.exports.userByEmail(email, function(data, err) {
 
     //check if the user exists
     if (typeof data == 'undefined' || req.body.password) {
+      console.log('*****************undefined*****************')
       return msg.show401(req, res, next);
 
     }
@@ -104,15 +105,9 @@ exports.user_login = (req, res, next) => {
         });
 
       }  else {
+        console.log('password didnt match..')
         return msg.show401(req, res, next);
       }
     })
-
-
-
-
-
-
-
   })
 }

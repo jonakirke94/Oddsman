@@ -43,9 +43,11 @@ export class AuthService {
 
 
 
-  signup(email: string, password: string) {
+  signup(name: string, tag: string, email: string, password: string) {
     return this.http
       .post("http://localhost:3000/user/signup", {
+        name,
+        tag,
         email,
         password
       })

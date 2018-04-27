@@ -58,7 +58,6 @@ export class LoginComponent implements OnInit {
     ])),
       (this.password = new FormControl("", [
         Validators.required,
-        Validators.minLength(3)
       ]));
   }
 
@@ -71,7 +70,7 @@ export class LoginComponent implements OnInit {
 
   loginUser() {
     //clear any existing data
-    this._auth.logout();
+     this._auth.logout();
 
     if (this.loginForm.valid) {
       const email = this.loginForm.value.email;
@@ -84,9 +83,9 @@ export class LoginComponent implements OnInit {
         this.error = err.status === 401 ? "Please check your email and password" : "Error";
         this.showSpinner = false;       
       });
-    }
+    } 
 
     //may not want to reset form
-    this.loginForm.reset();
+    this.loginForm.reset(); 
   }
 }

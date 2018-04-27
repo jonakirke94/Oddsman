@@ -1,3 +1,209 @@
-<p>
-  signup works!
-</p>
+<section class="hero">
+    <div class="hero-body">
+      <div class="container has-text-centered">
+        <div class="column is-4 is-offset-4 is-primary" [@flyInOut]>
+  
+          <div id="login">
+            <div class="login-card">
+  
+              <div class="card-title">
+                <h1>Please Sign up</h1>
+              </div>
+  
+             
+                <div class="content">
+
+                
+                    <form *ngIf="!showSpinner" [formGroup]="signupForm" novalidate (ngSubmit)="signupUser()">
+
+                      
+                       <!-- Name -->
+                       <div class="field">
+                          <div class="control">
+                            <input [ngClass]="{'is-invalid': name.invalid  && (name.dirty || name.touched),'is-valid': name.valid && (name.dirty || name.touched)
+                                        }" id="name" type="text" name="email" title="email" placeholder="Name" formControlName="name"
+                              autocomplete="email">
+                            <span class="help is-danger has-text-left" *ngIf="name.errors  && (name.dirty || name.touched)">
+                              <p *ngIf="name.errors.required">The name field is required</p>
+                            </span>
+                          </div>
+                        </div>
+
+                        <!-- Tag -->
+                      <div class="field">
+                          <div class="control">
+                            <input [ngClass]="{'is-invalid': tag.invalid  && (tag.dirty || tag.touched),'is-valid': tag.valid && (tag.dirty || tag.touched)
+                                        }" id="tag" type="text" name="tag" title="tag" placeholder="Tag" formControlName="tag"
+                              autocomplete="username">
+                            <span class="help is-danger has-text-left" *ngIf="tag.errors  && (tag.dirty || tag.touched)">
+                              <p *ngIf="tag.errors.required">The tag field is required</p>
+                            </span>
+                          </div>
+                        </div>
+
+                       <!-- Email -->
+                      <div class="field">
+                        <div class="control">
+                          <input [ngClass]="{'is-invalid': email.invalid  && (email.dirty || email.touched),'is-valid': email.valid && (email.dirty || email.touched)
+                                      }" id="email" type="email" name="email" title="email" placeholder="Email" formControlName="email"
+                            autocomplete="email">
+                          <span class="help is-danger has-text-left" *ngIf="email.errors  && (email.dirty || email.touched)">
+                            <p *ngIf="email.errors.pattern">This email is invalid</p>
+                            <p *ngIf="email.errors.required">The email field is required</p>
+                          </span>
+                        </div>
+                      </div>
+                
+                       <!-- Password -->
+                      <div class="field"  formGroupName="passwords">
+                        <div class="control"> 
+                          <input [ngClass]="{
+                                            'is-invalid': password.invalid  && (password.dirty || password.touched),
+                                            'is-valid': password.valid && (password.dirty || password.touched)
+                                          }" id="password" type="password" name="password" title="password" placeholder="Password" formControlName="password"
+                            autocomplete="new-password">
+                
+                          <span class="help is-danger has-text-left" *ngIf="password.errors  && (password.dirty || password.touched)">
+                            <p *ngIf="password.hasError('minlength')">The password needs to be min. 8</p>
+                            <p *ngIf="password.errors.required">The password field is required</p>
+                          </span>
+                        </div>
+                      </div>
+
+                      <!-- Confirm password -->
+                      <div class="field"  formGroupName="passwords">
+                          <div class="control"> 
+                            <input [ngClass]="{
+                                              'is-invalid': (passwords.errors &&
+                                              passwords.errors.areEqual)  && (confirm.dirty || confirm.touched),
+                                              'is-valid': (!passwords.errors && password.touched) && (confirm.dirty || confirm.touched)
+                                            }" id="confirm" type="password" name="confirm" title="confirm password" placeholder="Confirm Password" formControlName="confirm"
+                              autocomplete="new-password">
+                  
+                              <span class="help is-danger has-text-left" *ngIf="
+                            passwords.errors &&
+                            passwords.errors.areEqual &&
+                            passwords.controls.password.touched">Passwords do not match
+                            </span>
+                          </div>
+                        </div>
+                  
+                
+                      <div *ngIf="error" class="help is-danger has-text-left error-text">{{error}}</div>
+                
+                      <button class="btn" [disabled]="!signupForm.valid">Signup</button>
+                
+                    </form>
+               
+                  <loading-spinner *ngIf="showSpinner"></loading-spinner>
+                </div>
+  
+             
+             
+            </div>
+          </div>
+  
+          <p class="has-text-grey links">
+            <a routerLink="/signup">Sign Up</a> &nbsp;·&nbsp;
+            <a href="../">Forgot Password</a> &nbsp;·&nbsp;
+            <a href="../">Need Help?</a>
+          </p>
+  
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  
+
+
+
+
+<!-- 
+
+
+ <section class="hero">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <div class="column is-4 is-offset-4 is-primary" [@flyInOut]>
+        <h3 class="title has-text-white">Signup</h3>
+        <p class="subtitle has-text-white">Please signup to proceed</p>
+        <div class="box">
+          <span *ngIf="!showSpinner">
+
+            <form *ngIf="!showForm" [formGroup]="signupForm" novalidate (ngSubmit)="signupUser()">
+
+              <div class="field">
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input is-large" [ngClass]="{
+            'is-danger': email.invalid  && (email.dirty || email.touched),
+            'is-success': email.valid && (email.dirty || email.touched)
+          }" type="email" placeholder="Your Email" autofocus="" name="email" formControlName="email" autocomplete="email">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-envelope"></i>
+                  </span>
+                </div>
+                <span class="help is-danger has-text-left" *ngIf="email.errors  && (email.dirty || email.touched)">
+                  <p *ngIf="email.errors.pattern">This email is invalid</p>
+                  <p *ngIf="email.errors.required">The email field is required</p>
+                </span>
+              </div>
+              <div class="field" formGroupName="passwords">
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input is-large" [ngClass]="{
+                      'is-danger': password.invalid  && (password.dirty || password.touched),
+                      'is-success': password.valid && (password.dirty || password.touched)
+                    }" type="password" placeholder="Password" name="password" formControlName="password" autocomplete="on">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-key"></i>
+                  </span>
+                </div>
+                <span class="help is-danger has-text-left" *ngIf="password.errors  && (password.dirty || password.touched)">
+                  <p *ngIf="password.hasError('minlength')">The password needs to be min. 3</p>
+                  <p *ngIf="password.errors.required">The password field is required</p>
+                </span>
+              </div>
+
+              <div class="field" formGroupName="passwords">
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input is-large" [ngClass]="{
+          'is-danger': (passwords.errors &&
+          passwords.errors.areEqual)  && (confirm.dirty || confirm.touched),
+          'is-success': (!passwords.errors && password.touched) && (confirm.dirty || confirm.touched)
+        }" type="password" placeholder="Confirm password" name="confirm" formControlName="confirm" autocomplete="on" />
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-key"></i>
+                  </span>
+                </div>
+
+                <span class="help is-danger has-text-left" *ngIf="
+    passwords.errors &&
+    passwords.errors.areEqual &&
+    passwords.controls.password.touched">Passwords do not match
+                </span>
+
+              </div>
+
+              <button class="button is-block is-dark is-large is-fullwidth no-corner" [disabled]="!signupForm.valid"> Signup</button>
+            </form>
+
+
+            <div *ngIf="error" class="help is-danger error-text">{{error}}</div>
+
+            <span *ngIf="!showSignup" class="is-block is-success">
+              <p class="has-text-success is-size-5">Signed up successfully, Welcome!</p>
+            </span>
+          </span>
+          <loading-spinner *ngIf="showSpinner"></loading-spinner>
+        </div>
+
+        <p class="has-text-grey">
+          <a routerLink="/login">Login</a> &nbsp;·&nbsp;
+          <a href="../">Forgot Password</a> &nbsp;·&nbsp;
+          <a href="../">Need Help?</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+</section>  -->
