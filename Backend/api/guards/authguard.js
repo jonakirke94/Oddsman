@@ -13,9 +13,10 @@ module.exports = (req, res, next) => {
     //token is sent as "Bearer  xxxxx" so we split it to retrieve token
     const token = req.headers.authorization.split(' ');
     try  {
+        const access_key = process.env.JWT_ACCESS_SECRET
     
     //attempt to verify token
-    jwt.verify(token[1],  process.env.JWT_ACCESS_SECRET) 
+    jwt.verify(token[1],  access_key) 
     next();
     }  
      catch (error) {
@@ -23,17 +24,18 @@ module.exports = (req, res, next) => {
         if(error["name"] == 'TokenExpiredError') {
             
             //extract user id from the JWT payload
-             const decoded = jwt.verify(token[1],  process.env.JWT_ACCESS_SECRET, {
+             const decoded = jwt.verify(token[1],  access_key, {
                 ignoreExpiration: true
             })
 
             const userId = decoded.userId;
             users.userById(userId, function(data) {
                 const refreshtoken = data.RefreshToken;
+                const refresh_key = process.env.JWT_REFRESH_SECRET
               
                 try {              
                     //check if expired else we generate new tokens
-                    jwt.verify(refreshtoken,  process.env.JWT_REFRESH_SECRET);
+                    jwt.verify(refreshtoken, refresh_key);
                    
                     //inform the client that the accesstoken needs to be refreshed
                     return msg.show419(req, res);
