@@ -1,0 +1,29 @@
+matrix:
+   include:
+    - language: csharp
+      mono: none
+      dotnet: 2.0.0
+      before_script: 
+        - cd /
+        - cd Scraper/Scraper
+      script:
+        - dotnet restore
+        - dotnet build
+        - cd Scraper.Test
+        - dotnet test     
+            
+    - language: node_js
+      node_js:
+         - "8"
+      before_script:
+        - cd /
+        - cd Backend
+        - npm install
+      script:
+        - npm test
+      cache:
+        directories:
+          - "node_modules"            
+
+notifications:
+    email: false
