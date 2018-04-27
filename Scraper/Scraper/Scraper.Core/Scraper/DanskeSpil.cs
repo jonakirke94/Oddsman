@@ -22,6 +22,7 @@ namespace Scraper.Core.Scraper
         public HtmlDocument LoadHtmlPage(string url, bool requireBrowser = false)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // For https calls
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; }; // Blindly accept certificates (DANGER AHEAD)
 
             HtmlDocument result;
 
