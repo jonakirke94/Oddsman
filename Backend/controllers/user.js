@@ -7,25 +7,12 @@ const bcrypt = require("bcrypt");
 const tokenController = require('../controllers/token');
 
 
-exports.userById = (id, callback) => {
-  const sql = `SELECT * FROM Users WHERE UserId=${mysql.escape(id)}`;
+exports.getUserByProperty = (column, value, callback) => {
+  const sql = `SELECT * FROM Users WHERE ${column}=${mysql.escape(value)}`;
   db.executeSql(sql, function(data, err) {
     if (err) {
       callback(null, err);
     } else {
-      callback(data[0]);
-    }
-  });
-};
-
-exports.userByEmail = (email, callback) => {
-  const sql = `SELECT * FROM Users WHERE Email=${mysql.escape(email)}`;
-  db.executeSql(sql, function(data, err) {
-    if (err) {
-      callback(null, err);
-    } else {
-      console.log('¤¤¤¤¤¤¤¤¤¤¤')
-      console.log(data[0])
       callback(data[0]);
     }
   });
@@ -47,42 +34,47 @@ exports.user_signup = (req, res, next) => {
     return msg.show400(req, res, errors);
   }
 
-  //check if unique
-  module.exports.userByEmail(email, function(data) {
-    if (data) {
+  //check if email is unique
+  module.exports.getUserByProperty('Email', email, function(emailuser) {
+    if (emailuser) {
       return msg.show409(req, res, "Email exists");
-    }
+    } 
+      //check if tag is unique
+      module.exports.getUserByProperty('Tag', tag, function(taguser) {
+        if(taguser) {
+          return msg.show409(req, res, "Tag exists");    
+        }
 
-    bcrypt.hash(password, 10, (err, hash) => {
-      if (err) {
-        msg.show500(req, res, err);
-      } else {
-        const sql = `INSERT INTO Users (Name,Tag,Email,Password)
-        VALUES (${mysql.escape(name)}, ${mysql.escape(tag)}, ${mysql.escape(
-          email
-        )}, ${mysql.escape(hash)})`;
-
-        db.executeSql(sql, function(data, err) {
+        bcrypt.hash(password, 10, (err, hash) => {
           if (err) {
-            return msg.show500(req, res, err);
-          }
-          return msg.show200(req, res, "Success");
+            msg.show500(req, res, err);
+          } 
+
+            const sql = `INSERT INTO Users (Name,Tag,Email,Password)
+            VALUES (${mysql.escape(name)}, ${mysql.escape(tag)}, ${mysql.escape(
+              email
+            )}, ${mysql.escape(hash)})`;
+    
+            db.executeSql(sql, function(data, err) {
+              if (err) {
+                return msg.show500(req, res, err);
+              }
+              return msg.show200(req, res, "Success");
+            });
+          
         });
-      }
-    });
+      })
   });
 };
 
 exports.user_login = (req, res, next) => {
   const email = req.body.email;
 
-  module.exports.userByEmail(email, function(data, err) {
+  module.exports.getUserByProperty('Email', email, function(data, err) {
 
     //check if the user exists
-    if (typeof data == 'undefined' || req.body.password) {
-      console.log('*****************undefined*****************')
+    if (typeof data == 'undefined' || !req.body.password) {
       return msg.show401(req, res, next);
-
     }
 
     //check if passwords match
@@ -105,7 +97,6 @@ exports.user_login = (req, res, next) => {
         });
 
       }  else {
-        console.log('password didnt match..')
         return msg.show401(req, res, next);
       }
     })

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { trigger, state, style, animate, transition, stagger, keyframes, query } from '@angular/animations';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import {AbstractControl, FormControl, Validators, FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
+import { flyInOut } from "../animations";
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 
@@ -12,18 +12,7 @@ import 'rxjs/add/observable/throw';
   selector: 'app-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.sass'],
-  animations: [
-    trigger("flyInOut", [
-      state("in", style({ transform: "translateX(0)" })),
-      transition("void => *", [
-        style({ transform: "translateX(100%)" }),
-        animate(100)
-      ]),
-      transition("* => void", [
-        animate(100, style({ transform: "translateX(100%)" }))
-      ])
-    ])
-  ]
+  animations: [flyInOut]
 })
 export class SignupComponent implements OnInit {
   signupForm: FormGroup;
@@ -92,9 +81,7 @@ export class SignupComponent implements OnInit {
       name: this.name,
       email: this.email,     
       passwords: this.passwords
-    });
-
-    
+    });    
   }
 
   //used to determine whether the passwords match
@@ -129,16 +116,14 @@ export class SignupComponent implements OnInit {
         },
         err => {
           if(err.status === 409) {
-            this.error = "Email already exists";
+            //409 is sent if email or tag wasn't unique
+            this.error = err.error.msg === 'Email exists' ? "Email already exists" : "Tag already exists";
           } else {
-            this.error = "Error";
+            this.error = "Server Error";
           }         
           this.showSpinner = false;
         }
       );
-
-      //may not want to reset form
-      this.signupForm.reset();
     }
   }
 }

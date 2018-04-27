@@ -34,9 +34,9 @@ export class AuthService {
         password
       })
       .do(res => {
-        console.log('Made a call..')
         this.setSession(res, email);
         this.loggedIn.next(true);
+        console.log('auth logged in..')
       })
       .shareReplay();
   }
@@ -59,8 +59,8 @@ export class AuthService {
 
   private setSession(authResult, email) {
     //the user is logged in as long as a valid refreshtoken exists on the server
-    const expiresAt = moment().add(authResult.data.refreshExp, "seconds");
-    localStorage.setItem("accesstoken", authResult.data.accesstoken);
+    const expiresAt = moment().add(authResult.data.refresh_exp, "seconds");
+    localStorage.setItem("accesstoken", authResult.data.access_token);
     localStorage.setItem("refresh_expiresAt", JSON.stringify(expiresAt.valueOf()));
 
     let authInfo = new CurrentUser(email);

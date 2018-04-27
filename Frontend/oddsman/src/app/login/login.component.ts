@@ -4,25 +4,14 @@ import { FormGroup, FormControl, Validators,  } from "@angular/forms";
 import { AuthService } from "../services/auth.service";
 import { Router } from "@angular/router";
 import "rxjs/add/operator/map";
-import {trigger,state,style, animate, transition, stagger, keyframes, query} from "@angular/animations";
+import { flyInOut } from "../animations";
 import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component";
 
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.sass"],
-  animations: [
-    trigger("flyInOut", [
-      state("in", style({ transform: "translateX(0)" })),
-      transition("void => *", [
-        style({ transform: "translateX(100%)" }),
-        animate(100)
-      ]),
-      transition("* => void", [
-        animate(100, style({ transform: "translateX(100%)" }))
-      ])
-    ])
-  ]
+  animations: [flyInOut]
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -78,14 +67,16 @@ export class LoginComponent implements OnInit {
 
       //set loading to true and then false if error
       this.showSpinner = true;
-      this.login$ = this._auth.login(email, password).subscribe(() => {}, 
+      this.login$ = this._auth.login(email, password).subscribe(() => {
+        console.log('Logged in ..')
+        this.router.navigateByUrl("/");
+      }, 
       err => {
         this.error = err.status === 401 ? "Please check your email and password" : "Error";
         this.showSpinner = false;       
       });
     } 
 
-    //may not want to reset form
     this.loginForm.reset(); 
   }
 }

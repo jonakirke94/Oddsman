@@ -23,7 +23,8 @@
 
     <div class="navbar-end">
 
-      <span *ngIf="(isLoggedin$ | async)">
+        <div *ngIf="(isLoggedin$ | async)" class="navbar-item">
+      
       <a class="navbar-item" routerLink="/">
         <span class="icon">
           <i class="fas fa-futbol"></i>
@@ -33,13 +34,14 @@
         </span>
       </a>
 
-      <a class="navbar-item" routerLink="/products/create">
+      <a class="navbar-item" routerLink="/">
         Dashboard
       </a>
-      <a class="navbar-item" routerLink="/products/create">
+      <a class="navbar-item" routerLink="/">
         Log out
       </a>
-    </span>
+      </div>
+  
 
       <div *ngIf="(isLoggedin$ | async) == false" class="navbar-item">
         <div class="field is-grouped">
