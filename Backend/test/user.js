@@ -23,7 +23,7 @@ describe("Users", () => {
   });
 
   /****************************** TESTING GETBYX *****************************/
-  describe("/GET Users", () => {
+  describe("/GET User", () => {
     beforeEach(done => {
       //Seed a user before all GETBYX tests
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
@@ -67,7 +67,7 @@ describe("Users", () => {
   });
 
    /****************************** TESTING SIGNUP *****************************/
-  describe("/POST Users/signup", () => {
+  describe("/POST User/signup", () => {
     it("it should signup a user ", done => {
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email.dk", password: "123456789"};
       chai
@@ -139,7 +139,7 @@ describe("Users", () => {
   });
 
   /****************************** TESTING LOGIN *****************************/
-  describe("/POST Users/login", () => {
+  describe("/POST User/login", () => {
     beforeEach(done => {
       //Before each test we empty the database
       let person = {name: "Kobe Bryan",tag: "KB", email: "Bryan@email1.dk", password: "123456789"};
