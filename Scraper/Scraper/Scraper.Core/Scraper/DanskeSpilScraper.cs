@@ -11,7 +11,7 @@ using Scraper.Core.Model;
 
 namespace Scraper.Core.Scraper
 {
-    public class DanskeSpil : IScraper
+    public class DanskeSpilScraper : IScraper
     {
 
         private const string DenLange = "https://oddset.danskespil.dk/allekampe/den-lange";
@@ -58,7 +58,7 @@ namespace Scraper.Core.Scraper
         }
 
 
-        public IList<Match> GetMatches()
+        public IList<Match> GetUpcomingMatches()
         {
             var doc = LoadHtmlPage(DenLange);
 
@@ -79,7 +79,7 @@ namespace Scraper.Core.Scraper
             return DanskeSpilParser.ParseMatchRounds(doc);
         }
 
-        public Match GetMatch(int matchId)
+        public Match GetUpcomingMatch(int matchId)
         {
             var doc = LoadHtmlPage(string.Format(MatchSearch, matchId));
 
