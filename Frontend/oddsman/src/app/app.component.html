@@ -1,7 +1,4 @@
-
-
-
-<nav class="navbar is-transparent">
+<nav class="navbar">
   <div class="navbar-brand">
     <div class="navbar-burger burger" data-target="navbarExampleTransparentExample" (click)="toggleNav = !toggleNav;" [ngClass]="{'is-active' : toggleNav}">
       <span></span>
@@ -21,37 +18,33 @@
       <a class="navbar-item" routerLink="/products/create">
         Info
       </a>
-      
+
     </div>
 
     <div class="navbar-end">
-        <div class="navbar-item">
-            <div class="field is-grouped">
-          <p class="control">
-            <a class="bd-tw-button button is-primary" routerLink="/">
-              <span class="icon">
-                <i class="fas fa-futbol"></i>
-              </span>
-              <span>
-                Send tips
-              </span>
-            </a>
-          </p>
 
-        </div>
-      </div>
-        <a class="navbar-item" routerLink="/products/create">
-          Dashboard
-        </a>
-        <a class="navbar-item" routerLink="/products/create">
-          Log out
-        </a>
-      
- 
+      <span *ngIf="(isLoggedin$ | async)">
+      <a class="navbar-item" routerLink="/">
+        <span class="icon">
+          <i class="fas fa-futbol"></i>
+        </span>
+        <span>
+          Send tips
+        </span>
+      </a>
+
+      <a class="navbar-item" routerLink="/products/create">
+        Dashboard
+      </a>
+      <a class="navbar-item" routerLink="/products/create">
+        Log out
+      </a>
+    </span>
+
       <div *ngIf="(isLoggedin$ | async) == false" class="navbar-item">
         <div class="field is-grouped">
           <p class="control">
-            <a class="bd-tw-button button" routerLink="/login">
+            <a class="navbar-item" routerLink="/login">
               <span class="icon">
                 <i class="fas fa-user"></i>
               </span>
@@ -62,7 +55,7 @@
           </p>
 
           <p class="control">
-            <a class="button is-primary" routerLink="/signup">
+            <a class="navbar-item" routerLink="/signup">
               <span class="icon">
                 <i class="fas fa-user-plus"></i>
               </span>
