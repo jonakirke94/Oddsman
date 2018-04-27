@@ -170,7 +170,6 @@ namespace Scraper.Core.Scraper
 
         public static Match ParseMatch(HtmlNode n, DateTime date)
         {
-
             var m = new Match
             {
                 Scraped = DateTime.Now,
@@ -247,6 +246,30 @@ namespace Scraper.Core.Scraper
             return matchWeeks;
         }
 
+        public static Match ParseMatchSearch(HtmlDocument doc)
+        {
+            var list = doc.GetElementbyId("ob-retail-event-list");
+            // Get the event container (containing date + the tables with all the matches)
+            var container = list
+                .Descendants("div")
+                .Select(e => e)
+                .First(e => e.Attributes["class"].Value == "retailEventContainer");
+
+            // Get the date
+            var dateTxt = container.Descendants("p").First().HtmlDecodedValue().Replace(" ", "");
+            // Parse the date
+            var date = ParseMatchDate(dateTxt);
+
+            // Find the table body
+            var eventBody = container.Descendants("tbody").First();
+            // Find all the rows
+            var @event = eventBody
+                .Descendants("tr")
+                .Select(x => x)
+                .First();
+
+            return ParseMatch(@event, date);
+        }
 
 
         private static double ParseCommaDouble(string str)

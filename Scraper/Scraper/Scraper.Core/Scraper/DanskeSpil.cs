@@ -79,10 +79,11 @@ namespace Scraper.Core.Scraper
             return DanskeSpilParser.ParseMatchRounds(doc);
         }
 
-        public Match GetMatch()
+        public Match GetMatch(int matchId)
         {
-            
-            return new Match();
+            var doc = LoadHtmlPage(string.Format(MatchSearch, matchId));
+
+            return DanskeSpilParser.ParseMatchSearch(doc);
         }
 
     }

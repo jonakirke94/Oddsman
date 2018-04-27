@@ -37,10 +37,19 @@ namespace Scraper.Test
             Assert.NotEmpty(rounds);
         }
 
-        //[Fact]
-        //public void Get()
-        //{
-        //    Assert.True(true);
-        //}
+        [Fact]
+        public void GetMatch_Test()
+        {
+            var scraper = new DanskeSpil();
+            var matches = scraper.GetMatches();
+            // Gets all matches from "Den Lange" picks the last match's number
+            // The GetMatch method only searches Live Matches (which means finished/ongoing matches are not searchable)
+            var matchNo = matches.Last().MatchNo; 
+
+            var match = scraper.GetMatch(matchNo);
+
+            Assert.NotNull(match);
+            Assert.StrictEqual(matchNo, match.MatchNo);
+        }
     }
 }
