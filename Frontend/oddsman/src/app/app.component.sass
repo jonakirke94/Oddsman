@@ -12,12 +12,14 @@
 .navbar-menu
     padding: 0
 
-
+.active 
+   border-color: $defaultblue !important
 
 a.navbar-item
   color: $white
+  border-bottom: 5px solid transparent
   &:hover
-    border-bottom: 5px solid $defaultblue
+    border-color: $defaultblue
     background: none
   padding: 2em 3em 3em 3em
   +tablet-only

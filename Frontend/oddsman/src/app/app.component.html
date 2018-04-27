@@ -9,13 +9,13 @@
 
   <div id="navbarExampleTransparentExample" class="navbar-menu" [ngClass]="{'is-active' : toggleNav}">
     <div class="navbar-start">
-      <a class="navbar-item" routerLink="/">
+      <a class="navbar-item" routerLink="/" [class.active]="router.url==='/standing'">
         Stilling
       </a>
-      <a class="navbar-item" routerLink="/products">
+      <a class="navbar-item" routerLink="/" [class.active]="router.url==='/statistic'">
         Statistik
       </a>
-      <a class="navbar-item" routerLink="/products/create">
+      <a class="navbar-item" routerLink="/" [class.active]="router.url==='/info'">
         Info
       </a>
 
@@ -25,7 +25,7 @@
 
         <div *ngIf="(isLoggedin$ | async)" class="navbar-item">
       
-      <a class="navbar-item" routerLink="/">
+      <a class="navbar-item" routerLink="/" [class.active]="router.url==='/sendtips'">
         <span class="icon">
           <i class="fas fa-futbol"></i>
         </span>
@@ -34,10 +34,10 @@
         </span>
       </a>
 
-      <a class="navbar-item" routerLink="/">
+      <a class="navbar-item" routerLink="/" [class.active]="router.url==='/dashboard'">
         Dashboard
       </a>
-      <a class="navbar-item" routerLink="/">
+      <a class="navbar-item" routerLink="/login" (click)="logout()">
         Log out
       </a>
       </div>
@@ -46,7 +46,7 @@
       <div *ngIf="(isLoggedin$ | async) == false" class="navbar-item">
         <div class="field is-grouped">
           <p class="control">
-            <a class="navbar-item" routerLink="/login">
+            <a class="navbar-item" routerLink="/login" [class.active]="router.url==='/login'">
               <span class="icon">
                 <i class="fas fa-user"></i>
               </span>
@@ -57,7 +57,7 @@
           </p>
 
           <p class="control">
-            <a class="navbar-item" routerLink="/signup">
+            <a class="navbar-item" routerLink="/signup" [class.active]="router.url==='/signup'">
               <span class="icon">
                 <i class="fas fa-user-plus"></i>
               </span>
