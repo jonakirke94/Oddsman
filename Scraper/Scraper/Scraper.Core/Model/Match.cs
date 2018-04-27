@@ -7,7 +7,6 @@ namespace Scraper.Core.Model
     {
         public int Id { get; set; }
         public int MatchNo { get; set; }
-        public int RoundNo { get; set; }
         public DateTime MatchDate { get; set; }
         public DateTime Scraped { get; set; }
         public string MatchName { get; set; }

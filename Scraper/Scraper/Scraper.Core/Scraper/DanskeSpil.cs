@@ -15,13 +15,14 @@ namespace Scraper.Core.Scraper
     {
 
         private const string DenLange = "https://oddset.danskespil.dk/allekampe/den-lange";
-        private const string Resultater = "https://oddset.danskespil.dk/allekampe/resultater";
-        private const string ResultSearch = "https://oddset.danskespil.dk//results/list_retail/1/{0}/FOOTBALL/{1}"; // 0 = daterange | 1 = kampnummer
-
+        private const string Results = "https://oddset.danskespil.dk/allekampe/resultater";
+        private const string ResultSearch = "https://oddset.danskespil.dk//results/list_retail/1/{0}/FOOTBALL/{1}"; // 0 = MatchRound | 1 = MatchNumber
+        private const string MatchSearch = "https://oddset.danskespil.dk/allekampe/den-lange?search=1&criteria={0}"; // Can only be found if it exists on Den Lange
 
         public HtmlDocument LoadHtmlPage(string url, bool requireBrowser = false)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // For https calls
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; }; // Blindly accept certificates (DANGER AHEAD)
 
             HtmlDocument result;
 
@@ -68,7 +69,20 @@ namespace Scraper.Core.Scraper
         {
             var doc = LoadHtmlPage(eventUrl);
 
-            return DanskeSpilParser.ParseSubmatchTest(doc);
+            return DanskeSpilParser.ParseSubMatches(doc);
+        }
+
+        public IList<MatchRound> GetMatchRounds()
+        {
+            var doc = LoadHtmlPage(Results);
+            
+            return DanskeSpilParser.ParseMatchRounds(doc);
+        }
+
+        public Match GetMatch()
+        {
+            
+            return new Match();
         }
 
     }
