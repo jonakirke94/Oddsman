@@ -15,6 +15,15 @@ namespace Scraper.Core.Scraper
 {
     public static class DanskeSpilParser
     {
+        private const string SubMatchJsonExpression = "(\\[{\"names\":.*\\}\\])";
+        private const string MatchRoundIdExpression = "([0-9]*)(?= )";
+        private const string MatchRoundDateExpression = "(?<=\\()(.*)(?=\\))";
+        private const string DsCultureInfo = "da-DK";
+        private const string MatchCustomDateTime = "dddd,d.MMMMyyyy";
+        private const string MatchRoundCustomDateTime = "dd.MM.yy";
+
+
+
         public static IList<Match> ParseMatches(HtmlDocument doc)
         {
             var matches = new List<Match>();
@@ -55,119 +64,6 @@ namespace Scraper.Core.Scraper
             return matches;
         }
 
-
-        public static IList<SubMatch> ParseSubMatches(HtmlDocument doc)
-        {
-            #region Old Html Parse
-
-            //var subMatches = new List<SubMatch>();
-
-            //var sublist = doc.DocumentNode
-            //    .Descendants("div")
-            //    .Where(e => e.Attributes["class"].Value == "retailEventContainer")
-            //    .ToList();
-
-            //sublist.RemoveAt(0); // Skip main match
-
-            //foreach (var submatch in sublist)
-            //{
-            //    var head = submatch.Descendants("p").First(e => e.Attributes["class"].Value == "truncated");
-            //    var t = head.InnerText.Split('-');  //Format : MatchNo - MatchType
-
-            //    int.TryParse(t[0], out var no);
-
-            //    var sm = new SubMatch
-            //    {
-            //        MatchName = matchName,
-            //        MatchNo = no,
-            //        MatchType = t[1]
-            //    };
-
-            //    var odds = submatch
-            //        .Descendants("span")
-            //        .Where(e => e.Attributes["class"].Value == "odds-decimal")
-            //        .ToList();
-
-            //    var options = submatch
-            //        .Descendants("div")
-            //        .Where(e => e.Attributes["class"].Value == "oneXTwoName")
-            //        .ToList();
-
-            //    if (odds.Count == 3)
-            //    {
-            //        sm.Option1Odds = ParseCommaDouble(odds[0]?.InnerText);
-            //        sm.Option2Odds = ParseCommaDouble(odds[1]?.InnerText);
-            //        sm.Option3Odds = ParseCommaDouble(odds[2]?.InnerText);
-            //    }
-            //    else
-            //    {
-            //        sm.Option1Odds = ParseCommaDouble(odds[0]?.InnerText);
-            //        sm.Option3Odds = ParseCommaDouble(odds[1]?.InnerText);
-            //    }
-
-            //    sm.Option1 = options[0]?.InnerText;
-            //    sm.Option2 = options[1]?.InnerText;
-            //    sm.Option3 = options[2]?.InnerText;
-
-            //    subMatches.Add(sm);
-            //}
-
-            //return subMatches;
-
-            #endregion
-
-
-            var subMatches = new List<SubMatch>();
-            var regex = new Regex("(\\[{\"names\":.*\\}\\])");
-
-            var matches = regex.Matches(doc.ParsedText);
-
-            if (matches.Count < 2) return subMatches;
-
-            var headers = JsonConvert.DeserializeObject<List<SubMatchHeaderData>>(matches[0].Value);
-            var odds = JsonConvert.DeserializeObject<List<SubMatchOddsData>>(matches[1].Value);
-
-            foreach (var header in headers)
-            {
-                var sm = new SubMatch
-                {
-                    MatchName = header.Names.Da,
-                    MatchNo = header.MatchNumber
-                };
-
-                var id = header.HeaderId;
-
-                var smOdds = odds.Select(o => o).Where(o => o.HeaderId == id).ToList();
-
-                var o1 = smOdds.FirstOrDefault(o => o.BetOption == "1");
-                var o2 = smOdds.FirstOrDefault(o => o.BetOption == "X");
-                var o3 = smOdds.FirstOrDefault(o => o.BetOption == "2");
-
-
-                sm.Option1 = o1?.Names.Da;
-                sm.Option2 = o2?.Names.Da;
-                sm.Option3 = o3?.Names.Da;
-
-                sm.Option1Odds = o1?.GetCalculatedOdds ?? 0.0d;
-                sm.Option2Odds = o2?.GetCalculatedOdds ?? 0.0d;
-                sm.Option3Odds = o3?.GetCalculatedOdds ?? 0.0d;
-
-                sm.MatchNo = header.MatchNumber;
-
-                subMatches.Add(sm);
-            }
-
-
-            return subMatches;
-        }
-
-        public static SubMatch ParseSubMatch(HtmlDocument doc)
-        {
-            
-
-            return new SubMatch();
-        }
-
         public static Match ParseMatch(HtmlNode n, DateTime date)
         {
             var m = new Match
@@ -201,7 +97,7 @@ namespace Scraper.Core.Scraper
             var name = col[2].Descendants("span").First(span => span.Attributes["class"].Value == "eventName").HtmlDecodedValue();
             var names = name.Split('-'); // Format: TeamName1 - TeamName2
             m.MatchName = name;
-            m.HomeTeam = names[0]; 
+            m.HomeTeam = names[0];
             m.AwayTeam = names[1]; //TODO: Replace whitespaces
 
             // Find the league / country
@@ -218,6 +114,42 @@ namespace Scraper.Core.Scraper
             return m;
         }
 
+        public static IList<SubMatch> ParseSubMatches(SubMatchData data)
+        {
+            if (data == null) return null;
+            var subMatches = new List<SubMatch>();
+
+            foreach (var header in data.Headers)
+            {
+                var smOdds = data.Odds.Select(o => o).Where(o => o.HeaderId == header.HeaderId).ToList();
+                subMatches.Add(ParseSubMatch(header, smOdds));
+            }
+
+
+            return subMatches;
+        }
+
+        public static SubMatch ParseSubMatch(SubMatchHeaderData header, IList<SubMatchOddsData> odds)
+        {
+            var o1 = odds.FirstOrDefault(o => o.BetOption == "1");
+            var o2 = odds.FirstOrDefault(o => o.BetOption == "X");
+            var o3 = odds.FirstOrDefault(o => o.BetOption == "2");
+
+            return new SubMatch
+            {
+                MatchName = header.Names.Da,
+                MatchNo = header.MatchNo,
+                SubMatchNo = int.Parse(header.SubMatchNo),
+                Option1 = o1?.Names.Da,
+                Option2 = o2?.Names.Da,
+                Option3 = o3?.Names.Da,
+                Option1Odds = o1?.GetCalculatedOdds ?? 0.0d,
+                Option2Odds = o2?.GetCalculatedOdds ?? 0.0d,
+                Option3Odds = o3?.GetCalculatedOdds ?? 0.0d
+            };
+        }
+
+
         public static IList<MatchRound> ParseMatchRounds(HtmlDocument doc)
         {
             var matchWeeks = new List<MatchRound>();
@@ -231,7 +163,7 @@ namespace Scraper.Core.Scraper
                 var data = option.HtmlDecodedValue();
                 var dates = ParseMatchRoundDate(data);
 
-                var numCheck = new Regex("([0-9]*)(?= )");
+                var numCheck = new Regex(MatchRoundIdExpression);
                 var match = numCheck.Match(data);
 
 
@@ -271,29 +203,47 @@ namespace Scraper.Core.Scraper
             return ParseMatch(@event, date);
         }
 
+        public static SubMatchData ParseSubMatchData(HtmlDocument doc)
+        {
+            var regex = new Regex(SubMatchJsonExpression);
+
+            var matches = regex.Matches(doc.ParsedText);
+
+            if (matches.Count < 2) return null;
+
+            var headers = JsonConvert.DeserializeObject<List<SubMatchHeaderData>>(matches[0].Value);
+            var odds = JsonConvert.DeserializeObject<List<SubMatchOddsData>>(matches[1].Value);
+
+
+            return new SubMatchData{ Headers = headers, Odds = odds };
+        }
+
+        #region Helper Methods
 
         private static double ParseCommaDouble(string str)
         {
-            double.TryParse(str, NumberStyles.Any, CultureInfo.GetCultureInfo("da-DK"), out var res);
+            double.TryParse(str, NumberStyles.Any, CultureInfo.GetCultureInfo(DsCultureInfo), out var res);
             return res;
         }
 
         private static DateTime ParseMatchDate(string date)
         {
-            return DateTime.ParseExact(date.Replace(" ", ""), "dddd,d.MMMMyyyy", CultureInfo.GetCultureInfo("da-DK"));
+            return DateTime.ParseExact(date.Replace(" ", ""), MatchCustomDateTime, CultureInfo.GetCultureInfo(DsCultureInfo));
         }
 
         private static (DateTime, DateTime) ParseMatchRoundDate(string date)
         {
-            var regex = new Regex("(?<=\\()(.*)(?=\\))");
+            var regex = new Regex(MatchRoundDateExpression);
             var dates = regex.Match(date);
             var dateArr = dates.Value.Split('-');
 
-            var start = DateTime.ParseExact(dateArr[0], "dd.MM.yy", CultureInfo.GetCultureInfo("da-DK"));
-            var end = DateTime.ParseExact(dateArr[1], "dd.MM.yy", CultureInfo.GetCultureInfo("da-DK"));
+            var start = DateTime.ParseExact(dateArr[0], MatchRoundCustomDateTime, CultureInfo.GetCultureInfo(DsCultureInfo));
+            var end = DateTime.ParseExact(dateArr[1], MatchRoundCustomDateTime, CultureInfo.GetCultureInfo(DsCultureInfo));
 
             return (start, end);
         }
-        
+
+        #endregion
+
     }
 }

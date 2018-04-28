@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int MatchNo { get; set; }
+        public int SubMatchNo { get; set; }
         public string MatchName { get; set; }
         public string MatchType { get; set; }
         public string Option1 { get; set; }
