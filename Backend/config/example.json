@@ -6,6 +6,7 @@
       "password": "X"
     },
     "JWT_ACCESS_SECRET": "X",
-    "JWT_REFRESH_SECRET": "X"
+    "JWT_REFRESH_SECRET": "X",
+    "ADMIN_PASSWORD": "X"
   }
   

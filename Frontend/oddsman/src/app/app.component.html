@@ -25,7 +25,7 @@
 
         <div *ngIf="(isLoggedin$ | async)" class="navbar-item">
       
-      <a class="navbar-item" routerLink="/" [class.active]="router.url==='/sendtips'">
+      <a class="navbar-item" routerLink="/dashboard/sendtips" [class.active]="router.url==='/dashboard/sendtips'">
         <span class="icon">
           <i class="fas fa-futbol"></i>
         </span>

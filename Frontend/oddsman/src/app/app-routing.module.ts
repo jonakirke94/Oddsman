@@ -7,6 +7,12 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminpanelComponent } from './adminpanel/adminpanel.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminguardGuard } from './guards/adminguard.guard';
+import { UserstatsComponent } from './dashboard/usercomponents/userstats/userstats.component';
+import { UsersettingsComponent } from './dashboard/usercomponents/usersettings/usersettings.component';
+import { SendtipsComponent } from './dashboard/usercomponents/sendtips/sendtips.component';
+import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/admin-stats.component';
+import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adminusers.component';
+
 
 const routes: Routes = [
   {
@@ -24,12 +30,36 @@ const routes: Routes = [
   {
     path: 'dashboard',
     canActivate: [AuthGuard],
-    component: DashboardComponent
+    component: DashboardComponent,
+    children:[
+      {
+        path : '',
+        component: UserstatsComponent
+       },
+      {
+       path : 'settings',
+       component: UsersettingsComponent
+      },
+      {
+        path : 'sendtips',
+        component: SendtipsComponent
+       }
+    ]
   },
   {
     path: 'admin',
     canActivate: [AdminguardGuard],
-    component: AdminpanelComponent
+    component: AdminpanelComponent,
+     children:[
+      {
+        path : '',
+        component: AdminStatsComponent
+       },
+       {
+       path : 'users',
+        component: AdminusersComponent
+       },
+    ]
   },
   
 

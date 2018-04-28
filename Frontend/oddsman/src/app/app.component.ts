@@ -26,12 +26,14 @@ export class AppComponent {
   }
 
   private setHeader() {
-    if (this._auth.isLoggedIn()) {
-      this.isLoggedin$ = this._auth.isLoggedIn();
+    const loggedIn = this._auth.isLoggedIn();
+    if (loggedIn) {
+      this.isLoggedin$ = loggedIn;
     }
 
-    if(this._auth.isLoggedAsAdmin()) {
-      this.isAdmin$ = this._auth.isLoggedAsAdmin();
+    const isAdmin = this._auth.isLoggedAsAdmin();
+    if (isAdmin) {
+      this.isAdmin$ = isAdmin;
     }
 
   }

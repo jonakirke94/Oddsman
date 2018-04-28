@@ -1,4 +1,4 @@
-/* process.env.NODE_ENV = "test";
+process.env.NODE_ENV = "test";
 
 const config = require("config");
 const chai = require("chai");
@@ -7,51 +7,25 @@ const server = require("../server");
 const should = chai.should();
 const db = require("../db/db");
 
-const user = require("../controllers/user");
+const token = require("../controllers/token");
 
 chai.use(chaiHttp);
 
+
+
 //Our parent block
-describe("Users", () => {
-  beforeEach(done => {
-    //Before each test we empty the database
-    db.executeSql("TRUNCATE TABLE Persons", function(err, data) {
+describe("Tokens", () => {
+  //Test generate tokens
+  describe("/Generate tokens", () => {
+    it("it should return tokens and expirations", done => {
+      const user = {Email: "Test@Test.dk", UserId: 1}
+      const tokens = token.generateTokens(user);
+      should.not.equal(tokens.access_token, undefined);
+      should.not.equal(tokens.refresh_token, undefined);
+      should.not.equal(tokens.access_exp, undefined);
+      should.not.equal(tokens.refresh_exp, undefined);
       done();
     });
   });
 
-  //Test the /GET route
-  describe("/GET Users", () => {
-    it("it should GET all the users", done => {
-      chai
-        .request(server)
-        .get("/user/all")
-        .end((err, res) => {
-          res.should.have.status(200);
-          should.exist(res.body.data);
-          res.body.data.should.be.a("array");
-          res.body.data.length.should.be.eql(0);
-          done();
-        });
-    });
-  });
-  //Test the /Post route
-  describe("/POST Users", () => {
-    it("it should POST a user ", done => {
-      let person = {
-        name: "Kobe",
-        lastname: "Bryan"
-      };
-      chai
-        .request(server)
-        .post("/user")
-        .send(person)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.msg.should.be.eql("Success");
-          done();
-        });
-    });
-  });
 });
- */

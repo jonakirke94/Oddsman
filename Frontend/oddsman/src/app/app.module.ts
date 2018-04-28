@@ -17,6 +17,13 @@ import { OddsService } from './services/odds.service';
 import { AdminpanelComponent } from './adminpanel/adminpanel.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminguardGuard } from './guards/adminguard.guard';
+import { ChartsModule } from 'ng2-charts';
+import { UsersettingsComponent } from './dashboard/usercomponents/usersettings/usersettings.component';
+import { UserstatsComponent } from './dashboard/usercomponents/userstats/userstats.component';
+import { SendtipsComponent } from './dashboard/usercomponents/sendtips/sendtips.component';
+import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/admin-stats.component';
+import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adminusers.component';
+
 
 
 @NgModule({
@@ -27,7 +34,12 @@ import { AdminguardGuard } from './guards/adminguard.guard';
     SignupComponent,
     StandingComponent,
     DashboardComponent,
-    AdminpanelComponent
+    AdminpanelComponent,
+    UsersettingsComponent,
+    UserstatsComponent,
+    SendtipsComponent,
+    AdminStatsComponent,
+    AdminusersComponent
   ],
   imports: [
     BrowserModule,
@@ -35,6 +47,7 @@ import { AdminguardGuard } from './guards/adminguard.guard';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    ChartsModule
   ],
   providers: [
     AuthService,

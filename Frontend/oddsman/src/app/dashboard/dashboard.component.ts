@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,13 +9,13 @@ import { HttpClient } from '@angular/common/http';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
-
-    return this.http
-      .post("http://localhost:3000/odds/", {
-      }).subscribe(res => console.log('Worked'));
+   
   }
 
+
 }
+
+

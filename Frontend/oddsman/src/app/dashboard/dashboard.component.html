@@ -1,3 +1,42 @@
-<p>
-  dashboard works!
-</p>
+<section class="hero">
+
+  <section class="columns hero__container">
+
+    <div class="column is-3 hero__left">
+            <aside class="menu">
+                    <p class="menu-label">
+                      General
+                    </p>
+                    <ul class="menu-list">
+                      <li><a routerLink="/dashboard" [class.is-active]="router.url==='/dashboard'">Dashboard</a></li>
+                      
+                      <li><a routerLink="settings" routerLinkActive="is-active">Profile Settings</a></li>
+                    </ul>
+                    <p class="menu-label">
+                      Odds
+                    </p>
+                    <ul class="menu-list">
+                      <li><a routerLink="sendtips" routerLinkActive="is-active">Send tips</a></li>
+                      <li><a>Mine tips</a></li>
+                      <li><a>Ændr tips for runde</a></li>
+                    </ul>
+                    <p class="menu-label">
+                      Turneringer
+                    </p>
+                    <ul class="menu-list">
+                      <li><a>Invitationer</a></li>
+                      <li><a>Historik</a></li>
+                    </ul>
+                  </aside>
+
+    </div>
+
+    <div class="column hero__right">
+            <router-outlet></router-outlet>
+    </div>
+
+
+  </section>
+
+
+</section>

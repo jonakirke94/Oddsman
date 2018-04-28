@@ -24,6 +24,9 @@
     "@auth0/angular-jwt": "^1.1.0",
     "bulma": "^0.7.1",
     "core-js": "^2.4.1",
+    "chart.js": "^2.7.0",
+    "ng2-charts": "^1.6.0",
+    "jquery": "^3.2.1",
     "moment": "^2.22.1",
     "rxjs": "^5.5.6",
     "zone.js": "^0.8.19"
