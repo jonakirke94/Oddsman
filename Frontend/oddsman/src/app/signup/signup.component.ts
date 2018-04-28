@@ -107,7 +107,7 @@ export class SignupComponent implements OnInit {
         () => {
           //logging the user in after we signed him up
           this.login$ = this._auth.login(email, password).subscribe(() => {
-            this.router.navigateByUrl("/");
+            this.router.navigateByUrl('/');
           }),
             err => {
               this.error = "Error logging in";

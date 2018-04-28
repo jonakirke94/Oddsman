@@ -12,6 +12,9 @@ import { SignupComponent } from './signup/signup.component';
 import { AuthService } from './services/auth.service';
 import { StandingComponent } from './standing/standing.component';
 import { AuthGuard } from './auth.guard';
+import { AuthInterceptor } from './auth.interceptor';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { OddsService } from './services/odds.service';
 
 
 @NgModule({
@@ -20,7 +23,8 @@ import { AuthGuard } from './auth.guard';
     LoginComponent,
     LoadingSpinnerComponent,
     SignupComponent,
-    StandingComponent
+    StandingComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +35,13 @@ import { AuthGuard } from './auth.guard';
   ],
   providers: [
     AuthService,
-    AuthGuard
+    OddsService,
+    AuthGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
 
   ],
   bootstrap: [AppComponent]

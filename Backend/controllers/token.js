@@ -5,12 +5,35 @@ const msg = require("../db/http");
 const mysql = require('mysql');
 const config = require('config');
 const jwt = require("jsonwebtoken");
+const userController = require('./user');
 
 
 
 exports.refreshToken = (req, res, next) => {
+  const token = req.body.accesstoken;
 
+  //get userid from JWT payload
+  const decoded = jwt.verify(token, config.JWT_ACCESS_SECRET, {
+    ignoreExpiration: true
+  });
 
+  const userId = decoded.userId;
+  userController.getUserByProperty('UserId', userId, function(data) {
+    const user = data;
+    const tokens = module.exports.generateTokens(user);
+
+    //this saves the new refreshtoken to the db
+    module.exports.saveRefreshToken(userId, tokens.refresh_token, function(data) {
+      const newTokens = {
+        access_token: tokens.access_token,
+        refresh_exp: tokens.refresh_exp
+      };
+  
+      return msg.show200(req, res, "Refreshed Succesfully", newTokens);
+    });
+    
+    
+  });
 }
 
 exports.saveRefreshToken = (id, refreshtoken, callback) => { 
@@ -28,8 +51,8 @@ exports.saveRefreshToken = (id, refreshtoken, callback) => {
   };
 
 exports.generateTokens = user => {
-    const REFRESH_EXP = 600; // 691200s = 8d
-    const ACCESS_EXP = 10; // 300s = 5m
+    const REFRESH_EXP = 691200; // 691200s = 8d
+    const ACCESS_EXP = 300; // 300s = 5m
  
     const ACCESS_TOKEN = jwt.sign({
         email: user.Email,

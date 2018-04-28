@@ -75,6 +75,7 @@ export class AuthService {
   }
 
   public isLoggedIn() {
+    //do some testing here.
     const IsValid = moment().isBefore(this.getExpiration());
     IsValid ? this.loggedIn.next(true) : this.loggedIn.next(false);
     return this.loggedIn.asObservable();

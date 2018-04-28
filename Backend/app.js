@@ -7,6 +7,8 @@ const expressValidator = require('express-validator');
 const http = require('./db/http');
 const userRoutes = require('./api/routes/user');
 const tokenRoutes = require('./api/routes/token');
+const oddsRoutes = require('./api/routes/odds');
+
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -33,6 +35,8 @@ if(config.util.getEnv('NODE_ENV') !== 'test') {
 //set up routes
 app.use('/user', userRoutes);
 app.use('/token', tokenRoutes);
+app.use('/odds', oddsRoutes);
+
 
 //error handling if no routing was hit
 app.use((req, res, next) => {

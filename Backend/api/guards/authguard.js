@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const msg = require('../../db/http');
+const config = require('config');
+const userController = require('../../controllers/user')
 
 //read more: https://jwt.io/
 
@@ -12,45 +14,36 @@ module.exports = (req, res, next) => {
 
     //token is sent as "Bearer  xxxxx" so we split it to retrieve token
     const token = req.headers.authorization.split(' ');
-    try  {
-        const access_key = process.env.JWT_ACCESS_SECRET
-    
-    //attempt to verify token
-    jwt.verify(token[1],  access_key) 
-    next();
-    }  
-     catch (error) {
-        //if accesstoken has expired we fetch the user's refreshtoken and if that is valid we generate new tokens
-        if(error["name"] == 'TokenExpiredError') {
-            
+    const ACCESS_SECRET = config.JWT_ACCESS_SECRET;
+    const REFRESH_SECRET = config.JWT_REFRESH_SECRET;
+   
+    jwt.verify(token[1], ACCESS_SECRET, function(err, decoded) {
+        //if the accesstoken has expired we fetch the user's refreshtoken and if that is valid we generate new tokens   
+        if(err && err["name"] == 'TokenExpiredError') {                       
             //extract user id from the JWT payload
-             const decoded = jwt.verify(token[1],  access_key, {
+            const decoded = jwt.verify(token[1], ACCESS_SECRET, {
                 ignoreExpiration: true
             })
 
             const userId = decoded.userId;
-            users.userById(userId, function(data) {
-                const refreshtoken = data.RefreshToken;
-                const refresh_key = process.env.JWT_REFRESH_SECRET
-              
-                try {              
-                    //check if expired else we generate new tokens
-                    jwt.verify(refreshtoken, refresh_key);
-                   
-                    //inform the client that the accesstoken needs to be refreshed
-                    return msg.show419(req, res);
-                    
-                } catch(error) {
-                    //if the refreshtoken has expired too the user needs to login
-                    if(error["name"] == 'TokenExpiredError') {
-                        return msg.show401(req, res, next); 
+            userController.getUserByProperty('UserId', userId, function(data) {          
+                //check if expired else we generate new tokens
+                jwt.verify(data.RefreshToken, REFRESH_SECRET, function(err, decoded){
+                    if(err && err["name"] == 'TokenExpiredError') {
+                        //if the refreshtoken has expired too the user needs to login                           
+                        return msg.show401(req, res, next);                                 
                     }
-                }
-            }, req, res);          
-        } 
-    }
+                    if(decoded){
+                        //server holds a valid refresh token
+                        //inform the client that the accesstoken needs to be refreshed
+                        return msg.show419(req, res);
+                    }
+                });                                                                             
+            });                         
+        }
 
-
-    
-    
+        if(decoded){
+            next(); //valid access token
+        }
+    }) 
 }
