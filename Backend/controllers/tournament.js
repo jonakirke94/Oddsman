@@ -4,7 +4,7 @@ const db = require('../db/db');
 const msg = require("../db/http");
 const mysql = require('mysql');
 
-exports.sendOdds = (req, res, next) => {
+exports.test = (req, res, next) => {
  
     return msg.show200(req,res,next);
 

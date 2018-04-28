@@ -39,6 +39,7 @@ describe("Users", () => {
         });
     });
     it("it should GET a user by id 1", done => {
+      //2 since admin has been seeded
       user.getUserByProperty("UserId", 1, function(data, err) {
         should.equal(err, undefined);
         should.equal(data.UserId, 1);

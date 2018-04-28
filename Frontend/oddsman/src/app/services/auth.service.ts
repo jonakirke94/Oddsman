@@ -5,7 +5,7 @@ import "rxjs/add/operator/do";
 import "rxjs/add/operator/shareReplay";
 import * as moment from "moment";
 import { CurrentUser } from "../models/currentUser"
-
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 
 
@@ -14,6 +14,7 @@ export class AuthService {
   
   private email: string;
   loggedIn = new BehaviorSubject<boolean>(false);
+  isAdmin = new BehaviorSubject<boolean>(false);
   login$;
 
   constructor(private http: HttpClient) {}
@@ -62,12 +63,15 @@ export class AuthService {
     localStorage.setItem("accesstoken", authResult.data.access_token);
     localStorage.setItem("refresh_expiresAt", JSON.stringify(expiresAt.valueOf()));
 
+    authResult.data.isAdmin ? this.isAdmin.next(true) : this.isAdmin.next(false);
+
     let authInfo = new CurrentUser(email);
     localStorage.setItem("authInfo", JSON.stringify(authInfo));
   }
 
   logout() {
     this.loggedIn.next(false);
+    this.isAdmin.next(false);
     localStorage.removeItem("accesstoken");
     localStorage.removeItem("refresh_expiresAt");
     localStorage.removeItem("authInfo");
@@ -80,6 +84,19 @@ export class AuthService {
     return this.loggedIn.asObservable();
   }
 
+   public isLoggedAsAdmin() {
+    const access_token = localStorage.getItem("accesstoken");
+
+    if(access_token) {
+        const helper = new JwtHelperService();
+        const decodedToken = helper.decodeToken(access_token);
+        decodedToken.isAdmin === 0 ? this.isAdmin.next(false) : this.isAdmin.next(true);
+    } else {
+      this.isAdmin.next(false);
+    }
+    return this.isAdmin.asObservable();
+  }
+ 
   getExpiration() {
     const expiration = localStorage.getItem("refresh_expiresAt");
     const expiresAt = JSON.parse(expiration);

@@ -13,6 +13,7 @@ export class AppComponent {
   
   toggleNav: false;
   isLoggedin$: Observable<boolean>;
+  isAdmin$: Observable<boolean>;
 
   constructor(
     private http: HttpClient,
@@ -28,6 +29,11 @@ export class AppComponent {
     if (this._auth.isLoggedIn()) {
       this.isLoggedin$ = this._auth.isLoggedIn();
     }
+
+    if(this._auth.isLoggedAsAdmin()) {
+      this.isAdmin$ = this._auth.isLoggedAsAdmin();
+    }
+
   }
 
   logout() {

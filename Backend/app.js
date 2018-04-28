@@ -5,9 +5,13 @@ const morgan = require('morgan');
 const config = require('config');
 const expressValidator = require('express-validator');
 const http = require('./db/http');
+const seed = require('./db/seed');
+
 const userRoutes = require('./api/routes/user');
 const tokenRoutes = require('./api/routes/token');
 const oddsRoutes = require('./api/routes/odds');
+const tournamentRoutes = require('./api/routes/tournament');
+
 
 
 app.use(bodyParser.urlencoded({extended: false}));
@@ -30,13 +34,26 @@ app.use((req, res, next) => {
 if(config.util.getEnv('NODE_ENV') !== 'test') {
     //use morgan to log at command line
     app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
-} 
+
+    //seed admin
+    const admin = {
+        Name: "WebMaster",
+        Tag: "XXX",
+        Email: "Webmaster@oddsman.dk",
+        Password: config.ADMIN_PASSWORD,
+        IsAdmin: true
+    }
+
+    seed.seedAdmin(admin);
+}
+
+
 
 //set up routes
 app.use('/user', userRoutes);
 app.use('/token', tokenRoutes);
 app.use('/odds', oddsRoutes);
-
+app.use('/tournament', tournamentRoutes);
 
 //error handling if no routing was hit
 app.use((req, res, next) => {

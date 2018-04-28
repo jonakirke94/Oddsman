@@ -3,8 +3,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { StandingComponent } from './standing/standing.component';
-import { AuthGuard } from './auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AdminpanelComponent } from './adminpanel/adminpanel.component';
+import { AuthGuard } from './guards/auth.guard';
+import { AdminguardGuard } from './guards/adminguard.guard';
 
 const routes: Routes = [
   {
@@ -23,6 +25,11 @@ const routes: Routes = [
     path: 'dashboard',
     canActivate: [AuthGuard],
     component: DashboardComponent
+  },
+  {
+    path: 'admin',
+    canActivate: [AdminguardGuard],
+    component: AdminpanelComponent
   },
   
 

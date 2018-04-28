@@ -87,10 +87,11 @@ exports.user_login = (req, res, next) => {
         //generate tokens
         const tokens = tokenController.generateTokens(data);
 
-        tokenController.saveRefreshToken(data.UserId, tokens.refresh_token, function(data) {
+        tokenController.saveRefreshToken(data.UserId, tokens.refresh_token, function(success) {
           const client_data = {
             access_token: tokens.access_token,
-            refresh_exp: tokens.refresh_exp
+            refresh_exp: tokens.refresh_exp,
+            isAdmin: data.IsAdmin
           }
   
           return msg.show200(req, res, "Success", client_data)

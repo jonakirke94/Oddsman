@@ -11,10 +11,12 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
 import { SignupComponent } from './signup/signup.component';
 import { AuthService } from './services/auth.service';
 import { StandingComponent } from './standing/standing.component';
-import { AuthGuard } from './auth.guard';
 import { AuthInterceptor } from './auth.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { OddsService } from './services/odds.service';
+import { AdminpanelComponent } from './adminpanel/adminpanel.component';
+import { AuthGuard } from './guards/auth.guard';
+import { AdminguardGuard } from './guards/adminguard.guard';
 
 
 @NgModule({
@@ -24,7 +26,8 @@ import { OddsService } from './services/odds.service';
     LoadingSpinnerComponent,
     SignupComponent,
     StandingComponent,
-    DashboardComponent
+    DashboardComponent,
+    AdminpanelComponent
   ],
   imports: [
     BrowserModule,
@@ -37,6 +40,7 @@ import { OddsService } from './services/odds.service';
     AuthService,
     OddsService,
     AuthGuard,
+    AdminguardGuard,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
