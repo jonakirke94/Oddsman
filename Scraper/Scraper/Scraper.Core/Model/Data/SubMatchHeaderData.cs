@@ -14,14 +14,17 @@ namespace Scraper.Core.Model.Data
         /// The Id of the Match that this SubMatch belongs to.
         /// </summary>
         [JsonProperty("ev_id")]
-        public int MatchNumber { get; set; }
+        public int MatchNo { get; set; }
 
         /// <summary>
         /// Used to identify which SubMatchOddsData betting options that belongs to this Header.
         /// </summary>
         [JsonProperty("ev_mkt_id")]
         public int HeaderId { get; set; }
-
+        
+        [JsonProperty("number")]
+        public string SubMatchNo { get; set; }
+        
 
         //[JsonProperty("mkt_type")]
         //public string MktType { get; set; }
@@ -82,9 +85,6 @@ namespace Scraper.Core.Model.Data
 
         //[JsonProperty("hier_cashout_avail")]
         //public string HierCashoutAvail { get; set; }
-
-        //[JsonProperty("number")]
-        //public string Number { get; set; }
 
         //[JsonProperty("num_mkt_selns")]
         //public string NumMktSelns { get; set; }
