@@ -19,27 +19,40 @@ module.exports = (req, res, next) => {
    
     jwt.verify(token[1], ACCESS_SECRET, function(err, decoded) {
         //if the accesstoken has expired we fetch the user's refreshtoken and if that is valid we generate new tokens   
-        if(err && err["name"] == 'TokenExpiredError') {                       
-            //extract user id from the JWT payload
-            const decoded = jwt.verify(token[1], ACCESS_SECRET, {
-                ignoreExpiration: true
-            })
+        if(err) {
+            if(err["name"] == 'TokenExpiredError') {
+                //extract user id from the JWT payload
+                const decoded = jwt.verify(token[1], ACCESS_SECRET, {
+                    ignoreExpiration: true
+                })
 
-            const userId = decoded.userId;
-            userController.getUserByProperty('UserId', userId, function(data) {          
-                //check if expired else we generate new tokens
-                jwt.verify(data.RefreshToken, REFRESH_SECRET, function(err, decoded){
-                    if(err && err["name"] == 'TokenExpiredError') {
-                        //if the refreshtoken has expired too the user needs to login                           
-                        return msg.show401(req, res, next);                                 
-                    }
-                    if(decoded){
-                        //server holds a valid refresh token
-                        //inform the client that the accesstoken needs to be refreshed
-                        return msg.show419(req, res);
-                    }
-                });                                                                             
-            });                         
+                const userId = decoded.userId;
+                userController.getUserByProperty('UserId', userId, function(data) {          
+                    //check if expired else we generate new tokens
+                    jwt.verify(data.RefreshToken, REFRESH_SECRET, function(err, decoded){
+                        if(err) {
+                            if(err["name"] == 'TokenExpiredError'){
+                                //if the refreshtoken has expired too the user needs to login                           
+                                return msg.show401(req, res, next);      
+                            }
+                            else {
+                                //something else went wrong while decoding the token
+                                return msg.show401(req, res, next);  
+                            }
+                                                      
+                        }
+                        if(decoded){
+                            //server holds a valid refresh token
+                            //inform the client that the accesstoken needs to be refreshed
+                            return msg.show419(req, res);
+                        }
+                    });                                                                             
+                });
+            }
+            else {
+                //something else went wrong while decoding the token
+                return msg.show401(req, res, next);
+            }                                                         
         }
 
         if(decoded){

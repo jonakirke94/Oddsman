@@ -68,7 +68,6 @@ export class LoginComponent implements OnInit {
       //set loading to true and then false if error
       this.showSpinner = true;
       this.login$ = this._auth.login(email, password).subscribe(() => {
-        console.log('Logged in ..')
         this.router.navigateByUrl("/");
       }, 
       err => {

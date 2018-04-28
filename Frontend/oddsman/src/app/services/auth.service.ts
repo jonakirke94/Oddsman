@@ -36,7 +36,6 @@ export class AuthService {
       .do(res => {
         this.setSession(res, email);
         this.loggedIn.next(true);
-        console.log('auth logged in..')
       })
       .shareReplay();
   }
