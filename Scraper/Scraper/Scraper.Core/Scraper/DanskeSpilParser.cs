@@ -149,7 +149,6 @@ namespace Scraper.Core.Scraper
             };
         }
 
-
         public static IList<MatchRound> ParseMatchRounds(HtmlDocument doc)
         {
             var matchWeeks = new List<MatchRound>();

@@ -29,6 +29,7 @@ namespace Scraper.Test
         [Fact]
         public void GetSubMatches_Test()
         {
+            Assert.NotNull(_upcomingMatch);
             var submatches = _scraper.GetSubMatches(_upcomingMatch.SubMatchLink);
             Assert.NotEmpty(submatches);
         }
@@ -44,6 +45,7 @@ namespace Scraper.Test
         [Fact]
         public void GetMatch_Test()
         {
+            Assert.NotNull(_upcomingMatch);
             var match = _scraper.GetUpcomingMatch(_upcomingMatch.MatchNo);
             Assert.NotNull(match);
             Assert.StrictEqual(_upcomingMatch.MatchNo, match.MatchNo);
@@ -53,6 +55,8 @@ namespace Scraper.Test
         [Fact]
         public void GetSubMatch_Test()
         {
+            Assert.NotNull(_upcomingMatch);
+            Assert.NotEmpty(_upcomingMatch.SubMatches);
             var subMatch = _scraper.GetSubMatch(_upcomingMatch.SubMatchLink, _upcomingMatch.SubMatches.First().SubMatchNo);
             Assert.NotNull(subMatch);
         }
