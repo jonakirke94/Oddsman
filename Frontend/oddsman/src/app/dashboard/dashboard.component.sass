@@ -1,3 +1,4 @@
+@import '../../styles/variables'
 
     
 h1,h2,h3,h4 
@@ -8,10 +9,10 @@ h1,h2,h3,h4
 body 
     box-sizing: border-box
 
-
-.hero 
+.hero
     &__container 
         margin-top: 0rem
+        
     
     &__left 
         padding: 2rem 2rem
@@ -20,6 +21,6 @@ body
             color: #00d1b2
         
         .is-active 
-            background-color: #394754 
+            background-color: lighten($darker, 10%)
         
     

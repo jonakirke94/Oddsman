@@ -1,5 +1,5 @@
 
-<p-table [columns]="cols" [value]="users" [paginator]="true" [rows]="3" [scrollable]="true">
+<p-table [columns]="cols" [value]="users" [paginator]="true" [rows]="3" [responsive]="true">
   <ng-template pTemplate="header" let-columns>
       <tr>
           <th *ngFor="let col of columns" [pSortableColumn]="col.field">
