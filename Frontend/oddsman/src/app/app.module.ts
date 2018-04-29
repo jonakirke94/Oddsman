@@ -23,7 +23,10 @@ import { UserstatsComponent } from './dashboard/usercomponents/userstats/usersta
 import { SendtipsComponent } from './dashboard/usercomponents/sendtips/sendtips.component';
 import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/admin-stats.component';
 import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adminusers.component';
-
+import {AccordionModule} from 'primeng/accordion';    
+import {MenuItem} from 'primeng/api';    
+import {TableModule} from 'primeng/table';
+import { UserService } from './services/user.service';
 
 
 @NgModule({
@@ -47,11 +50,16 @@ import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adm
     ReactiveFormsModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    ChartsModule
+    ChartsModule,
+    AccordionModule,
+    TableModule
+
+    
   ],
   providers: [
     AuthService,
     OddsService,
+    UserService,
     AuthGuard,
     AdminguardGuard,
     {

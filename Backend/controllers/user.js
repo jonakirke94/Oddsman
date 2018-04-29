@@ -103,3 +103,25 @@ exports.user_login = (req, res, next) => {
     })
   })
 }
+
+exports.user_all = (req, res, next) => {
+
+  const sql = `SELECT * FROM Users WHERE NOT IsAdmin=True`;
+
+  db.executeSql(sql, function(data, err) {
+    if (err) {
+      return msg.show500(req, res, err);
+    }
+
+    const users = data.map(x => { 
+      return { 
+        id: x.UserId, 
+        name: x.Name,
+        email: x.Email,
+        tag: x.Tag       
+      }
+    })
+      
+    return msg.show200(req, res, "Success", users);
+  });
+}

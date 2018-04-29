@@ -60,9 +60,9 @@ module.exports = (req, res, next) => {
         if(decoded){
             if(decoded.isAdmin === 1) {
                 next(); //valid access token & admin role
-            }
-
-            return msg.show401(req, res, next);        
+            } else {
+            return msg.show401(req, res, next);     
+            }   
         }
     }) 
 }
