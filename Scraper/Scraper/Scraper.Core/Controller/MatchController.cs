@@ -39,7 +39,7 @@ namespace Scraper.Core.Controller
         /// </summary>
         /// <param name="date"></param>
         /// <returns>The match round number for the given matches date or a default "not found" value of -1</returns>
-        public int GetMatchRoundNum(DateTime date)
+        public int GetMatchRoundId(DateTime date)
         {
             int num;
 
@@ -47,7 +47,7 @@ namespace Scraper.Core.Controller
             {
                 using (var ctx = new DanskeSpilContext())
                 {
-                    num = ctx.MatchRounds.FirstOrDefault(r => r.Start >= date && date <= r.End)?.Number ?? -1;
+                    num = ctx.MatchRounds.FirstOrDefault(r => r.Start >= date && date <= r.End)?.MatchRoundId ?? -1;
                 }
             }
             catch (Exception e)
