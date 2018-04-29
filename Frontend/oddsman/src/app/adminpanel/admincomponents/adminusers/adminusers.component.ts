@@ -16,6 +16,8 @@ export class AdminusersComponent implements OnInit {
 
   cols: any[];
 
+  $getusers;
+
 
   constructor(private http: HttpClient, private _user: UserService) {}
 
@@ -24,9 +26,20 @@ export class AdminusersComponent implements OnInit {
     this.getUsers();
   }
 
-  getUsers() {
-      this._user.getUsers().subscribe(res => this.users = res);
+  ngOnDestroy() {
+    //unsubscrube from getusers
   }
+
+  getUsers() {
+      this.loading = true;
+      setTimeout(() => {
+      this.$getusers = this._user.getUsers().subscribe(res => {
+          this.users = res
+          this.loading = false;
+        });
+    }, 500);
+  }
+
     
   createCols() {
     this.cols = [
