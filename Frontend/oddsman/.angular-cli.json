@@ -20,7 +20,9 @@
       "prefix": "app",
       "styles": [
         "../node_modules/bulma/bulma.sass",
-        "styles/styles.sass"
+        "styles/styles.sass",
+        "../node_modules/primeng/resources/themes/voclain/theme.css",
+        "../node_modules/primeng/resources/primeng.min.css"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",

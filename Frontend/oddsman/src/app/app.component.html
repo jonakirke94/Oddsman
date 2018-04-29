@@ -21,17 +21,10 @@
 
     </div>
 
-    <div class="navbar-end">
-
-        <div *ngIf="(isLoggedin$ | async)" class="navbar-item">
-      
+    <div class="navbar-end" *ngIf="(isLoggedin$ | async)">
+    
       <a class="navbar-item" routerLink="/dashboard/sendtips" [class.active]="router.url==='/dashboard/sendtips'">
-        <span class="icon">
-          <i class="fas fa-futbol"></i>
-        </span>
-        <span>
-          Send tips
-        </span>
+         Send tips
       </a>
 
       <a class="navbar-item" *ngIf="(isAdmin$ | async) === false"  routerLink="/dashboard" [class.active]="router.url==='/dashboard'">
@@ -45,34 +38,17 @@
       <a class="navbar-item" routerLink="/login" (click)="logout()">
         Log out
       </a>
-      </div>
-  
-
-      <div *ngIf="(isLoggedin$ | async) == false" class="navbar-item">
-        <div class="field is-grouped">
-          <p class="control">
-            <a class="navbar-item" routerLink="/login" [class.active]="router.url==='/login'">
-              <span class="icon">
-                <i class="fas fa-user"></i>
-              </span>
-              <span>
-                Login
-              </span>
-            </a>
-          </p>
-
-          <p class="control">
-            <a class="navbar-item" routerLink="/signup" [class.active]="router.url==='/signup'">
-              <span class="icon">
-                <i class="fas fa-user-plus"></i>
-              </span>
-              <span>Signup</span>
-            </a>
-          </p>
-        </div>
-      </div>
     </div>
 
+    <div class="navbar-end" *ngIf="(isLoggedin$ | async) == false">
+        <a class="navbar-item" routerLink="/login" [class.active]="router.url==='/login'">
+            Login   
+        </a>
+
+        <a class="navbar-item" routerLink="/signup" [class.active]="router.url==='/signup'">
+            Signup
+        </a>
+    </div>
   </div>
 </nav>
 
