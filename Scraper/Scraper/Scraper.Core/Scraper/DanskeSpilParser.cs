@@ -16,7 +16,7 @@ namespace Scraper.Core.Scraper
     public static class DanskeSpilParser
     {
         private const string SubMatchJsonExpression = "(\\[{\"names\":.*\\}\\])";
-        private const string MatchRoundIdExpression = "([0-9]*)(?= )";
+        private const string MatchRoundNumberExpression = "([0-9]*)(?= )";
         private const string MatchRoundDateExpression = "(?<=\\()(.*)(?=\\))";
         private const string DsCultureInfo = "da-DK";
         private const string MatchCustomDateTime = "dddd,d.MMMMyyyy";
@@ -156,19 +156,21 @@ namespace Scraper.Core.Scraper
             var selector = doc.GetElementbyId("kuponspil-round");
 
             var options = selector.Descendants("option");
+            
 
             foreach (var option in options)
             {
                 var data = option.HtmlDecodedValue();
                 var dates = ParseMatchRoundDate(data);
 
-                var numCheck = new Regex(MatchRoundIdExpression);
+                var numCheck = new Regex(MatchRoundNumberExpression);
                 var match = numCheck.Match(data);
 
 
                 matchWeeks.Add(new MatchRound
                 {
                     Number = int.Parse(match.Value),
+                    MatchRoundId = int.Parse(option.Attributes["value"].Value),
                     Start = dates.Item1,
                     End = dates.Item2
                 });
