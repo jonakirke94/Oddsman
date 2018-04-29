@@ -47,7 +47,7 @@ namespace Scraper.Core.Controller
             {
                 using (var ctx = new DanskeSpilContext())
                 {
-                    num = ctx.MatchRounds.FirstOrDefault(r => r.Start >= date && date <= r.End)?.Number ?? -1;
+                    num = ctx.MatchRounds.FirstOrDefault(r => r.Start >= date && date <= r.End)?.MatchRoundId ?? -1;
                 }
             }
             catch (Exception e)
