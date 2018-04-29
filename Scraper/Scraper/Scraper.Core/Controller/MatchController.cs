@@ -39,7 +39,7 @@ namespace Scraper.Core.Controller
         /// </summary>
         /// <param name="date"></param>
         /// <returns>The match round number for the given matches date or a default "not found" value of -1</returns>
-        public int GetMatchRoundNum(DateTime date)
+        public int GetMatchRoundId(DateTime date)
         {
             int num;
 
