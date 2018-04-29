@@ -12,7 +12,7 @@
 		box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.11)
 
 		.card-title 
-			background-color: darken($primary, 5%)
+			background-color: $dark-prim
 			padding: 2rem
 
 			h1 
@@ -34,7 +34,7 @@
 			margin-bottom: 1.75rem
 			padding: 0.25rem 0
 			border: none
-			border-bottom: 1px solid $grey-lighter
+			border-bottom: 1px solid $grey
 			transition: all .5s
 
 		.is-invalid
@@ -43,7 +43,7 @@
 
 
 		.checkbox 
-			color: $grey-light
+			color: $grey
 			font-size: 0.8rem
 
 			span 
@@ -56,25 +56,25 @@
 		
 
 		.options 
-			color: $grey-light
+			color: $grey
 			margin-bottom: 1.5rem
 		
 
 		button 
 			cursor: pointer
 			font-size: 1.2rem
-			color: $primary
+			color: $prim
 			border-radius: 4rem
 			display: block
 			width: 100%
 			background: transparent
-			border: 2px solid $primary
+			border: 2px solid $prim
 			padding: 0.9rem 0 1.1rem
 			transition: color .5s, border-color .5s
 			margin-top: 3rem
 
 			&:hover, &:focus 
-                background: darken($primary, 3%)		           
+                background: $dark-prim      
                 color: white
                
                
@@ -99,7 +99,7 @@ label
 
 .regular-checkbox + label 
 	background-color: #fafafa
-	border: 1px solid $grey-lighter
+	border: 1px solid $grey
 	box-shadow: 0 1px 2px rgba(0,0,0,0.05)
 	padding: 7px
 	border-radius: 3px
@@ -117,7 +117,7 @@ label
 	position: absolute
 	top: 0
 	left: 3px
-	color: $grey-light
+	color: $grey
 
 
 input:focus,
