@@ -1,77 +1,89 @@
-<div class="columns">
+<div class="columns is-multiline" [@listAnimation]="tournaments.length">
 
-<div class="column is-3" *ngFor="let tour of tournaments">
-<div class="card">
-    <header class="card-header">
-      <p class="card-header-title">
-        {{tour.Name}}
-      </p>
-    </header>
-    <div class="card-content">
-      <div class="content">
-        <div class="level">
-          <div class="level-left">Start</div>
-          <div class="level-right">{{tour.Start | date:'MM/dd/yyyy'}}</div>
-        </div>
-        <div class="level">
+  <div class="column is-one-third" *ngFor="let tour of tournaments">
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">
+          {{tour.Name}}
+        </p>
+      </header>
+      <div class="card-content">
+        <div class="content">
+          <div class="level">
+            <div class="level-left">Start</div>
+            <div class="level-right">{{tour.Start | date:'MM/dd/yyyy'}}</div>
+          </div>
+          <div class="level">
             <div class="level-left">Slut</div>
             <div class="level-right">{{tour.End | date:'MM/dd/yyyy'}}</div>
           </div>
           <div class="level">
-              <div class="level-left">Deltagere</div>
-              <div class="level-right">0</div>
-            </div>
+            <div class="level-left">Deltagere</div>
+            <div class="level-right">0</div>
+          </div>
+        </div>
       </div>
+      <footer class="card-footer">
+        <a class="card-footer-item" (click)="goToInvitations(tour.Name)">Inviter</a>
+        <a class="card-footer-item" >Deltagere</a>
+
+      </footer>
     </div>
-    <footer class="card-footer">
-      <a class="card-footer-item">Inviter</a>
-    </footer>
+  </div>
+
+  <!-- CREATE NEW TOURNAMENT-->
+  <div class="column is-one-third clickable" (click)="openModal()">
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">
+          Opret ny turnering
+        </p>
+      </header>
+      <div class="card-content">
+        <div class="content">
+          <div class="has-text-centered">
+            <div class="card-content">
+              <i class="fa fa-plus"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="card-footer">
+        <a class="card-footer-item">-</a>
+      </footer>
+    </div>
+
   </div>
 </div>
 
-
-        <div class="column is-3 clickable">
-            <div class="box has-text-centered" (click)="openModal()">
-                <div class="card-content">
-                  <i class="fa fa-plus fa-5x"></i>
+<!-- MODAL BODY -->
+<div class="column is-4">
+  <div class="modal" id="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Opret ny turnering</p>
+        <button class="delete" aria-label="close" (click)="closeModal()"></button>
+      </header>
+      <section class="modal-card-body" style="height: 500px">
+          <div class="ui-g ui-fluid">
+              <div class="ui-g-12 ui-md-12">
+                  <label class="label">Turneringsnavn</label>
+                  <input class="input calendar" type="text" placeholder="Oddsman2018B"[(ngModel)]="name">
                 </div>
+              <div class="ui-g-12 ui-md-12">
+                <label class="label">Start - Slut</label>
+                <p-calendar [(ngModel)]="rangeDates" selectionMode="range" readonlyInput="true" styleClass="calendar" placeholder="mm-dd-yyyy - mm-dd-yyyy"  ></p-calendar>
               </div>
-        </div>
-
-
-
-<div class="column is-3">
-    <div class="modal" id="modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <p class="modal-card-title">Opret ny turnering</p>
-            <button class="delete" aria-label="close" (click)="closeModal()"></button>
-          </header>
-          <section class="modal-card-body" style="height: 400px">
-              <div class="field">
-                  <label class="label">Name</label>
-                  <div class="control">
-                    <input class="input" type="text" placeholder="Text input" [(ngModel)]="name">
-                  </div>
-                </div>
-
-                <div class="field">
-                    <label class="label">Start - Slut</label>
-
-                        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" readonlyInput="true" inputStyleClass="calendar-input"></p-calendar>
-                    
-
-                  </div>
-
-          </section>
-          <footer class="modal-card-foot">
-            <button class="button is-success"  (click)="createTournament()">Opret</button>
-            <button class="button" (click)="closeModal()">Cancel</button>
-          </footer>
-        </div>
-      </div>
-    
-</div>
+          </div>
+          <div *ngIf="error" class="help is-danger has-text-left error-text">{{error}}</div>
+        
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-primary" (click)="createTournament()" id="modal-submit">Opret</button>
+        <button class="button is-danger" (click)="closeModal()">Fortryd</button>
+      </footer>
+    </div>
+  </div>
 
 </div>

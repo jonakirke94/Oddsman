@@ -30,6 +30,9 @@ import { AdminTournamentsComponent } from './adminpanel/admincomponents/admin-to
 import { TournamentService } from './services/tournament.service';
 import {CalendarModule} from 'primeng/calendar';
 import {InputTextModule} from 'primeng/inputtext';
+import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-invitations/admin-invitations.component';
+import { DataTableModule } from 'primeng/primeng'; // Here
+import {GrowlModule} from 'primeng/primeng';
 
 
 @NgModule({
@@ -47,6 +50,7 @@ import {InputTextModule} from 'primeng/inputtext';
     AdminStatsComponent,
     AdminusersComponent,
     AdminTournamentsComponent,
+    AdminInvitationsComponent,
     
     
   ],
@@ -61,7 +65,9 @@ import {InputTextModule} from 'primeng/inputtext';
     TableModule,
     CalendarModule,
     FormsModule,
-    InputTextModule
+    InputTextModule,
+    DataTableModule,
+    GrowlModule
 
     
   ],

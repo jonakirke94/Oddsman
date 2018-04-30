@@ -20,7 +20,7 @@ describe("Tournaments", () => {
     });
   });
   //Test post tournament
-  describe("/Create tournament", () => {
+  describe("/POST tournament", () => {
     it("it should create a tournament", done => {
       let tourney = {
         name: "Season1",
@@ -59,5 +59,55 @@ describe("Tournaments", () => {
             });
         });
     });
+    it("it not create with missing arguments", done => {
+      let tourney = {
+        start: new Date("2015-03-25T12:00:00Z"),
+        end: new Date("2015-03-25T12:00:00Z")
+      };
+      chai
+        .request(server)
+        .post("/tournament")
+        .send(tourney)
+        .end((err, res) => {
+          res.should.have.status(400);
+          should.exist(res.body.err);
+          res.body.err.should.be.a("array");
+          done();
+        });
+    });
   });
+   describe("/GET tournament", () => {
+      beforeEach(done => {
+      //Seed database 
+      let tourney = {
+        name: "Season1",
+        start: new Date("2015-03-25T12:00:00Z"),
+        end: new Date("2015-03-25T12:00:00Z")
+      };
+      chai
+        .request(server)
+        .post("/tournament")
+        .send(tourney)
+        .end((err, res) => {
+          done();
+        })
+    }); 
+
+     it("it should fetch all tournaments", done => {
+      chai
+        .request(server)
+        .get("/tournament")
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.data.should.be.a("array");
+          res.body.data.should.have.length(1);
+          res.body.data[0].should.be.a("object");
+          done();
+        });
+    });
+  })
+ 
+
+
+  
 });

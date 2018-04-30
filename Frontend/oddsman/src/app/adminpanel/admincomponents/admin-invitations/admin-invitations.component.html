@@ -1,0 +1,21 @@
+<p-growl [value]="msgs"></p-growl>
+
+
+<p-dataTable [value]="users">
+    <p-column field="id" header="#"></p-column>
+    <p-column field="name" header="Navn"></p-column>
+    <p-column field="tag" header="Tag"></p-column>
+    <p-column field="email" header="Email"></p-column>
+    <p-column styleClass="col-button">
+        <ng-template pTemplate="header">
+            <button type="button" pButton icon="fa-refresh"></button>
+        </ng-template>
+        <ng-template let-user="rowData" pTemplate="body">
+            <div class="has-text-centered">
+            <button type="button" pButton (click)="inviteUser(user)" title="Accepter" icon="fa-check"></button>
+            <button type="button" pButton (click)="declineUser(user)" title="Afvis" icon="fa-close"></button> 
+            </div>
+
+        </ng-template>
+    </p-column>
+</p-dataTable>

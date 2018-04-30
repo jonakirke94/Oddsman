@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class TournamentService {
 
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+   }
 
   createTournament(name: string, start: Date, end: Date) {
     return this.http
@@ -20,5 +22,7 @@ export class TournamentService {
     .get("http://localhost:3000/tournament")
     .map(res => res);
   }
+
+ 
 
 }

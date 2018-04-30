@@ -9,18 +9,28 @@ h1,h2,h3,h4
 body 
     box-sizing: border-box
 
-.hero
+
+.hero 
     &__container 
         margin-top: 0rem
-        
+
+    &__right
+        padding: 2rem
     
     &__left 
         padding: 2rem 2rem
         border-right: 1px solid #999
         p 
-            color: #00d1b2
+            color: $prim
         
         .is-active 
-            background-color: lighten($darker, 10%)
+            background-color: $dim-blue
+
+.menu-list a 
+    color: $white
+
+.menu-list a:hover 
+    color: $dim-blue
+
         
     

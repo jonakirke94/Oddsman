@@ -14,3 +14,13 @@ CREATE TABLE `gotomain_net_db2`.`Tournaments` (
   `Start` DATE NOT NULL,
   `End` DATE NOT NULL,
   PRIMARY KEY (`TournamentId`));
+
+/* many to many table for tournaments and users*/
+CREATE TABLE `gotomain_net_db2`.`Requests` (
+  `UserId` INT NOT NULL,
+  `TournamentId` INT NOT NULL,
+  `Status` enum('accepted','declined', 'pending') default 'pending',
+  FOREIGN KEY (UserId) REFERENCES Users (UserId),
+  FOREIGN KEY (TournamentId) REFERENCES Tournaments (TournamentId),
+  PRIMARY KEY (TournamentId, UserId));
+

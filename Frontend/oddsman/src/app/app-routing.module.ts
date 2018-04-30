@@ -13,6 +13,7 @@ import { SendtipsComponent } from './dashboard/usercomponents/sendtips/sendtips.
 import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/admin-stats.component';
 import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adminusers.component';
 import { AdminTournamentsComponent } from './adminpanel/admincomponents/admin-tournaments/admin-tournaments.component';
+import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-invitations/admin-invitations.component';
 
 
 const routes: Routes = [
@@ -63,6 +64,10 @@ const routes: Routes = [
        {
         path : 'tournaments',
          component: AdminTournamentsComponent
+        },
+       {
+        path : 'invitations/:name', 
+        component: AdminInvitationsComponent
         },
     ]
   },
