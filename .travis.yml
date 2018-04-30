@@ -1,19 +1,19 @@
--   language: csharp
-	mono: none
-	dotnet: 2.0.0
-	services:
-		- mysql
-	node_js:
-		- "8"
-	before_install:
-		- mysql -u root --password="" < test_db_setup.sql
-	before_script: 
-		- dotnet build Scraper/Scraper/Scraper.sln		
-		- cd Backend
-		- npm install
-		- cd /
-	script:
-		- dotnet test Scraper/Scraper/Scraper.Test/Scraper.Test.csproj
-		- npm test Backend/test	  
+- language: csharp
+  mono: none
+  dotnet: 2.0.0
+  services:
+    - mysql
+  node_js:
+    - "8"
+  before_install:
+    - mysql -u root --password="" < test_db_setup.sql
+  before_script: 
+    - dotnet build Scraper/Scraper/Scraper.sln		
+    - cd Backend
+    - npm install
+    - cd /
+  script:
+    - dotnet test Scraper/Scraper/Scraper.Test/Scraper.Test.csproj
+    - npm test Backend/test	  
 notifications:
     email: false
