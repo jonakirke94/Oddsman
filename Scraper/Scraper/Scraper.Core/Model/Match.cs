@@ -19,9 +19,6 @@ namespace Scraper.Core.Model
         public int RoundId { get; set; }
         public Result Result { get; set; }
         public string SubMatchLink { get; set; }
-
-
-
         public List<SubMatch> SubMatches { get; set; }
 
 
