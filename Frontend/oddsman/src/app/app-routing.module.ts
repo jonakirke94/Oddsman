@@ -12,6 +12,7 @@ import { UsersettingsComponent } from './dashboard/usercomponents/usersettings/u
 import { SendtipsComponent } from './dashboard/usercomponents/sendtips/sendtips.component';
 import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/admin-stats.component';
 import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adminusers.component';
+import { AdminTournamentsComponent } from './adminpanel/admincomponents/admin-tournaments/admin-tournaments.component';
 
 
 const routes: Routes = [
@@ -59,6 +60,10 @@ const routes: Routes = [
        path : 'users',
         component: AdminusersComponent
        },
+       {
+        path : 'tournaments',
+         component: AdminTournamentsComponent
+        },
     ]
   },
   

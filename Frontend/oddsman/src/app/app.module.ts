@@ -1,10 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormGroup, FormControl, ReactiveFormsModule, Validator } from '@angular/forms';
+import { FormGroup, FormControl, ReactiveFormsModule, Validator, FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
@@ -27,6 +26,10 @@ import {AccordionModule} from 'primeng/accordion';
 import {MenuItem} from 'primeng/api';    
 import {TableModule} from 'primeng/table';
 import { UserService } from './services/user.service';
+import { AdminTournamentsComponent } from './adminpanel/admincomponents/admin-tournaments/admin-tournaments.component';
+import { TournamentService } from './services/tournament.service';
+import {CalendarModule} from 'primeng/calendar';
+import {InputTextModule} from 'primeng/inputtext';
 
 
 @NgModule({
@@ -42,7 +45,10 @@ import { UserService } from './services/user.service';
     UserstatsComponent,
     SendtipsComponent,
     AdminStatsComponent,
-    AdminusersComponent
+    AdminusersComponent,
+    AdminTournamentsComponent,
+    
+    
   ],
   imports: [
     BrowserModule,
@@ -52,13 +58,17 @@ import { UserService } from './services/user.service';
     HttpClientModule,
     ChartsModule,
     AccordionModule,
-    TableModule
+    TableModule,
+    CalendarModule,
+    FormsModule,
+    InputTextModule
 
     
   ],
   providers: [
     AuthService,
     OddsService,
+    TournamentService,
     UserService,
     AuthGuard,
     AdminguardGuard,

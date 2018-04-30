@@ -5,6 +5,7 @@ exports.show200 = function(req, res, msg, data) {
     msg: msg,
     data: data
   })
+  res.end()
 };
 
 //bad client request

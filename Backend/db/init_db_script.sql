@@ -7,3 +7,10 @@ CREATE TABLE `gotomain_net_db2`.`Users` (
   `IsAdmin` TINYINT(1) NOT NULL,
   `RefreshToken` VARCHAR(200) NULL,
   PRIMARY KEY (`UserId`));
+
+CREATE TABLE `gotomain_net_db2`.`Tournaments` (
+  `TournamentId` INT NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(45) NOT NULL,
+  `Start` DATE NOT NULL,
+  `End` DATE NOT NULL,
+  PRIMARY KEY (`TournamentId`));

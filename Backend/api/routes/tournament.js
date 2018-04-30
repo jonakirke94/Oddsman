@@ -6,6 +6,10 @@ const adminguard = require('../guards/adminguard');
 
 const tournamentController = require('../../controllers/tournament');
 
-router.post("/", adminguard, tournamentController.test);
+router.post("/", adminguard, tournamentController.create);
+router.get("/", tournamentController.get_all);
+//router.get("/:id", tournamentController.);
+
+
 
 module.exports = router;
