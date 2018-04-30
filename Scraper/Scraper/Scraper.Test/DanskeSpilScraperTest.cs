@@ -60,5 +60,23 @@ namespace Scraper.Test
             var subMatch = _scraper.GetSubMatch(_upcomingMatch.SubMatchLink, _upcomingMatch.SubMatches.First().SubMatchNo);
             Assert.NotNull(subMatch);
         }
+
+
+        [Fact]
+        public void GetResults_Test()
+        {
+            // TODO: find a better parse example.
+            // var match = playedMatch;
+            var results = _scraper.GetResults(new Match{RoundId = 452, MatchNo = 235, SubMatches = new List<SubMatch>()}); // Temporary Ids for a played match
+            Assert.NotEmpty(results);
+            // Assert.True(match.Results.Count + 1 == results.Count); // taking into account the match itself.
+        }
+
+        [Fact]
+        public void GetResult_Test()
+        {
+            var result = _scraper.GetResult(452, 235);
+            Assert.NotNull(result);
+        }
     }
 }

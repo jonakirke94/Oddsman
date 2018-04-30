@@ -16,6 +16,7 @@ namespace Scraper.Core.Model
         public double HomeOdds { get; set; }
         public double AwayOdds { get; set; }
         public double DrawOdds { get; set; }
+        public int RoundId { get; set; }
         public Result Result { get; set; }
         public string SubMatchLink { get; set; }
 

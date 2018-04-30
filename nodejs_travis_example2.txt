@@ -1,0 +1,31 @@
+- language: csharp
+	services:
+		- mysql
+	node_js:
+		- "8"
+	mono: none
+	dotnet: 2.0.0
+	before_script: 
+	- cd /
+	- cd Scraper/Scraper
+	- dotnet build
+	- cd /
+	- cd Backend
+	- cd npm install
+	- cd /
+
+	script:
+	- cd Scraper.Test
+	- dotnet test 
+	- cd /
+	- cd Backend
+	- npm test
+	
+	cache:
+	directories:
+	  - "node_modules" 
+
+                 
+
+notifications:
+    email: false
