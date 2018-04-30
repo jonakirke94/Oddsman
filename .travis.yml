@@ -8,14 +8,14 @@ node_js:
 before_install:
  - mysql -u root --password="" < test_db_setup.sql
 before_script:
- - cd /Scraper/Scraper
+ - cd ~/Scraper/Scraper
  - dotnet build
- - cd /Backend
+ - cd ~/Backend
  - npm install
 script:
- - cd /Scraper/Scraper/Scraper.Test
+ - cd ~/Scraper/Scraper/Scraper.Test
  - dotnet test
- - cd /Backend/test
+ - cd ~/Backend/test
  - npm test
 notifications:
  email: false
