@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Scraper.Core.Model.Data
+namespace Scraper.Core.Scraper.DanskeSpil.Model
 {
     public class SubMatchData
     {

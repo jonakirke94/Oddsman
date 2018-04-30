@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Scraper.Core.Extension;
 using Scraper.Core.Model;
-using Scraper.Core.Model.Data;
+using Scraper.Core.Scraper.DanskeSpil.Model;
 using Match = Scraper.Core.Model.Match;
 
-namespace Scraper.Core.Scraper
+namespace Scraper.Core.Scraper.DanskeSpil
 {
     public static class DanskeSpilParser
     {

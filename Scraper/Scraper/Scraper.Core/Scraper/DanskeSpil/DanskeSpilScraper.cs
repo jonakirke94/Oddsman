@@ -10,6 +10,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using Scraper.Core.Model;
+using Scraper.Core.Scraper.DanskeSpil;
 
 namespace Scraper.Core.Scraper
 {
