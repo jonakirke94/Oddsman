@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using Scraper.Core.Model;
+using Scraper.Core.Scraper.DanskeSpil;
 
 namespace Scraper.Core.Scraper
 {
@@ -60,49 +62,128 @@ namespace Scraper.Core.Scraper
 
         public IList<Match> GetUpcomingMatches()
         {
+            var matches = new List<Match>();
             var doc = LoadHtmlPage(DenLange);
 
-            return DanskeSpilParser.ParseMatches(doc);
+            try
+            {
+                matches = new List<Match>(DanskeSpilParser.ParseMatches(doc));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return matches;
         }
 
         public IList<SubMatch> GetSubMatches(string eventUrl)
         {
+            var subMatches = new List<SubMatch>(); 
             var doc = LoadHtmlPage(eventUrl);
             var data = DanskeSpilParser.ParseSubMatchData(doc);
 
-            return DanskeSpilParser.ParseSubMatches(data);
+            try
+            {
+                subMatches = new List<SubMatch>(DanskeSpilParser.ParseSubMatches(data));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return subMatches;
         }
 
         public IList<MatchRound> GetMatchRounds()
         {
+            var rounds = new List<MatchRound>();
             var doc = LoadHtmlPage(Results);
-            
-            return DanskeSpilParser.ParseMatchRounds(doc);
+
+            try
+            {
+                rounds = new List<MatchRound>(DanskeSpilParser.ParseMatchRounds(doc));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return rounds;
         }
 
         public Match GetUpcomingMatch(int matchId)
         {
+            Match m = null;
             var doc = LoadHtmlPage(string.Format(MatchSearch, matchId));
 
-            return DanskeSpilParser.ParseMatchSearch(doc);
+            try
+            {
+                m = DanskeSpilParser.ParseMatchSearch(doc);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return m;
         }
 
         public SubMatch GetSubMatch(string eventUrl, int subMatchId)
         {
+            SubMatch sm = null;
             var doc = LoadHtmlPage(eventUrl);
             var data = DanskeSpilParser.ParseSubMatchData(doc);
             var header = data.Headers.First(h => int.Parse(h.SubMatchNo) == subMatchId);
             var odds = data.Odds.Select(o => o).Where(o => o.HeaderId == header.HeaderId).ToList();
 
-            return DanskeSpilParser.ParseSubMatch(header, odds);
+            try
+            {
+                sm = DanskeSpilParser.ParseSubMatch(header, odds);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return sm;
         }
 
-        public Result GetResult(int matchRound, int matchNo)
+        public IList<Result> GetResults(Match match)
         {
-            var doc = LoadHtmlPage(string.Format(ResultSearch, matchRound, matchNo));
-            throw new NotImplementedException();
+            var results = new List<Result>();
+            var doc = LoadHtmlPage(string.Format(ResultSearch, match.RoundId, match.MatchNo));
+            try
+            {
+                results = new List<Result>(DanskeSpilParser.ParseResults(doc, match));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return results;
         }
+
+        public Result GetResult(int matchRound, int matchId)
+        {
+            Result res = null;
+            var doc = LoadHtmlPage(string.Format(ResultSearch, matchRound, matchId));
+
+            try
+            {
+                res = DanskeSpilParser.ParseResult(doc, matchId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return res;
+        }
+
 
         // TODO: Fix MatchNo/MatchId naming discrepencies (naming convention refactor needed).
+
     }
 }

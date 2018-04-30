@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Scraper.Core.Extension;
 using Scraper.Core.Model;
-using Scraper.Core.Model.Data;
+using Scraper.Core.Scraper.DanskeSpil.Model;
 using Match = Scraper.Core.Model.Match;
 
-namespace Scraper.Core.Scraper
+namespace Scraper.Core.Scraper.DanskeSpil
 {
     public static class DanskeSpilParser
     {
@@ -19,8 +18,9 @@ namespace Scraper.Core.Scraper
         private const string MatchRoundNumberExpression = "([0-9]*)(?= )";
         private const string MatchRoundDateExpression = "(?<=\\()(.*)(?=\\))";
         private const string DsCultureInfo = "da-DK";
-        private const string MatchCustomDateTime = "dddd,d.MMMMyyyy";
-        private const string MatchRoundCustomDateTime = "dd.MM.yy";
+        private const string MatchDateFormat = "dddd,d.MMMMyyyy";
+        private const string MatchRoundDateFormat = "dd.MM.yy";
+        private const string ResultDateFormat = "dddd, dd. MMMM yyyy";
 
 
 
@@ -219,6 +219,89 @@ namespace Scraper.Core.Scraper
             return new SubMatchData{ Headers = headers, Odds = odds };
         }
 
+        public static IList<Result> ParseResults(HtmlDocument doc, Match match)
+        {
+            var results = new List<Result>();
+
+            var rows = doc.GetElementbyId("resultTable")
+                .Descendants("tbody")
+                .FirstOrDefault()
+                ?.Descendants("tr")
+                .Where(r => r.HasClass("eventDetailsRow"))
+                .ToList();
+
+            if (rows == null) return results;
+
+            foreach (var row in rows)
+            {
+                var cols = row.Descendants("td").ToList();
+                var idCol = cols[0];
+                int.TryParse(idCol.InnerHtml, out var id);
+                var correctBet = cols.First(c => c.HasClass("boldText"))?.InnerHtml;
+                var score = cols.First(c => c.HasClass("centeredText"))?.InnerHtml;
+
+                if (id != match.MatchNo)
+                {
+                    var submatch = match.SubMatches.FirstOrDefault(sm => sm.SubMatchNo == id);
+                    if (submatch == null) continue;
+
+                    results.Add(new Result
+                    {
+                        CorrectBet = correctBet,
+                        Score = score,
+                        SubMatchId = submatch.SubMatchNo
+                    });
+                }
+                else
+                {
+                    results.Add(new Result
+                    {
+                        CorrectBet = correctBet,
+                        Score = score,
+                        MatchId = id
+                    });
+                }
+            }
+
+            return results;
+        }
+
+        public static Result ParseResult(HtmlDocument doc, int matchId)
+        {
+            Result res = null;
+
+            var rows = doc.GetElementbyId("resultTable")
+                .Descendants("tbody")
+                .FirstOrDefault()
+                ?.Descendants("tr")
+                .Where(r => r.HasClass("eventDetailsRow"))
+                .ToList();
+
+            if (rows == null) return null;
+
+            foreach (var row in rows)
+            {
+                var cols = row.Descendants("td").ToList();
+                var idCol = cols[0];
+                int.TryParse(idCol.InnerHtml, out var id);
+
+                if(id != matchId) continue;;
+
+                var correctBet = cols.First(c => c.HasClass("boldText"))?.InnerHtml;
+                var score = cols.First(c => c.HasClass("centeredText"))?.InnerHtml;
+                res = new Result
+                {
+                    CorrectBet = correctBet,
+                    Score = score,
+                    MatchId = id
+                };
+                
+                break;
+            }
+
+            return res;
+        }
+
         #region Helper Methods
 
         private static double ParseCommaDouble(string str)
@@ -229,7 +312,7 @@ namespace Scraper.Core.Scraper
 
         private static DateTime ParseMatchDate(string date)
         {
-            return DateTime.ParseExact(date.Replace(" ", ""), MatchCustomDateTime, CultureInfo.GetCultureInfo(DsCultureInfo));
+            return DateTime.ParseExact(date.Replace(" ", ""), MatchDateFormat, CultureInfo.GetCultureInfo(DsCultureInfo));
         }
 
         private static (DateTime, DateTime) ParseMatchRoundDate(string date)
@@ -238,10 +321,15 @@ namespace Scraper.Core.Scraper
             var dates = regex.Match(date);
             var dateArr = dates.Value.Split('-');
 
-            var start = DateTime.ParseExact(dateArr[0], MatchRoundCustomDateTime, CultureInfo.GetCultureInfo(DsCultureInfo));
-            var end = DateTime.ParseExact(dateArr[1], MatchRoundCustomDateTime, CultureInfo.GetCultureInfo(DsCultureInfo));
+            var start = DateTime.ParseExact(dateArr[0], MatchRoundDateFormat, CultureInfo.GetCultureInfo(DsCultureInfo));
+            var end = DateTime.ParseExact(dateArr[1], MatchRoundDateFormat, CultureInfo.GetCultureInfo(DsCultureInfo));
 
             return (start, end);
+        }
+
+        private static DateTime ParseResultDate(string date) // TODO: Find out if needed
+        {
+            return DateTime.ParseExact(date, ResultDateFormat, CultureInfo.GetCultureInfo(DsCultureInfo)); // Søndag, 29. april 2018
         }
 
         #endregion

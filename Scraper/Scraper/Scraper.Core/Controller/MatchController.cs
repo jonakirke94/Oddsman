@@ -12,27 +12,7 @@ namespace Scraper.Core.Controller
     {
         private readonly DanskeSpilScraper _scraper = new DanskeSpilScraper();
 
-        /// <summary>
-        /// Scrapes the Match Rounds and their values, then adds them to the database.
-        /// </summary>
-        public async Task ScrapeMatchRounds()
-        {
-            try
-            {
-                var rounds = _scraper.GetMatchRounds();
-
-                using (var ctx = new DanskeSpilContext())
-                {
-                    ctx.MatchRounds.AddRange(rounds);
-                    await ctx.SaveChangesAsync();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
+        
 
         /// <summary>
         /// Finds a match's round number based on the match's date
