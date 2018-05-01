@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using HtmlAgilityPack;
-using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
 using Scraper.Core.Model;
-using Scraper.Core.Scraper.DanskeSpil;
 
-namespace Scraper.Core.Scraper
+namespace Scraper.Core.Scraper.DanskeSpil
 {
     public class DanskeSpilScraper
     {
@@ -21,6 +16,7 @@ namespace Scraper.Core.Scraper
         private const string Results = "https://oddset.danskespil.dk/allekampe/resultater";
         private const string ResultSearch = "https://oddset.danskespil.dk//results/list_retail/1/{0}/FOOTBALL/{1}"; // 0 = MatchRoundId | 1 = MatchNo
         private const string MatchSearch = "https://oddset.danskespil.dk/allekampe/den-lange?search=1&criteria={0}"; // Can only be found if it exists on Den Lange
+        private const string SubMatchUrl = "https://oddset.danskespil.dk/allekampe/den-lange/event-{0}.html";
 
         private static HtmlDocument LoadHtmlPage(string url, bool requireBrowser = false)
         {
@@ -129,16 +125,16 @@ namespace Scraper.Core.Scraper
             return m;
         }
 
-        public SubMatch GetSubMatch(string eventUrl, int subMatchId)
+        public SubMatch GetSubMatch(int matchId, int subMatchId)
         {
             SubMatch sm = null;
-            var doc = LoadHtmlPage(eventUrl);
-            var data = DanskeSpilParser.ParseSubMatchData(doc);
-            var header = data.Headers.First(h => int.Parse(h.SubMatchNo) == subMatchId);
-            var odds = data.Odds.Select(o => o).Where(o => o.HeaderId == header.HeaderId).ToList();
+            var doc = LoadHtmlPage(string.Format(SubMatchUrl, matchId));
 
             try
             {
+                var data = DanskeSpilParser.ParseSubMatchData(doc);
+                var header = data.Headers.First(h => int.Parse(h.SubMatchNo) == subMatchId);
+                var odds = data.Odds.Select(o => o).Where(o => o.HeaderId == header.HeaderId).ToList();
                 sm = DanskeSpilParser.ParseSubMatch(header, odds);
             }
             catch (Exception e)

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Scraper.Core.Data;
 using Scraper.Core.Model;
 using Scraper.Core.Scraper;
+using Scraper.Core.Scraper.DanskeSpil;
 
 namespace Scraper.Core.Controller
 {
@@ -39,6 +40,43 @@ namespace Scraper.Core.Controller
             return num;
         }
 
+        public Match GetUpcomingMatch(int matchNumber)
+        {
+            Match match;
+            try
+            {
+                using (var db = new DanskeSpilContext())
+                {
+                    match = db.Matches.FirstOrDefault(m => m.MatchNo == matchNumber);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            return match;
+        }
+
+        public SubMatch GetUpcomingSubMatch(int subMatchNumber)
+        {
+            SubMatch match;
+            try
+            {
+                using (var db = new DanskeSpilContext())
+                {
+                    match = db.SubMatches.FirstOrDefault(m => m.SubMatchNo == subMatchNumber);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            return match;
+        }
 
         //public IList<Match> GetUpcomingMatches()
         //{
@@ -50,10 +88,7 @@ namespace Scraper.Core.Controller
         //    return _scraper.GetSubMatches(eventUrl);
         //}
 
-        //public Match GetUpcomingMatch(int matchNumber)
-        //{
-        //    return _scraper.GetUpcomingMatch(matchNumber);
-        //}
+
 
         //public IList<Result> GetResults()
         //{

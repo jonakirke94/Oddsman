@@ -134,7 +134,7 @@ namespace Scraper.Core.Scraper.DanskeSpil
             var o1 = odds.FirstOrDefault(o => o.BetOption == "1");
             var o2 = odds.FirstOrDefault(o => o.BetOption == "X");
             var o3 = odds.FirstOrDefault(o => o.BetOption == "2");
-
+            var x = int.Parse(header.SubMatchNo);
             return new SubMatch
             {
                 MatchName = header.Names.Da,

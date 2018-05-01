@@ -27,5 +27,6 @@ namespace Scraper.Core.Model
         {
             return $"MatchDate: {MatchDate} MatchNo: {MatchNo} HomeOdds: {HomeOdds} DrawOdds: {DrawOdds} AwayOdds {AwayOdds}";
         }
+        
     }
 }
