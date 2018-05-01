@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using HtmlAgilityPack;
-using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
 using Scraper.Core.Model;
-using Scraper.Core.Scraper.DanskeSpil;
 
-namespace Scraper.Core.Scraper
+namespace Scraper.Core.Scraper.DanskeSpil
 {
     public class DanskeSpilScraper
     {

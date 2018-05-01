@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Scraper.Core.Data;
 using Scraper.Core.Model;
 using Scraper.Core.Scraper;
+using Scraper.Core.Scraper.DanskeSpil;
 
 namespace Scraper.Core.Controller
 {

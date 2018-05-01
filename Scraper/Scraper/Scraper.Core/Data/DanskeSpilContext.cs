@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Scraper.Core.Model;
 
 namespace Scraper.Core.Data
@@ -20,8 +21,5 @@ namespace Scraper.Core.Data
         {
             base.OnModelCreating(modelBuilder);
         }
-
-
-
     }
 }

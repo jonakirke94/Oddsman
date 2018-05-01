@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Scraper.Core.Model;
 using Scraper.Core.Scraper;
+using Scraper.Core.Scraper.DanskeSpil;
 using Xunit;
 
 namespace Scraper.Test
