@@ -5,7 +5,8 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const server = require("../server");
 const should = chai.should();
-const db = require("../db/db");
+//const db = require("../db/db");
+const db = require('../db/db');
 
 const user = require("../controllers/user");
 
@@ -14,17 +15,12 @@ chai.use(chaiHttp);
 //Our parent block
 describe("Users", () => {
   beforeEach(done => {
-    //Before each test we empty the database
-    db.executeSql("TRUNCATE TABLE Users", function(err, data) {
+    db.cleanDatabase(function(data) {
       done();
-    });
+    })
   });
-   after(function(done){
-    //Clean db
-    db.executeSql("TRUNCATE TABLE Users", function(err, data) {
-      done();
-    });
-  }); 
+ 
+  
 
   /****************************** TESTING GETBYPROPERTY *****************************/
   describe("/GET User", () => {
@@ -220,7 +216,6 @@ describe("Users", () => {
   /****************************** TESTING LOGIN *****************************/
   describe("/POST User/login", () => {
     beforeEach(done => {
-      //Before each test we empty the database
       let person = {
         name: "Kobe Bryan",
         tag: "KB",
@@ -247,7 +242,7 @@ describe("Users", () => {
             done();
           });
         });
-    });
+    }); 
     it("it should return generated tokens", done => {
       let login = { email: "Bryan@email1.dk", password: "123456789" };
       chai
@@ -262,7 +257,7 @@ describe("Users", () => {
             done();
           });
         });
-    });
+    });   
     it("it should save a refresh token on login", done => {
       let login = { email: "Bryan@email1.dk", password: "123456789" };
       chai
@@ -275,7 +270,7 @@ describe("Users", () => {
             done();
           });
         });
-    });
+    }); 
     it("it should return 401 on invalid password", done => {
       let login = { email: "Bryan@email1.dk", password: "123456" };
       chai
@@ -297,6 +292,19 @@ describe("Users", () => {
           res.should.have.status(401);
           done();
         });
-    });
+    }); 
+   
+   
   });
-});
+
+  after(function(done){
+    db.cleanDatabase(function(data) {
+    done();
+    }) 
+  }); 
+  
+  
+
+  
+}); 
+

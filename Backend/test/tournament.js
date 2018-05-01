@@ -6,6 +6,7 @@ const chaiHttp = require("chai-http");
 const server = require("../server");
 const should = chai.should();
 const db = require("../db/db");
+const tokenController = require('../controllers/token')
 
 const token = require("../controllers/token");
 
@@ -14,17 +15,14 @@ chai.use(chaiHttp);
 //Our parent block
 describe("Tournaments", () => {
   beforeEach(done => {
-    //Before each test we empty the database
-    db.executeSql("TRUNCATE TABLE Tournaments", function(err, data) {
+    db.cleanDatabase(function(data) {
       done();
-    });
+    })
   });
-  //Clean db
   after(function(done){
-    //Clean db
-    db.executeSql("TRUNCATE TABLE Tournaments", function(err, data) {
+      db.cleanDatabase(function(data) {
       done();
-    });
+    }) 
   }); 
   //Test post tournament
   describe("/POST tournament", () => {
@@ -112,9 +110,38 @@ describe("Tournaments", () => {
           done();
         });
     });
+    //ENROLLED TOURNAMENTS FOR USER
+    describe("/Should get enrolled tournaments", () => {
+      let user = {
+        name: "Kobe Bryan",
+        tag: "KB",
+        email: "Bryan@email.dk",
+        password: "123456789"
+      };
+      beforeEach(done => {
+        
+        chai
+          .request(server)
+          .post("/user/signup")
+          .send(user)
+          .end((err, res) => {
+            done();
+          });
+      });
+      it("it should get the enrolled tournament", done => {
+        const tokens = tokenController.generateTokens({Email: 'Bryan@email.dk', UserId: 1, IsAdmin: false});
+        chai
+          .request(server)
+          .post("/tournament/1/requests")
+          .set('authorization', 'Bearer ' + tokens.access_token)
+          .end((err, res) => {
+            res.should.have.status(200);
+            done();
+          }); 
+      });
+
+    }) 
+    
   })
  
-
-
-  
 });

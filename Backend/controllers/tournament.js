@@ -80,7 +80,6 @@ exports.request = (req, res, next) => {
       console.log(err)
       return msg.show500(req, res, err);
     }
-    console.log('Success')
     return msg.show200(req, res, "Success");
   });
 }
@@ -143,9 +142,7 @@ exports.get_unenrolled_tournaments = (req, res, next) => {
   LEFT OUTER JOIN Tournament_Users tour_user
   ON (tour.TournamentId = tour_user.Tournament_Id AND tour_user.User_Id = ${mysql.escape(userId)})
   WHERE req.Tournament_Id IS NULL AND tour_user.Tournament_Id IS NULL AND tour.Start > CURDATE();`
-
-              
-
+            
   db.executeSql(sql, function(data, err) {
     if (err) {
       console.log(err)
