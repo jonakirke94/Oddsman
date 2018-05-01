@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Scraper.Core.Model;
@@ -14,6 +15,7 @@ namespace Scraper.API.Controllers
 
         private static readonly DanskeSpilScraper Scraper = new DanskeSpilScraper();
 
+        
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(List<Match>))]
@@ -43,7 +45,7 @@ namespace Scraper.API.Controllers
 
             return Ok(match);
         }
-
+        
         [HttpGet("GetResult/{matchRound}/{matchId}")]
         [ProducesResponseType(200, Type = typeof(Result))]
         [ProducesResponseType(400)]
@@ -58,30 +60,16 @@ namespace Scraper.API.Controllers
 
             return Ok(result);
         }
-
-        [HttpGet("GetSubMatch/{eventUrl}/{matchId}")]
+        
+        [HttpGet("GetSubMatch/{matchId}/{subMatchId}")]
         [ProducesResponseType(200, Type = typeof(SubMatch))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetSubMatch(string eventUrl, int matchId)
+        public async Task<IActionResult> GetSubMatch(int matchId, int subMatchId)
         {
-            Uri uri;
-            try
-            {
-                uri = new Uri(eventUrl);
-            }
-            catch (ArgumentNullException e)
-            {
-                Console.WriteLine(e);
-                return BadRequest();
-            }
-            catch (UriFormatException e)
-            {
-                Console.WriteLine(e);
-                return BadRequest();
-            }
+            if (matchId <= 0 || subMatchId <= 0) return BadRequest();
 
-            var submatch = Scraper.GetSubMatch(uri.ToString(), matchId);
+            var submatch = Scraper.GetSubMatch(matchId, subMatchId);
 
             if (submatch == null) return NotFound();
 

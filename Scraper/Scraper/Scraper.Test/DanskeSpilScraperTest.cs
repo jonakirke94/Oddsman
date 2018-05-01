@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Scraper.Core.Controller;
 using Scraper.Core.Model;
 using Scraper.Core.Scraper;
 using Scraper.Core.Scraper.DanskeSpil;
@@ -58,7 +59,7 @@ namespace Scraper.Test
         {
             Assert.NotNull(_upcomingMatch);
             Assert.NotEmpty(_upcomingMatch.SubMatches);
-            var subMatch = _scraper.GetSubMatch(_upcomingMatch.SubMatchLink, _upcomingMatch.SubMatches.First().SubMatchNo);
+            var subMatch = _scraper.GetSubMatch(_upcomingMatch.MatchNo, _upcomingMatch.SubMatches.First().SubMatchNo);
             Assert.NotNull(subMatch);
         }
 
@@ -79,5 +80,6 @@ namespace Scraper.Test
             var result = _scraper.GetResult(452, 235);
             Assert.NotNull(result);
         }
+        
     }
 }
