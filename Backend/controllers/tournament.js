@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require("../db/db");
 const msg = require("../db/http");
 const mysql = require("mysql");
+const jwtDecode = require('jwt-decode');
 
 exports.create = (req, res, next) => {
   const start = req.body.start;
@@ -54,14 +55,6 @@ exports.getByName = (name, callback) => {
   });
 };
 
-exports.invite = (req, res, next) => {
-  const userId = req.params.userid
-  const tourId = req.params.tourid
-
-  console.log('uId ' + userId + 'tId ' + tourId)
-
-}
-
 exports.get_all = (req, res, next) => {
   const sql = `SELECT * FROM Tournaments`;
 
@@ -74,31 +67,88 @@ exports.get_all = (req, res, next) => {
 };
 
 exports.request = (req, res, next) => {
-  const userId = req.params.userid
+  const userId = getUserId(req);
   const tourId = req.params.tourid
 
-  const sql = `INSERT INTO Requests (UserId,TournamentId)
+  //check if user already has requested
+
+  const sql = `INSERT INTO Requests (User_Id,Tournament_Id)
             VALUES (${mysql.escape(userId)}, ${mysql.escape(tourId)})`;
 
   db.executeSql(sql, function(data, err) {
     if (err) {
+      console.log(err)
       return msg.show500(req, res, err);
     }
+    console.log('Success')
     return msg.show200(req, res, "Success");
   });
 }
 
 exports.requests_all = (req, res, next) => {
-  const userId = req.params.userid
+  const userId = getUserId(req);
 
-  const sql = `SELECT Tournaments.*, Requests.Status
-              FROM Tournaments
-              INNER JOIN Requests
-              ON Tournaments.TournamentId = Requests.TournamentId
-              WHERE Requests.UserId = ${mysql.escape(userId)}`
+
+  const sql = `SELECT *
+  FROM Tournaments tour
+  LEFT OUTER JOIN Requests req
+  ON (tour.TournamentId = req.Tournament_Id AND req.User_Id = ${mysql.escape(userId)})
+  LEFT OUTER JOIN Tournament_Users tour_user
+  ON (tour.TournamentId = tour_user.Tournament_Id AND tour_user.User_Id = ${mysql.escape(userId)})
+  WHERE req.Status != 'accepted' AND tour_user.Tournament_Id IS NULL`
 
   db.executeSql(sql, function(data, err) {
     if (err) {
+      console.log(err)
+      return msg.show500(req, res, err);
+    }
+    return msg.show200(req, res, "Success", data);
+  });
+}
+
+function getUserId(req) {
+  //decode the token and fetch id
+  const token = req.headers.authorization.split(' ');
+  var decoded = jwtDecode(token[1]);
+  return decoded.userId;
+}
+
+exports.get_enrolled_tournaments = (req, res, next) => {
+  //might wanna check for tournaments with userid rather than accepted requests
+  const userId = getUserId(req);
+
+  const sql = `SELECT *
+  FROM Tournaments tour
+  LEFT OUTER JOIN Tournament_Users req
+  ON (tour.TournamentId = req.Tournament_Id AND req.User_Id = ${mysql.escape(userId)})
+  WHERE tour.TournamentId = req.Tournament_Id`             
+
+  db.executeSql(sql, function(data, err) {
+    if (err) {
+      return msg.show500(req, res, err);
+    }
+    return msg.show200(req, res, "Success", data);
+  });
+}
+
+
+exports.get_unenrolled_tournaments = (req, res, next) => {
+  //fetch unenrolled tournaments that has not yet started and where the user has no request
+  const userId = getUserId(req);
+
+  const sql = `SELECT *
+  FROM Tournaments tour
+  LEFT OUTER JOIN Requests req
+  ON (tour.TournamentId = req.Tournament_Id AND req.User_Id = ${mysql.escape(userId)})
+  LEFT OUTER JOIN Tournament_Users tour_user
+  ON (tour.TournamentId = tour_user.Tournament_Id AND tour_user.User_Id = ${mysql.escape(userId)})
+  WHERE req.Tournament_Id IS NULL AND tour_user.Tournament_Id IS NULL AND tour.Start > CURDATE();`
+
+              
+
+  db.executeSql(sql, function(data, err) {
+    if (err) {
+      console.log(err)
       return msg.show500(req, res, err);
     }
     return msg.show200(req, res, "Success", data);

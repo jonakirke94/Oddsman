@@ -19,6 +19,12 @@ describe("Users", () => {
       done();
     });
   });
+   after(function(done){
+    //Clean db
+    db.executeSql("TRUNCATE TABLE Users", function(err, data) {
+      done();
+    });
+  }); 
 
   /****************************** TESTING GETBYPROPERTY *****************************/
   describe("/GET User", () => {

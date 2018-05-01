@@ -19,6 +19,13 @@ describe("Tournaments", () => {
       done();
     });
   });
+  //Clean db
+  after(function(done){
+    //Clean db
+    db.executeSql("TRUNCATE TABLE Tournaments", function(err, data) {
+      done();
+    });
+  }); 
   //Test post tournament
   describe("/POST tournament", () => {
     it("it should create a tournament", done => {
