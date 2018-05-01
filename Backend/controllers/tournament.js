@@ -10,10 +10,15 @@ exports.create = (req, res, next) => {
   const end = req.body.end;
   const name = req.body.name;
 
+  const startDate = new Date(start).toISOString().substring(0, 10);
+  const endDate = new Date(end).toISOString().substring(0, 10);
+
   //check if valid email
   req.check("name", "Email is empty").notEmpty();
   req.check("start", "Startdate is empty").notEmpty();
   req.check("end", "Enddate is empty").notEmpty();
+  req.check("start", "Startdate is empty").isAfter(new Date().toDateString());
+  req.check("end", "Startdate is empty").isAfter(startDate);
 
   const errors = req.validationErrors();
 
@@ -27,8 +32,7 @@ exports.create = (req, res, next) => {
       return msg.show409(req, res, "Tournament name exists");
     }
 
-    const startDate = new Date(start).toISOString().substring(0, 10);
-    const endDate = new Date(end).toISOString().substring(0, 10);
+
 
     const sql = `INSERT INTO Tournaments (Name,Start,End)
             VALUES (${mysql.escape(name)}, ${mysql.escape(
@@ -37,6 +41,7 @@ exports.create = (req, res, next) => {
 
     db.executeSql(sql, function(data, err) {
       if (err) {
+        console.log(err)
         return msg.show500(req, res, err);
       }
       return msg.show200(req, res, "Success");
@@ -70,23 +75,54 @@ exports.request = (req, res, next) => {
   const userId = getUserId(req);
   const tourId = req.params.tourid
 
-  //check if user already has requested
-
-  const sql = `INSERT INTO Requests (User_Id,Tournament_Id)
-            VALUES (${mysql.escape(userId)}, ${mysql.escape(tourId)})`;
-
-  db.executeSql(sql, function(data, err) {
-    if (err) {
-      console.log(err)
+  has_requested(userId, tourId, function(result, duplicate, error){
+    if (error) {
       return msg.show500(req, res, err);
     }
-    return msg.show200(req, res, "Success");
-  });
+
+    if(duplicate) {
+      return msg.show409(req, res, 'User already has a request');
+    }
+ 
+      is_enrolled(userId, tourId, function(result, duplicate, error){
+        if(error) {
+          return msg.show500(req, res, err);
+        }
+    
+        if(duplicate) {
+          return msg.show409(req, res, 'User is already enrolled');
+        }
+
+          is_tournament_started(tourId, function(started, error){
+            if(error) {
+              return msg.show500(req, res, err);
+            }
+
+            if(typeof started === 'undefined') {
+              return msg.show409(req, res, 'Tournament already started or doesnt exist');
+            }
+
+
+            //if no request was found insert 
+            const sql = `INSERT INTO Requests (User_Id,Tournament_Id)
+            VALUES (${mysql.escape(userId)}, ${mysql.escape(tourId)})`;
+
+            db.executeSql(sql, function(data, err) {
+              if (err) {
+                return msg.show500(req, res, err);
+              }
+              return msg.show200(req, res, "Success");
+            }); //end insert request
+
+          }) //end is_tournament_started
+
+      }) //end is_enrolled
+
+   })  //end has_requested
 }
 
 exports.requests_all = (req, res, next) => {
   const userId = getUserId(req);
-
 
   const sql = `SELECT *
   FROM Tournaments tour
@@ -105,12 +141,71 @@ exports.requests_all = (req, res, next) => {
   });
 }
 
-function getUserId(req) {
-  //decode the token and fetch id
-  const token = req.headers.authorization.split(' ');
-  var decoded = jwtDecode(token[1]);
-  return decoded.userId;
+exports.handle_request = (req, res, next) => {
+    const status = req.body.status;
+
+    if(status === 'accepted') {
+      return accept_request(req, res, next);
+    } else {
+      return decline_request(req, res, next);
+    } 
+
 }
+
+function decline_request(req, res, next) {
+  return msg.show200(req, res, "Success");
+
+}
+
+function accept_request(req, res, next) {
+  const tourId = req.params.tourid;
+  const userId = req.params.userid;
+
+  is_enrolled(userId, tourId, function(result, duplicate, err) {
+    if (err) {
+      return msg.show500(req, res, err);
+    }
+
+    if (duplicate) {
+      return msg.show409(req, res, "User is already enrolled");
+    }
+
+    is_tournament_started(tourId, function(started, error) {
+      if (error) {
+        return msg.show500(req, res, err);
+      }
+
+      if (typeof started === "undefined") {
+        return msg.show409(
+          req,
+          res,
+          "Tournament already started or doesnt exist"
+        );
+      }
+
+      //accept request and add user to tournament
+      const sql_req = `UPDATE Requests SET Status='accepted' WHERE User_Id=${mysql.escape(
+        userId
+      )} AND Tournament_Id=${mysql.escape(tourId)}`;
+      db.executeSql(sql_req, function(data, err) {
+        if (err) {
+          return msg.show500(req, res, err);
+        }
+
+        //add the user
+        const sql_tour = `INSERT INTO Tournament_Users (User_Id,Tournament_Id)
+        VALUES (${mysql.escape(userId)}, ${mysql.escape(tourId)})`;
+        db.executeSql(sql_tour, function(data, err) {
+          if (err) {
+            return msg.show500(req, res, err);
+          }
+
+          return msg.show200(req, res, "Success");
+        }); //insert into tournament ends
+      }); //update request ends
+    }); //is_tournament_started ends
+  }); //is_enrolled ends
+};
 
 exports.get_enrolled_tournaments = (req, res, next) => {
   //might wanna check for tournaments with userid rather than accepted requests
@@ -152,3 +247,58 @@ exports.get_unenrolled_tournaments = (req, res, next) => {
   });
 }
 
+/* HELPERS */
+
+function getUserId(req) {
+  //decode the token and fetch id
+  const token = req.headers.authorization.split(' ');
+
+  try {
+    var decoded = jwtDecode(token[1])
+    return decoded.userId;
+  } catch (err) {
+    return msg.show500(req, res, err);
+  }
+}
+
+function is_enrolled(userId, tourId, callback) {
+  const sql = `SELECT * FROM Tournament_Users WHERE User_Id=${mysql.escape(userId)} AND Tournament_ID=${mysql.escape(tourId)}`;
+  db.executeSql(sql, function(result, err) {
+    if (err) {
+      return callback(null, null, err)    
+    }
+
+    if(result.length >= 1) {
+      return callback(null, result)
+    } 
+
+    callback(result)   
+  })
+}
+
+function has_requested(userId, tourId, callback) {
+  const sql = `SELECT * FROM Requests WHERE User_Id=${mysql.escape(userId)} AND Tournament_ID=${mysql.escape(tourId)}`;
+  db.executeSql(sql, function(result, err) {
+    if (err) {
+      return callback(null, null, err)    
+    }
+
+    if(result.length >= 1) {
+      return callback(null, result)
+    } 
+
+    callback(result)   
+  })
+}
+
+function is_tournament_started(tourId, callback) {
+  const sql = `SELECT * FROM Tournaments WHERE TournamentId=${mysql.escape(tourId)} AND Start > CURDATE()`;
+  db.executeSql(sql, function(result, err) {
+    if (err) {
+      console.log(err)
+      return callback(null, err)    
+    }
+
+    callback(result[0])   
+  })
+}
