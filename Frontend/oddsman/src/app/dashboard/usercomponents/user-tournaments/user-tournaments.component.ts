@@ -17,14 +17,19 @@ export class UserTournamentsComponent implements OnInit {
   upcoming = [];
   enrolled = [];
 
-  //showUpcoming = this.upcoming.length > 0;
+  requestedAny: boolean;
+  upcomingAny: boolean;
+  enrolledAny: boolean;
 
    constructor(private _tournament: TournamentService,
      private router: Router
   ) { }
 
-  private tourneysub$: Subscription;
-  private createsub$: Subscription;
+  private join$: Subscription;
+  private request$: Subscription;
+  private enrolled$: Subscription;
+  private unenrolled$: Subscription;
+
 
   ngOnInit() {
     this.getUserRequests();
@@ -32,29 +37,39 @@ export class UserTournamentsComponent implements OnInit {
     this.getUnEnrolledTourneys(); 
   }
 
+  ngOnDestroy() {
+    if (this.join$ && this.join$ !== null) this.join$.unsubscribe();
+    if (this.request$ && this.request$ !== null) this.request$.unsubscribe();
+    if (this.enrolled$ && this.enrolled$ !== null) this.enrolled$.unsubscribe();
+    if (this.unenrolled$ && this.unenrolled$ !== null) this.unenrolled$.unsubscribe();
+  }
+
   //tournaments with active requests
   getUserRequests() {
-    this.createsub$ = this._tournament.getUserRequests().subscribe(res => {
+    this.request$ = this._tournament.getUserRequests().subscribe(res => {
       this.requested = res["data"];
+      this.requestedAny = this.requested.length > 0;
     });
   }
   
   //tournaments that are not yet started but has no user request
   getUnEnrolledTourneys() {
-    this.createsub$ = this._tournament.getUnEnrolledTournaments().subscribe(res => {
+    this.unenrolled$ = this._tournament.getUnEnrolledTournaments().subscribe(res => {
       this.upcoming = res["data"];
+      this.upcomingAny = this.upcoming.length > 0;
     });
   }
 
   //enrolled tournaments
   getEnrolledTourneys() {
-    this.createsub$ = this._tournament.getEnrolledTournaments().subscribe(res => {
+    this.enrolled$ = this._tournament.getEnrolledTournaments().subscribe(res => {
       this.enrolled = res["data"];
+      this.enrolledAny = this.enrolled.length > 0;
     });
   }
 
   join(id) {
-    this.createsub$ = this._tournament.joinTournament(id).subscribe(res => {
+    this.join$ = this._tournament.joinTournament(id).subscribe(res => {
       this.refreshLists();
     });
   }

@@ -317,17 +317,28 @@ describe("Requests", () => {
     })
   });
 
-  describe("/POST accept request", () => {
+  describe("/POST handle request request", () => {
     it("it should accept a request", done => {
         chai
           .request(server)
-          .post("/tournament/1/requests/1") //accept request
+          .post("/tournament/1/requests/1") //handle request
           .send({status: 'accepted'})
           .end((err, res) => {
             res.should.have.status(200);      
             done();         
           })
     })
+    it("it should decline a request", done => {
+      chai
+        .request(server)
+        .post("/tournament/1/requests/1") //handle request
+        .send({status: 'declined'})
+        .end((err, res) => {
+          res.should.have.status(200);      
+          done();         
+        })
+    })
+    
     it("it should NOT accept a request if already enrolled", done => {
       db.executeSql(`INSERT INTO Tournament_Users (User_Id,Tournament_Id)
       VALUES (1,1)`, function(data, err){
@@ -401,7 +412,6 @@ describe("Requests", () => {
     });
   })
 
-  //should refactor accept_request to handle_request and pass declined/accepted in body
 
 
 

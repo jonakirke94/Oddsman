@@ -121,7 +121,26 @@ exports.request = (req, res, next) => {
    })  //end has_requested
 }
 
-exports.requests_all = (req, res, next) => {
+exports.get_tournament_requests= (req, res, next) => {
+  const tourId = req.params.tourid;
+
+  const sql = `SELECT tour.Name as tourName, tour.TournamentId as tourId, tour.Start as start, req.Status as status, users.Email as userEmail, users.Name as userName, users.Tag as userTag, users.UserId as userId
+  FROM Tournaments tour
+  LEFT OUTER JOIN Requests req
+  ON (tour.TournamentId = req.Tournament_Id AND tour.TournamentId = ${mysql.escape(tourId)})
+  LEFT OUTER JOIN Users users
+  ON (req.User_Id = users.UserId AND tour.TournamentId = ${mysql.escape(tourId)})
+  WHERE req.Status = 'pending'`
+
+  db.executeSql(sql, function(data, err) {
+    if (err) {
+      return msg.show500(req, res, err);
+    }
+    return msg.show200(req, res, "Success", data);
+  });
+}
+
+exports.get_users_requests = (req, res, next) => {
   const userId = getUserId(req);
 
   const sql = `SELECT *
@@ -134,7 +153,6 @@ exports.requests_all = (req, res, next) => {
 
   db.executeSql(sql, function(data, err) {
     if (err) {
-      console.log(err)
       return msg.show500(req, res, err);
     }
     return msg.show200(req, res, "Success", data);
@@ -153,8 +171,18 @@ exports.handle_request = (req, res, next) => {
 }
 
 function decline_request(req, res, next) {
-  return msg.show200(req, res, "Success");
+  const tourId = req.params.tourid;
+  const userId = req.params.userid;
 
+  const sql_req = `UPDATE Requests SET Status='declined' WHERE User_Id=${mysql.escape(
+    userId
+  )} AND Tournament_Id=${mysql.escape(tourId)}`;
+  db.executeSql(sql_req, function(data, err) {
+    if (err) {
+      return msg.show500(req, res, err);
+    }
+    return msg.show200(req, res, "Success");
+  })
 }
 
 function accept_request(req, res, next) {
@@ -240,7 +268,6 @@ exports.get_unenrolled_tournaments = (req, res, next) => {
             
   db.executeSql(sql, function(data, err) {
     if (err) {
-      console.log(err)
       return msg.show500(req, res, err);
     }
     return msg.show200(req, res, "Success", data);

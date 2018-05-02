@@ -10,7 +10,8 @@ const tournamentController = require('../../controllers/tournament');
 router.post("/", adminguard, tournamentController.create);
 router.post("/:tourid/requests/:userid", adminguard, tournamentController.handle_request);
 router.post("/:tourid/requests/", guard, tournamentController.request)
-router.get("/requests/", guard, tournamentController.requests_all)
+router.get("/requests/", guard, tournamentController.get_users_requests)
+router.get("/requests/:tourid", adminguard, tournamentController.get_tournament_requests)
 router.get("/enrolled", guard, tournamentController.get_enrolled_tournaments)
 router.get("/unenrolled/", guard, tournamentController.get_unenrolled_tournaments)
 

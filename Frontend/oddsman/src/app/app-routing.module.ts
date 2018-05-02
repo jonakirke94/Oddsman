@@ -71,7 +71,7 @@ const routes: Routes = [
          component: AdminTournamentsComponent
         },
        {
-        path : 'invitations/:name', 
+        path : 'requests/:id', 
         component: AdminInvitationsComponent
         },
     ]

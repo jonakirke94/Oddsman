@@ -30,6 +30,12 @@ export class TournamentService {
     .map(res => res);
   }
 
+  getTournamentRequests(tourId) {
+    return this.http
+    .get(`${this.baseUrl}/requests/${tourId}`)
+    .map(res => <Request[]>res['data']);
+  }
+
   getEnrolledTournaments() {
     return this.http
     .get(`${this.baseUrl}/enrolled`)
@@ -47,9 +53,21 @@ export class TournamentService {
     .post(`${this.baseUrl}/${tourid}/requests/`, {})
     .map(res => res);
   }
+  
+  handleRequest(status, tourId, userId) {
+    return this.http
+    .post(`${this.baseUrl}/${tourId}/requests/${userId}`, {status: status})
+    .map(res => res);
+  }
+}
 
-
-
- 
-
+export class Request {
+  tourId;
+  tourName;
+  start;
+  status;
+  userId;
+  userName;
+  userEmail;
+  userTag;
 }
