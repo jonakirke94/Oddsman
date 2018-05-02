@@ -14,7 +14,7 @@ namespace Scraper.Core.Scraper.DanskeSpil.Model
         /// The Id of the Match that this SubMatch belongs to.
         /// </summary>
         [JsonProperty("ev_id")]
-        public int MatchNo { get; set; }
+        public int ParentId { get; set; }
 
         /// <summary>
         /// Used to identify which SubMatchOddsData betting options that belongs to this Header.
@@ -23,7 +23,7 @@ namespace Scraper.Core.Scraper.DanskeSpil.Model
         public int HeaderId { get; set; }
         
         [JsonProperty("number")]
-        public string SubMatchNo { get; set; }
+        public string MatchId { get; set; }
         
 
         //[JsonProperty("mkt_type")]
@@ -46,9 +46,7 @@ namespace Scraper.Core.Scraper.DanskeSpil.Model
 
         //[JsonProperty("raw_hcap")]
         //public string RawHcap { get; set; }
-
-        //[JsonProperty("hcap_values")]
-        //public HcapValues HcapValues { get; set; }
+        
 
         //[JsonProperty("ew_places")]
         //public string EwPlaces { get; set; }

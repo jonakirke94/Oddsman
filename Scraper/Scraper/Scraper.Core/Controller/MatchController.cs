@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Scraper.Core.Data;
 using Scraper.Core.Model;
-using Scraper.Core.Scraper;
 using Scraper.Core.Scraper.DanskeSpil;
 
 namespace Scraper.Core.Controller
@@ -15,39 +12,16 @@ namespace Scraper.Core.Controller
 
         
 
-        /// <summary>
-        /// Finds a match's round number based on the match's date
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns>The match round number for the given matches date or a default "not found" value of -1</returns>
-        public int GetMatchRoundId(DateTime date)
-        {
-            int num;
 
-            try
-            {
-                using (var ctx = new DanskeSpilContext())
-                {
-                    num = ctx.MatchRounds.FirstOrDefault(r => r.Start >= date && date <= r.End)?.MatchRoundId ?? -1;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
 
-            return num;
-        }
-
-        public Match GetUpcomingMatch(int matchNumber)
+        public Match GetUpcomingMatch(int matchId)
         {
             Match match;
             try
             {
                 using (var db = new DanskeSpilContext())
                 {
-                    match = db.Matches.FirstOrDefault(m => m.MatchNo == matchNumber);
+                    match = db.Matches.FirstOrDefault(m => m.MatchId == matchId);
                 }
             }
             catch (Exception e)
@@ -59,24 +33,7 @@ namespace Scraper.Core.Controller
             return match;
         }
 
-        public SubMatch GetUpcomingSubMatch(int subMatchNumber)
-        {
-            SubMatch match;
-            try
-            {
-                using (var db = new DanskeSpilContext())
-                {
-                    match = db.SubMatches.FirstOrDefault(m => m.SubMatchNo == subMatchNumber);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
 
-            return match;
-        }
 
         //public IList<Match> GetUpcomingMatches()
         //{
