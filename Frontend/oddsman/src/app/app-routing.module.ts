@@ -14,6 +14,7 @@ import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/ad
 import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adminusers.component';
 import { AdminTournamentsComponent } from './adminpanel/admincomponents/admin-tournaments/admin-tournaments.component';
 import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-invitations/admin-invitations.component';
+import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
 
 
 const routes: Routes = [
@@ -45,6 +46,10 @@ const routes: Routes = [
       {
         path : 'sendtips',
         component: SendtipsComponent
+       },
+      {
+        path : 'turneringer',
+        component: UserTournamentsComponent
        }
     ]
   },
@@ -66,7 +71,7 @@ const routes: Routes = [
          component: AdminTournamentsComponent
         },
        {
-        path : 'invitations/:name', 
+        path : 'requests/:id', 
         component: AdminInvitationsComponent
         },
     ]

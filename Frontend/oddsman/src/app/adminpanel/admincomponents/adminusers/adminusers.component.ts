@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SortEvent } from 'primeng/components/common/sortevent';
 import { User, UserService } from '../../../services/user.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-adminusers',
@@ -16,7 +17,7 @@ export class AdminusersComponent implements OnInit {
 
   cols: any[];
 
-  $getusers;
+  getusers$ : Subscription;
 
 
   constructor(private http: HttpClient, private _user: UserService) {}
@@ -27,13 +28,13 @@ export class AdminusersComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    //unsubscrube from getusers
+    this.getusers$.unsubscribe();
   }
 
   getUsers() {
       this.loading = true;
       setTimeout(() => {
-      this.$getusers = this._user.getUsers().subscribe(res => {
+      this.getusers$ = this._user.getUsers().subscribe(res => {
           this.users = res
           this.loading = false;
         });

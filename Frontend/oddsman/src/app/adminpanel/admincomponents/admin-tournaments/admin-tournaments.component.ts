@@ -76,9 +76,8 @@ export class AdminTournamentsComponent implements OnInit {
      });
 }
 
-goToInvitations(id) {
-  this.router.navigateByUrl(`/admin/invitations/${id}`);
-
+goToRequests(id) {
+  this.router.navigateByUrl(`/admin/requests/${id}`);
 }
 
 

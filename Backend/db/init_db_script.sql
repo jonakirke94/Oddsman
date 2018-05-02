@@ -17,10 +17,19 @@ CREATE TABLE `gotomain_net_db2`.`Tournaments` (
 
 /* many to many table for tournaments and users*/
 CREATE TABLE `gotomain_net_db2`.`Requests` (
-  `UserId` INT NOT NULL,
-  `TournamentId` INT NOT NULL,
+  `User_Id` INT NOT NULL,
+  `Tournament_Id` INT NOT NULL,
   `Status` enum('accepted','declined', 'pending') default 'pending',
-  FOREIGN KEY (UserId) REFERENCES Users (UserId),
-  FOREIGN KEY (TournamentId) REFERENCES Tournaments (TournamentId),
-  PRIMARY KEY (TournamentId, UserId));
+  FOREIGN KEY (User_Id) REFERENCES Users (UserId),
+  FOREIGN KEY (Tournament_Id) REFERENCES Tournaments (TournamentId),
+  PRIMARY KEY (Tournament_Id, User_Id));
+
+/* many to many table for tournaments and users -- users enrolled in a tournament*/
+  CREATE TABLE `gotomain_net_db2`.`Tournament_Users` (
+  `User_Id` INT NOT NULL,
+  `Tournament_Id` INT NOT NULL,
+  FOREIGN KEY (User_Id) REFERENCES Users (UserId),
+  FOREIGN KEY (Tournament_Id) REFERENCES Tournaments (TournamentId),
+  PRIMARY KEY (Tournament_Id, User_Id));
+
 

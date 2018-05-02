@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 //don't show the log when it is test
 if(config.util.getEnv('NODE_ENV') !== 'test') {
     //use morgan to log at command line
-    app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
+    //app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
 
     //seed admin
     const admin = {
@@ -62,7 +62,7 @@ app.use((req, res, next) => {
 
 //internal server error
 app.use((error, req, res, next) => {
-    console.log(error);
+    //console.log(error);
     http.show500(req,res,error);
 });
 
