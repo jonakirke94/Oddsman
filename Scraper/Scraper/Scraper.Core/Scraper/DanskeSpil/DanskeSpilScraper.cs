@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using HtmlAgilityPack;
 using OpenQA.Selenium.Chrome;
 using Scraper.Core.Model;
+using Scraper.Core.Scraper.DanskeSpil.Model;
 
 namespace Scraper.Core.Scraper.DanskeSpil
 {
@@ -14,9 +16,17 @@ namespace Scraper.Core.Scraper.DanskeSpil
 
         private const string DenLange = "https://oddset.danskespil.dk/allekampe/den-lange";
         private const string Results = "https://oddset.danskespil.dk/allekampe/resultater";
-        private const string ResultSearch = "https://oddset.danskespil.dk//results/list_retail/1/{0}/FOOTBALL/{1}"; // 0 = MatchRoundId | 1 = MatchNo
+        private const string ResultSearch = "https://oddset.danskespil.dk//results/list_retail/1/{0}/FOOTBALL/{1}"; // 0 = MatchRoundId | 1 = ParentId
         private const string MatchSearch = "https://oddset.danskespil.dk/allekampe/den-lange?search=1&criteria={0}"; // Can only be found if it exists on Den Lange
         private const string SubMatchUrl = "https://oddset.danskespil.dk/allekampe/den-lange/event-{0}.html";
+
+        public DanskeSpilScraper()
+        {
+            if (MatchRoundIds.IsEmptyOrOutdated)
+            {
+                MatchRoundIds.SetValues(GetMatchRounds());
+            }
+        }
 
         private static HtmlDocument LoadHtmlPage(string url, bool requireBrowser = false)
         {
@@ -64,6 +74,7 @@ namespace Scraper.Core.Scraper.DanskeSpil
             try
             {
                 matches = new List<Match>(DanskeSpilParser.ParseMatches(doc));
+                Parallel.ForEach(matches, m => m.RoundId = MatchRoundIds.GetMatchRoundId(m.MatchDate));
             }
             catch (Exception e)
             {
@@ -73,15 +84,17 @@ namespace Scraper.Core.Scraper.DanskeSpil
             return matches;
         }
 
-        public IList<SubMatch> GetSubMatches(string eventUrl)
+        public IList<Match> GetSubMatches(int? eventId)
         {
-            var subMatches = new List<SubMatch>(); 
-            var doc = LoadHtmlPage(eventUrl);
+            if (eventId == null) return null;
+            var subMatches = new List<Match>(); 
+            var doc = LoadHtmlPage(string.Format(SubMatchUrl, eventId));
             var data = DanskeSpilParser.ParseSubMatchData(doc);
 
             try
             {
-                subMatches = new List<SubMatch>(DanskeSpilParser.ParseSubMatches(data));
+                subMatches = new List<Match>(DanskeSpilParser.ParseSubMatches(data));
+                Parallel.ForEach(subMatches, m => m.RoundId = MatchRoundIds.GetMatchRoundId(m.MatchDate));
             }
             catch (Exception e)
             {
@@ -116,6 +129,7 @@ namespace Scraper.Core.Scraper.DanskeSpil
             try
             {
                 m = DanskeSpilParser.ParseMatchSearch(doc);
+                m.RoundId = MatchRoundIds.GetMatchRoundId(m.MatchDate);
             }
             catch (Exception e)
             {
@@ -125,17 +139,18 @@ namespace Scraper.Core.Scraper.DanskeSpil
             return m;
         }
 
-        public SubMatch GetSubMatch(int matchId, int subMatchId)
+        public Match GetSubMatch(int? parentMatchId, int matchId)
         {
-            SubMatch sm = null;
-            var doc = LoadHtmlPage(string.Format(SubMatchUrl, matchId));
+            Match sm = null;
+            var doc = LoadHtmlPage(string.Format(SubMatchUrl, parentMatchId));
 
             try
             {
                 var data = DanskeSpilParser.ParseSubMatchData(doc);
-                var header = data.Headers.First(h => int.Parse(h.SubMatchNo) == subMatchId);
+                var header = data.Headers.First(h => int.Parse(h.MatchId) == matchId);
                 var odds = data.Odds.Select(o => o).Where(o => o.HeaderId == header.HeaderId).ToList();
                 sm = DanskeSpilParser.ParseSubMatch(header, odds);
+                sm.RoundId = MatchRoundIds.GetMatchRoundId(sm.MatchDate);
             }
             catch (Exception e)
             {
@@ -145,21 +160,7 @@ namespace Scraper.Core.Scraper.DanskeSpil
             return sm;
         }
 
-        public IList<Result> GetResults(Match match)
-        {
-            var results = new List<Result>();
-            var doc = LoadHtmlPage(string.Format(ResultSearch, match.RoundId, match.MatchNo));
-            try
-            {
-                results = new List<Result>(DanskeSpilParser.ParseResults(doc, match));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
 
-            return results;
-        }
 
         public Result GetResult(int matchRound, int matchId)
         {
@@ -178,8 +179,7 @@ namespace Scraper.Core.Scraper.DanskeSpil
             return res;
         }
 
-
-        // TODO: Fix MatchNo/MatchId naming discrepencies (naming convention refactor needed).
+        // TODO: Fix ParentId/MatchId naming discrepencies (naming convention refactor needed).
 
     }
 }

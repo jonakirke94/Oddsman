@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Scraper.Core.Model;
-using Scraper.Core.Scraper;
 using Scraper.Core.Scraper.DanskeSpil;
 
 namespace Scraper.API.Controllers
@@ -14,28 +10,12 @@ namespace Scraper.API.Controllers
     {
 
         private static readonly DanskeSpilScraper Scraper = new DanskeSpilScraper();
-
         
-
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(List<Match>))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> GetUpcomingMatches()
-        {
-            var matches = new List<Match>(Scraper.GetUpcomingMatches());
-
-            if (matches.Count == 0) return NotFound();
-
-            return Ok(matches);
-        }
-
-
-        [HttpGet("GetUpcomingMatch/{matchId}")]
+        [HttpGet("{matchId}")]
         [ProducesResponseType(200, Type = typeof(Match))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetUpcomingMatch(int matchId)
+        public async Task<IActionResult> GetMatch(int matchId)
         {
             if (matchId <= 0) return BadRequest();
 
@@ -46,7 +26,7 @@ namespace Scraper.API.Controllers
             return Ok(match);
         }
         
-        [HttpGet("GetResult/{matchRound}/{matchId}")]
+        [HttpGet("Result/{matchRound}/{matchId}")]
         [ProducesResponseType(200, Type = typeof(Result))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -61,15 +41,15 @@ namespace Scraper.API.Controllers
             return Ok(result);
         }
         
-        [HttpGet("GetSubMatch/{matchId}/{subMatchId}")]
-        [ProducesResponseType(200, Type = typeof(SubMatch))]
+        [HttpGet("{eventId}/{matchId}")]
+        [ProducesResponseType(200, Type = typeof(Match))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetSubMatch(int matchId, int subMatchId)
+        public async Task<IActionResult> GetSubMatch(int eventId, int matchId)
         {
-            if (matchId <= 0 || subMatchId <= 0) return BadRequest();
+            if (eventId <= 0 || matchId <= 0) return BadRequest();
 
-            var submatch = Scraper.GetSubMatch(matchId, subMatchId);
+            var submatch = Scraper.GetSubMatch(eventId, matchId);
 
             if (submatch == null) return NotFound();
 

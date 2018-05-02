@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Scraper.Core.Data;
 using Scraper.Core.Model;
-using Scraper.Core.Scraper;
 using Scraper.Core.Scraper.DanskeSpil;
 
 namespace Scraper.Core.Controller
@@ -14,27 +12,6 @@ namespace Scraper.Core.Controller
     {
         private readonly DanskeSpilScraper _scraper = new DanskeSpilScraper();
 
-        /// <summary>
-        /// Scrapes the Match Rounds and their values, then adds them to the database.
-        /// </summary>
-        public async Task ScrapeMatchRounds()
-        {
-            try
-            {
-                var rounds = _scraper.GetMatchRounds();
-
-                using (var ctx = new DanskeSpilContext())
-                {
-                    ctx.MatchRounds.AddRange(rounds);
-                    await ctx.SaveChangesAsync();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
 
 
         public async Task ScrapeUpcomingMatches()
@@ -46,9 +23,17 @@ namespace Scraper.Core.Controller
                 .Where(m => WithinValidDate(m.MatchDate))
                 .ToList();
 
-            Parallel.ForEach(validMatches, (match) =>
+            var subMatches = new List<Match>();
+
+            Parallel.ForEach(validMatches, new ParallelOptions { MaxDegreeOfParallelism = 4 }, (match) =>
             {
-                match.SubMatches = new List<SubMatch>(_scraper.GetSubMatches(match.SubMatchLink));
+                var sms = _scraper.GetSubMatches(match.EventId);
+                foreach (var sm in sms)
+                {
+                    sm.ParentId = match.MatchId;
+                    sm.EventId = match.EventId;
+                }
+                subMatches.AddRange(sms);
             });
 
 
@@ -57,6 +42,7 @@ namespace Scraper.Core.Controller
                 using (var db = new DanskeSpilContext())
                 {
                     db.Matches.AddRange(validMatches);
+                    db.Matches.AddRange(subMatches);
                     await db.SaveChangesAsync();
                 }
             }
@@ -88,10 +74,6 @@ namespace Scraper.Core.Controller
             var daysToAdd = ((int)day - (int)start.DayOfWeek + 7) % 7;
             return start.AddDays(daysToAdd);
         }
-
-        private static void SetRoundNumber()
-        {
-            throw new NotImplementedException(); //TODO: Implement
-        }
+        
     }
 }
