@@ -61,7 +61,12 @@ exports.getByName = (name, callback) => {
 };
 
 exports.get_all = (req, res, next) => {
-  const sql = `SELECT * FROM Tournaments`;
+  const sql = `SELECT t.TournamentId, t.Name as tourName, u.UserId, u.Name as userName
+  FROM  Tournament_Users tu
+  LEFT JOIN  Tournament t ON tu.Tournament_Id = t.TournamentId
+  LEFT JOIN  Users u ON u.UserId = tu.User_Id  FOR JSON AUTO 
+
+`;
 
   db.executeSql(sql, function(data, err) {
     if (err) {
@@ -167,8 +172,27 @@ exports.handle_request = (req, res, next) => {
     } else {
       return decline_request(req, res, next);
     } 
+}
+
+exports.get_participants = (req, res, next) => {
+  const tourId = req.params.tourid;
+
+  const sql = `SELECT t.Name as tourName, u.Name as userName
+  FROM  Tournament_Users tu
+  JOIN  Tournaments t ON tu.Tournament_Id = t.TournamentId
+  JOIN  Users u ON u.UserId = tu.User_Id 
+  WHERE t.TournamentId = ${mysql.escape(tourId)}`;
+  db.executeSql(sql, function(data, err) {
+    if (err) {
+      return msg.show500(req, res, err);
+    }
+
+    return msg.show200(req, res, "Success", data);
+  })
 
 }
+
+
 
 function decline_request(req, res, next) {
   const tourId = req.params.tourid;

@@ -14,6 +14,9 @@ router.get("/requests/", guard, tournamentController.get_users_requests)
 router.get("/requests/:tourid", adminguard, tournamentController.get_tournament_requests)
 router.get("/enrolled", guard, tournamentController.get_enrolled_tournaments)
 router.get("/unenrolled/", guard, tournamentController.get_unenrolled_tournaments)
+router.get("/:tourid/participants/", tournamentController.get_participants)
+
+
 
 
 router.get("/", tournamentController.get_all);
