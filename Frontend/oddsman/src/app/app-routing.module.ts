@@ -40,7 +40,7 @@ const routes: Routes = [
         component: UserstatsComponent
        },
       {
-       path : 'settings',
+       path : 'indstillinger',
        component: UsersettingsComponent
       },
       {

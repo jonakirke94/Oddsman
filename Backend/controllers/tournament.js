@@ -61,12 +61,13 @@ exports.getByName = (name, callback) => {
 };
 
 exports.get_all = (req, res, next) => {
-  const sql = `SELECT t.TournamentId, t.Name as tourName, u.UserId, u.Name as userName
-  FROM  Tournament_Users tu
-  LEFT JOIN  Tournament t ON tu.Tournament_Id = t.TournamentId
-  LEFT JOIN  Users u ON u.UserId = tu.User_Id  FOR JSON AUTO 
-
-`;
+  /* const sql = `SELECT json_array(
+    'TournamentId', t.TournamentId ,'tourName', t.Name) ,'UserId' ,u.UserId, 'UserName' ,u.Name
+    FROM  Tournament_Users tu
+    LEFT JOIN  Tournaments t ON tu.Tournament_Id = t.TournamentId
+    LEFT JOIN  Users u ON u.UserId = tu.User_Id 
+`; */
+const sql = 'SELECT * FROM Tournaments';
 
   db.executeSql(sql, function(data, err) {
     if (err) {
@@ -78,6 +79,11 @@ exports.get_all = (req, res, next) => {
 
 exports.request = (req, res, next) => {
   const userId = getUserId(req);
+
+  if(userId === -1) {
+    return msg.show500(req, res, err);
+  }
+
   const tourId = req.params.tourid
 
   has_requested(userId, tourId, function(result, duplicate, error){
@@ -148,6 +154,10 @@ exports.get_tournament_requests= (req, res, next) => {
 exports.get_users_requests = (req, res, next) => {
   const userId = getUserId(req);
 
+  if(userId === -1) {
+    return msg.show500(req, res, err);
+  }
+
   const sql = `SELECT *
   FROM Tournaments tour
   LEFT OUTER JOIN Requests req
@@ -177,11 +187,20 @@ exports.handle_request = (req, res, next) => {
 exports.get_participants = (req, res, next) => {
   const tourId = req.params.tourid;
 
-  const sql = `SELECT t.Name as tourName, u.Name as userName
+  /* const sql = `SELECT t.Name as tourName, u.Name as userName
   FROM  Tournament_Users tu
   JOIN  Tournaments t ON tu.Tournament_Id = t.TournamentId
   JOIN  Users u ON u.UserId = tu.User_Id 
   WHERE t.TournamentId = ${mysql.escape(tourId)}`;
+  db.executeSql(sql, function(data, err) {
+    if (err) {
+      return msg.show500(req, res, err);
+    }
+
+    return msg.show200(req, res, "Success", data);
+  }) */
+
+  const sql = `SELECT * FROM Tournaments `;
   db.executeSql(sql, function(data, err) {
     if (err) {
       return msg.show500(req, res, err);
@@ -260,8 +279,11 @@ function accept_request(req, res, next) {
 };
 
 exports.get_enrolled_tournaments = (req, res, next) => {
-  //might wanna check for tournaments with userid rather than accepted requests
   const userId = getUserId(req);
+
+  if(userId === -1) {
+    return msg.show500(req, res, err);
+  }
 
   const sql = `SELECT *
   FROM Tournaments tour
@@ -281,6 +303,10 @@ exports.get_enrolled_tournaments = (req, res, next) => {
 exports.get_unenrolled_tournaments = (req, res, next) => {
   //fetch unenrolled tournaments that has not yet started and where the user has no request
   const userId = getUserId(req);
+
+  if(userId === -1) {
+    return msg.show500(req, res, err);
+  }
 
   const sql = `SELECT *
   FROM Tournaments tour
@@ -308,7 +334,7 @@ function getUserId(req) {
     var decoded = jwtDecode(token[1])
     return decoded.userId;
   } catch (err) {
-    return msg.show500(req, res, err);
+    return -1;
   }
 }
 

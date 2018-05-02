@@ -6,6 +6,8 @@ CREATE TABLE `gotomain_net_db2`.`Users` (
   `Password` VARCHAR(200) NOT NULL,
   `IsAdmin` TINYINT(1) NOT NULL,
   `RefreshToken` VARCHAR(200) NULL,
+    CONSTRAINT `email_unique` UNIQUE (`Email`),
+  CONSTRAINT `tag_unique` UNIQUE (`Tag`),
   PRIMARY KEY (`UserId`));
 
 CREATE TABLE `gotomain_net_db2`.`Tournaments` (

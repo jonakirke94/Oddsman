@@ -73,6 +73,7 @@ export class AdminTournamentsComponent implements OnInit {
   getTournaments() {
     this.createsub$ = this._tournament.getAll().subscribe(res => {
       this.tournaments = res["data"];
+      console.log(this.tournaments);
      });
 }
 
