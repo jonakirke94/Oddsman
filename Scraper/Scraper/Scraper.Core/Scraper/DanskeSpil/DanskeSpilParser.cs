@@ -2,25 +2,26 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Scraper.Core.Extension;
 using Scraper.Core.Model;
-using Scraper.Core.Model.Data;
+using Scraper.Core.Scraper.DanskeSpil.Model;
 using Match = Scraper.Core.Model.Match;
 
-namespace Scraper.Core.Scraper
+namespace Scraper.Core.Scraper.DanskeSpil
 {
     public static class DanskeSpilParser
     {
         private const string SubMatchJsonExpression = "(\\[{\"names\":.*\\}\\])";
         private const string MatchRoundNumberExpression = "([0-9]*)(?= )";
         private const string MatchRoundDateExpression = "(?<=\\()(.*)(?=\\))";
+        private const string MatchEventIdExpression = "(?<=\\-)([0-9]*)(?=\\.)";
         private const string DsCultureInfo = "da-DK";
-        private const string MatchCustomDateTime = "dddd,d.MMMMyyyy";
-        private const string MatchRoundCustomDateTime = "dd.MM.yy";
+        private const string MatchDateFormat = "dddd,d.MMMMyyyy";
+        private const string MatchRoundDateFormat = "dd.MM.yy";
+        private const string ResultDateFormat = "dddd, dd. MMMM yyyy";
 
 
 
@@ -68,12 +69,13 @@ namespace Scraper.Core.Scraper
         {
             var m = new Match
             {
-                Scraped = DateTime.Now,
-                SubMatches = new List<SubMatch>()
+                LastUpdated = DateTime.Now
             };
-
             // Find the specific match link for submatches
-            m.SubMatchLink = n.Attributes["onclick"].Value.HtmlDecodedValue().Split('\'', '\'')[1];
+            var eventLink = n.Attributes["onclick"].Value.HtmlDecodedValue().Split('\'', '\'')[1];
+            var eventIdMatcher = new Regex(MatchEventIdExpression);
+            var eventId = eventIdMatcher.Match(eventLink).Value;
+            m.EventId = int.Parse(eventId);
 
             // Find all the columns
             var col = n.Descendants("td").ToList();
@@ -91,33 +93,31 @@ namespace Scraper.Core.Scraper
 
             if (matchNum == 0) return null;
 
-            m.MatchNo = matchNum;
+            m.MatchId = matchNum;
 
             // Find the match name (team names)
             var name = col[2].Descendants("span").First(span => span.Attributes["class"].Value == "eventName").HtmlDecodedValue();
             var names = name.Split('-'); // Format: TeamName1 - TeamName2
             m.MatchName = name;
-            m.HomeTeam = names[0];
-            m.AwayTeam = names[1]; //TODO: Replace whitespaces
-
-            // Find the league / country
-            var league = col[2].Descendants("span").First(span => span.Attributes["class"].Value == "typeclassName").HtmlDecodedValue();
-            var leagueCountry = league.Split('-'); // Format: League - Country
-            m.MatchType = league;
+            
+            m.Option1 = names[0];
+            m.Option2 = "Uafgjort";
+            m.Option3 = names[1]; //TODO: Replace whitespaces
+            
 
             // Find odds
             var odds = col[3].Descendants("div").Select(d => d).Where(d => d.Attributes["class"].Value.Contains("listPrice")).ToList();
-            m.HomeOdds = ParseCommaDouble(odds[0].Descendants("span").FirstOrDefault()?.InnerText);
-            m.DrawOdds = ParseCommaDouble(odds[1].Descendants("span").FirstOrDefault()?.InnerText);
-            m.AwayOdds = ParseCommaDouble(odds[2].Descendants("span").FirstOrDefault()?.InnerText);
+            m.Option1Odds = ParseCommaDouble(odds[0].Descendants("span").FirstOrDefault()?.InnerText);
+            m.Option2Odds = ParseCommaDouble(odds[1].Descendants("span").FirstOrDefault()?.InnerText);
+            m.Option3Odds = ParseCommaDouble(odds[2].Descendants("span").FirstOrDefault()?.InnerText);
 
             return m;
         }
 
-        public static IList<SubMatch> ParseSubMatches(SubMatchData data)
+        public static IList<Match> ParseSubMatches(SubMatchData data)
         {
             if (data == null) return null;
-            var subMatches = new List<SubMatch>();
+            var subMatches = new List<Match>();
 
             foreach (var header in data.Headers)
             {
@@ -129,17 +129,17 @@ namespace Scraper.Core.Scraper
             return subMatches;
         }
 
-        public static SubMatch ParseSubMatch(SubMatchHeaderData header, IList<SubMatchOddsData> odds)
+        public static Match ParseSubMatch(SubMatchHeaderData header, IList<SubMatchOddsData> odds)
         {
             var o1 = odds.FirstOrDefault(o => o.BetOption == "1");
             var o2 = odds.FirstOrDefault(o => o.BetOption == "X");
             var o3 = odds.FirstOrDefault(o => o.BetOption == "2");
 
-            return new SubMatch
+            return new Match
             {
                 MatchName = header.Names.Da,
-                MatchNo = header.MatchNo,
-                SubMatchNo = int.Parse(header.SubMatchNo),
+                ParentId = header.ParentId,
+                MatchId = int.Parse(header.MatchId),
                 Option1 = o1?.Names.Da,
                 Option2 = o2?.Names.Da,
                 Option3 = o3?.Names.Da,
@@ -219,6 +219,44 @@ namespace Scraper.Core.Scraper
             return new SubMatchData{ Headers = headers, Odds = odds };
         }
 
+
+
+        public static Result ParseResult(HtmlDocument doc, int matchId)
+        {
+            Result res = null;
+
+            var rows = doc.GetElementbyId("resultTable")
+                .Descendants("tbody")
+                .FirstOrDefault()
+                ?.Descendants("tr")
+                .Where(r => r.HasClass("eventDetailsRow"))
+                .ToList();
+
+            if (rows == null) return null;
+
+            foreach (var row in rows)
+            {
+                var cols = row.Descendants("td").ToList();
+                var idCol = cols[0];
+                int.TryParse(idCol.InnerHtml, out var id);
+
+                if(id != matchId) continue;;
+
+                var correctBet = cols.First(c => c.HasClass("boldText"))?.InnerHtml;
+                var score = cols.First(c => c.HasClass("centeredText"))?.InnerHtml;
+                res = new Result
+                {
+                    CorrectBet = correctBet,
+                    Score = score,
+                    MatchId = id
+                };
+                
+                break;
+            }
+
+            return res;
+        }
+
         #region Helper Methods
 
         private static double ParseCommaDouble(string str)
@@ -229,7 +267,7 @@ namespace Scraper.Core.Scraper
 
         private static DateTime ParseMatchDate(string date)
         {
-            return DateTime.ParseExact(date.Replace(" ", ""), MatchCustomDateTime, CultureInfo.GetCultureInfo(DsCultureInfo));
+            return DateTime.ParseExact(date.Replace(" ", ""), MatchDateFormat, CultureInfo.GetCultureInfo(DsCultureInfo));
         }
 
         private static (DateTime, DateTime) ParseMatchRoundDate(string date)
@@ -238,10 +276,15 @@ namespace Scraper.Core.Scraper
             var dates = regex.Match(date);
             var dateArr = dates.Value.Split('-');
 
-            var start = DateTime.ParseExact(dateArr[0], MatchRoundCustomDateTime, CultureInfo.GetCultureInfo(DsCultureInfo));
-            var end = DateTime.ParseExact(dateArr[1], MatchRoundCustomDateTime, CultureInfo.GetCultureInfo(DsCultureInfo));
+            var start = DateTime.ParseExact(dateArr[0], MatchRoundDateFormat, CultureInfo.GetCultureInfo(DsCultureInfo));
+            var end = DateTime.ParseExact(dateArr[1], MatchRoundDateFormat, CultureInfo.GetCultureInfo(DsCultureInfo));
 
             return (start, end);
+        }
+
+        private static DateTime ParseResultDate(string date) // TODO: Find out if needed
+        {
+            return DateTime.ParseExact(date, ResultDateFormat, CultureInfo.GetCultureInfo(DsCultureInfo)); // Søndag, 29. april 2018
         }
 
         #endregion

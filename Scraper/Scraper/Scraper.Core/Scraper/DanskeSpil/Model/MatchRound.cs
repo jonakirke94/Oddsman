@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Scraper.Core.Model
+namespace Scraper.Core.Scraper.DanskeSpil.Model
 {
     public class MatchRound
     {

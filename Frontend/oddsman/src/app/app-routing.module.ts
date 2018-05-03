@@ -12,6 +12,9 @@ import { UsersettingsComponent } from './dashboard/usercomponents/usersettings/u
 import { SendtipsComponent } from './dashboard/usercomponents/sendtips/sendtips.component';
 import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/admin-stats.component';
 import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adminusers.component';
+import { AdminTournamentsComponent } from './adminpanel/admincomponents/admin-tournaments/admin-tournaments.component';
+import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-invitations/admin-invitations.component';
+import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
 
 
 const routes: Routes = [
@@ -37,12 +40,16 @@ const routes: Routes = [
         component: UserstatsComponent
        },
       {
-       path : 'settings',
+       path : 'indstillinger',
        component: UsersettingsComponent
       },
       {
         path : 'sendtips',
         component: SendtipsComponent
+       },
+      {
+        path : 'turneringer',
+        component: UserTournamentsComponent
        }
     ]
   },
@@ -59,6 +66,14 @@ const routes: Routes = [
        path : 'users',
         component: AdminusersComponent
        },
+       {
+        path : 'tournaments',
+         component: AdminTournamentsComponent
+        },
+       {
+        path : 'requests/:id', 
+        component: AdminInvitationsComponent
+        },
     ]
   },
   

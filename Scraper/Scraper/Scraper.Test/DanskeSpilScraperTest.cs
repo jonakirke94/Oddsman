@@ -1,36 +1,26 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Scraper.Core.Model;
-using Scraper.Core.Scraper;
+using Scraper.Core.Scraper.DanskeSpil;
 using Xunit;
 
 namespace Scraper.Test
 {
     public class DanskeSpilScraperTest : BaseTest
     {
-        private readonly DanskeSpilScraper _scraper;
-        private readonly Match _upcomingMatch;
-
-        public DanskeSpilScraperTest()
-        {
-            _scraper = new DanskeSpilScraper();
-            _upcomingMatch = _scraper.GetUpcomingMatches().Last();
-            _upcomingMatch.SubMatches.AddRange(_scraper.GetSubMatches(_upcomingMatch.SubMatchLink));
-        }
+        
 
         [Fact]
         public void GetMatches_Test()
         {
-            var matches = _scraper.GetUpcomingMatches();
+            var matches = Scraper.GetUpcomingMatches();
             Assert.NotEmpty(matches);
         }
 
         [Fact]
         public void GetSubMatches_Test()
         {
-            Assert.NotNull(_upcomingMatch);
-            var submatches = _scraper.GetSubMatches(_upcomingMatch.SubMatchLink);
+            Assert.NotNull(UpcomingMatch);
+            var submatches = Scraper.GetSubMatches(UpcomingMatch.EventId);
             Assert.NotEmpty(submatches);
         }
 
@@ -38,27 +28,35 @@ namespace Scraper.Test
         [Fact]
         public void GetMatchRounds_Test()
         {
-            var rounds = _scraper.GetMatchRounds();
+            var rounds = Scraper.GetMatchRounds();
             Assert.NotEmpty(rounds);
         }
 
         [Fact]
         public void GetMatch_Test()
         {
-            Assert.NotNull(_upcomingMatch);
-            var match = _scraper.GetUpcomingMatch(_upcomingMatch.MatchNo);
+            Assert.NotNull(UpcomingMatch);
+            var match = Scraper.GetUpcomingMatch(UpcomingMatch.MatchId);
             Assert.NotNull(match);
-            Assert.StrictEqual(_upcomingMatch.MatchNo, match.MatchNo);
+            Assert.StrictEqual(UpcomingMatch.MatchId, match.MatchId);
         }
 
 
         [Fact]
         public void GetSubMatch_Test()
         {
-            Assert.NotNull(_upcomingMatch);
-            Assert.NotEmpty(_upcomingMatch.SubMatches);
-            var subMatch = _scraper.GetSubMatch(_upcomingMatch.SubMatchLink, _upcomingMatch.SubMatches.First().SubMatchNo);
+            Assert.NotNull(UpcomingMatch);
+            var subMatch = Scraper.GetSubMatch(UpcomingMatch.EventId, SubMatch.MatchId);
             Assert.NotNull(subMatch);
         }
+
+
+        [Fact]
+        public void GetResult_Test()
+        {
+            var result = Scraper.GetResult(452, 235);
+            Assert.NotNull(result);
+        }
+        
     }
 }

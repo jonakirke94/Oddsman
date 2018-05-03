@@ -5,6 +5,7 @@ exports.show200 = function(req, res, msg, data) {
     msg: msg,
     data: data
   })
+  res.end()
 };
 
 //bad client request
@@ -29,9 +30,10 @@ exports.show404 = function(req, res, next) {
 };
 
 //conflict
-exports.show409 = function(req, res, msg) {
+exports.show409 = function(req, res, msg, err) {
   res.status(409).json({
-    msg: msg
+    msg: msg,
+    err: err
   });
 };
 

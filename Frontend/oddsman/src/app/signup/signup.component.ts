@@ -117,7 +117,7 @@ export class SignupComponent implements OnInit {
         err => {
           if(err.status === 409) {
             //409 is sent if email or tag wasn't unique
-            this.error = err.error.msg === 'Email exists' ? "Email already exists" : "Tag already exists";
+            this.error = err.error.err;
           } else {
             this.error = "Server Error";
           }         

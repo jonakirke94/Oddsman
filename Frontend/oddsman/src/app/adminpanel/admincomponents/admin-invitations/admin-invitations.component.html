@@ -1,0 +1,29 @@
+<p-growl [value]="msgs"></p-growl>
+
+<h1 class="title">Turneringsforspørgsler</h1>
+<p-dataTable [value]="requests" [loading]="loading" loadingIcon="fa-spinner">
+    <p-column field="tourId" hidden='true' header="tourId"></p-column>
+    <p-column field="userId" hidden='true' header="userId"></p-column>
+    <p-column field="tourName" header="Turnering"></p-column>
+    <p-column field="start" header="Start">
+    <ng-template let-col let-file="rowData" pTemplate="body">
+        {{file[col.field] | date:'dd/MM/yyyy'}}
+    </ng-template>
+    </p-column>
+    <p-column field="status" header="Status"></p-column>
+    <p-column field="userTag" header="Tag"> </p-column>
+    <p-column field="userName" header="Navn"></p-column>'
+    <p-column field="userEmail" header="Email"></p-column>
+    <p-column styleClass="col-button">
+        <ng-template pTemplate="header">
+            <button type="button" pButton icon="fa-refresh" (click)="refresh()"></button>
+        </ng-template>
+        <ng-template let-request="rowData" pTemplate="body">
+            <div class="has-text-centered">
+            <button type="button" pButton (click)="acceptRequest(request)" title="Accepter" icon="fa-check"></button>
+            <button type="button" pButton (click)="declineRequest(request)" title="Afvis" icon="fa-close"></button> 
+            </div>
+
+        </ng-template>
+    </p-column>
+</p-dataTable>

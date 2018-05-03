@@ -1,0 +1,25 @@
+# Create Testuser
+CREATE USER 'dev'@'localhost' IDENTIFIED BY 'dev';
+GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP ON *.* TO 'dev'@'localhost';
+
+
+# Create DB
+CREATE DATABASE IF NOT EXISTS `test_db` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `test_db`;
+
+CREATE TABLE test_db.`Users` (
+  UserId INT NOT NULL AUTO_INCREMENT,
+  Name VARCHAR(45) NOT NULL,
+  Tag VARCHAR(45) NOT NULL,
+  Email VARCHAR(45) NOT NULL,
+  Password VARCHAR(200) NOT NULL,
+  IsAdmin TINYINT(1) NOT NULL,
+  RefreshToken VARCHAR(200) NULL,
+  PRIMARY KEY (UserId));
+
+CREATE TABLE test_db.`Tournaments` (
+  TournamentId INT NOT NULL AUTO_INCREMENT,
+  Name VARCHAR(45) NOT NULL,
+  Start DATE NOT NULL,
+  End DATE NOT NULL,
+  PRIMARY KEY (TournamentId));

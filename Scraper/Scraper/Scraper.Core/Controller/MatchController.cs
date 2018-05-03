@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Scraper.Core.Data;
 using Scraper.Core.Model;
-using Scraper.Core.Scraper;
+using Scraper.Core.Scraper.DanskeSpil;
 
 namespace Scraper.Core.Controller
 {
@@ -12,42 +10,18 @@ namespace Scraper.Core.Controller
     {
         private readonly DanskeSpilScraper _scraper = new DanskeSpilScraper();
 
-        /// <summary>
-        /// Scrapes the Match Rounds and their values, then adds them to the database.
-        /// </summary>
-        public async Task ScrapeMatchRounds()
+        
+
+
+
+        public Match GetUpcomingMatch(int matchId)
         {
+            Match match;
             try
             {
-                var rounds = _scraper.GetMatchRounds();
-
-                using (var ctx = new DanskeSpilContext())
+                using (var db = new DanskeSpilContext())
                 {
-                    ctx.MatchRounds.AddRange(rounds);
-                    await ctx.SaveChangesAsync();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Finds a match's round number based on the match's date
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns>The match round number for the given matches date or a default "not found" value of -1</returns>
-        public int GetMatchRoundId(DateTime date)
-        {
-            int num;
-
-            try
-            {
-                using (var ctx = new DanskeSpilContext())
-                {
-                    num = ctx.MatchRounds.FirstOrDefault(r => r.Start >= date && date <= r.End)?.MatchRoundId ?? -1;
+                    match = db.Matches.FirstOrDefault(m => m.MatchId == matchId);
                 }
             }
             catch (Exception e)
@@ -56,8 +30,9 @@ namespace Scraper.Core.Controller
                 throw;
             }
 
-            return num;
+            return match;
         }
+
 
 
         //public IList<Match> GetUpcomingMatches()
@@ -70,10 +45,7 @@ namespace Scraper.Core.Controller
         //    return _scraper.GetSubMatches(eventUrl);
         //}
 
-        //public Match GetUpcomingMatch(int matchNumber)
-        //{
-        //    return _scraper.GetUpcomingMatch(matchNumber);
-        //}
+
 
         //public IList<Result> GetResults()
         //{

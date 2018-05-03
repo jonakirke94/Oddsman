@@ -1,12 +1,18 @@
 language: csharp
 mono: none
 dotnet: 2.0.0
-before_script: cd Scraper/Scraper
+services:
+ - mysql
+node_js:
+ - "8"
+before_install:
+ - mysql -u root --password="" < test_db_setup.sql
+before_script:
+ - dotnet build /home/travis/build/jonakirke94/Oddsman/Scraper/Scraper/Scraper.sln
+# - cd /home/travis/build/jonakirke94/Oddsman/Backend
+# - npm install
 script:
- - dotnet restore
- - dotnet build
- - cd Scraper.Test
- - dotnet test
- 
+ - dotnet test /home/travis/build/jonakirke94/Oddsman/Scraper/Scraper/Scraper.Test
+# - npm test /home/travis/build/jonakirke94/Oddsman/Backend/test
 notifications:
-    email: false
+ email: false

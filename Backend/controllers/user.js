@@ -5,6 +5,8 @@ const msg = require("../db/http");
 const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 const tokenController = require('../controllers/token');
+const jwtDecode = require('jwt-decode');
+
 
 
 exports.getUserByProperty = (column, value, callback) => {
@@ -17,6 +19,65 @@ exports.getUserByProperty = (column, value, callback) => {
     }
   });
 };
+
+exports.update = (req, res, next) => {
+  const userid = getUserId(req);
+
+  if(userid === -1) {
+    return msg.show500(req, res, 'Couldnt fetch userid');
+  }
+
+  const name = req.body.name;
+  const email = req.body.email;
+  const tag = req.body.tag;
+
+  if(!name && !email && !tag) {
+    return msg.show400(req, res, "No inputs provided");
+  }
+
+   //check if valid email
+   if(email) {
+    req.check("email", "Email is not a valid email").isEmail(); 
+    const errors = req.validationErrors();
+    if (errors) {
+      return msg.show400(req, res, errors);
+    }
+   }
+
+  let buildSql = "UPDATE Users SET ";
+
+    //add if new email isn't empty
+    if (email) {
+      buildSql += `Email=${mysql.escape(email)},`
+    }
+
+    if(name) {
+      buildSql += `Name=${mysql.escape(name)},`
+    }
+
+    if(tag) {
+      buildSql += `Tag=${mysql.escape(tag)},`
+    }
+
+      //remove trailing comma
+      buildSql = buildSql.slice(0, -1);
+      buildSql += ` WHERE UserId = ${mysql.escape(userid)}`;
+    
+    db.executeSql(buildSql, function(data, err) {
+      if(err) {
+        if(err.sqlMessage.includes('email_unique') || err.sqlMessage.includes('tag_unique')) {
+          let errors = 'Error';
+          if(err.sqlMessage.includes('email_unique')) errors ='Email is already taken';
+          if(err.sqlMessage.includes('tag_unique')) errors ='Tag is already taken';
+          return msg.show409(req, res, "Duplicate entries", errors);
+        }
+
+        return msg.show500(req, res, err);
+      }
+
+        return msg.show200(req, res, "Success");
+    })
+}
 
 exports.user_signup = (req, res, next) => {
   const name = req.body.name;
@@ -34,8 +95,35 @@ exports.user_signup = (req, res, next) => {
     return msg.show400(req, res, errors);
   }
 
+  bcrypt.hash(password, 10, (err, hash) => {
+    if (err) {
+      msg.show500(req, res, err);
+    } 
+
+      const sql = `INSERT INTO Users (Name,Tag,Email,Password)
+      VALUES (${mysql.escape(name)}, ${mysql.escape(tag)}, ${mysql.escape(
+        email
+      )}, ${mysql.escape(hash)})`;
+
+      db.executeSql(sql, function(data, err) {
+        if (err) {    
+          if(err.sqlMessage.includes('email_unique') || err.sqlMessage.includes('tag_unique')) {
+            let errors = 'Error';
+            if(err.sqlMessage.includes('email_unique')) errors ='Email is already taken';
+            if(err.sqlMessage.includes('tag_unique')) errors ='Tag is already taken';
+            return msg.show409(req, res, "Duplicate entries", errors);
+          }
+
+          return msg.show500(req, res, err);
+        }
+
+        return msg.show200(req, res, "Success");
+      });
+    
+  });
+
   //check if email is unique
-  module.exports.getUserByProperty('Email', email, function(emailuser) {
+/*   module.exports.getUserByProperty('Email', email, function(emailuser) {
     if (emailuser) {
       return msg.show409(req, res, "Email exists");
     } 
@@ -64,7 +152,7 @@ exports.user_signup = (req, res, next) => {
           
         });
       })
-  });
+  }); */
 };
 
 exports.user_login = (req, res, next) => {
@@ -124,4 +212,18 @@ exports.user_all = (req, res, next) => {
       
     return msg.show200(req, res, "Success", users);
   });
+}
+
+
+/* HELPER */
+function getUserId(req) {
+  //decode the token and fetch id
+  const token = req.headers.authorization.split(' ');
+
+  try {
+    var decoded = jwtDecode(token[1])
+    return decoded.userId;
+  } catch (err) {
+    return -1;
+  }
 }

@@ -5,6 +5,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const server = require("../server");
 const should = chai.should();
+const tokenController = require("../controllers/token");
 const db = require("../db/db");
 
 const user = require("../controllers/user");
@@ -14,8 +15,7 @@ chai.use(chaiHttp);
 //Our parent block
 describe("Users", () => {
   beforeEach(done => {
-    //Before each test we empty the database
-    db.executeSql("TRUNCATE TABLE Users", function(err, data) {
+    db.cleanDatabase(function(data) {
       done();
     });
   });
@@ -121,7 +121,6 @@ describe("Users", () => {
             .send(person)
             .end((err, res) => {
               res.should.have.status(409);
-              res.body.msg.should.be.eql("Email exists");
               done();
             });
         });
@@ -150,7 +149,6 @@ describe("Users", () => {
             .send(person1)
             .end((err, res) => {
               res.should.have.status(409);
-              res.body.msg.should.be.eql("Tag exists");
               done();
             });
         });
@@ -214,7 +212,6 @@ describe("Users", () => {
   /****************************** TESTING LOGIN *****************************/
   describe("/POST User/login", () => {
     beforeEach(done => {
-      //Before each test we empty the database
       let person = {
         name: "Kobe Bryan",
         tag: "KB",
@@ -291,6 +288,117 @@ describe("Users", () => {
           res.should.have.status(401);
           done();
         });
+    });
+  });
+
+  describe("/PATCH User/", () => {
+    beforeEach(done => {
+      let person = {
+        name: "Kobe Bryan",
+        tag: "KB",
+        email: "Bryan@email1.dk",
+        password: "123456789"
+      };
+      const tokens = tokenController.generateTokens({
+        Email: "Bryan@email1.dk",
+        UserId: 1,
+        IsAdmin: false
+      });
+      chai
+        .request(server)
+        .post("/user/signup")
+        .send(person)
+        .end((err, res) => {
+          done();
+        });
+    });
+
+    it("it should update a user", done => {
+      let values = { tag: "XXX", name: "newname" };
+      chai
+        .request(server)
+        .patch("/user/")
+        .set("authorization", "Bearer " + tokens.access_token)
+        .send(values)
+        .end((err, res) => {
+          res.should.have.status(200);
+          user.getUserByProperty("UserId", 1, function(data, err) {
+            data.Name.should.be.eql("newname");
+            data.Email.should.be.eql("Bryan@email1.dk");
+            data.Tag.should.be.eql("XXX");
+            done();
+          });
+        });
+    });
+    describe("/PATCH User/ duplicate inputs", () => {
+      const xtokensx = tokenController.generateTokens({
+        Email: "Ryan@email1.dk",
+        UserId: 2,
+        IsAdmin: false
+      });
+      beforeEach(done => {
+        let person = {
+          name: "Ryan",
+          tag: "RB",
+          email: "Ryan@email1.dk",
+          password: "123456789"
+        };
+        chai
+          .request(server)
+          .post("/user/signup")
+          .send(person)
+          .end((err, res) => {
+            done();
+          });
+      });
+      it("it should not update a user with duplicate email", done => {
+        let values = { email: "Bryan@email1.dk", name: "newname" };
+        chai
+          .request(server)
+          .patch("/user/")
+          .set("authorization", "Bearer " + xtokensx.access_token)
+          .send(values)
+          .end((err, res) => {
+            res.should.have.status(409);
+            res.body.err.should.be.eql("Email is already taken");
+            done();
+          });
+      });
+      it("it should not update a user with duplicate tag", done => {
+        let values = { tag: "KB", name: "newname" };
+        chai
+          .request(server)
+          .patch("/user/")
+          .set("authorization", "Bearer " + xtokensx.access_token)
+          .send(values)
+          .end((err, res) => {
+            res.should.have.status(409);
+            res.body.err.should.be.eql("Tag is already taken");
+            done();
+          });
+      });
+    });
+    it("it should not anything with empty inputs", done => {
+      chai
+        .request(server)
+        .patch("/user/")
+        .set("authorization", "Bearer " + tokens.access_token)
+        .send({})
+        .end((err, res) => {
+          res.should.have.status(400);
+          user.getUserByProperty("UserId", 1, function(data, err) {
+            data.Name.should.be.eql("Kobe Bryan");
+            data.Email.should.be.eql("Bryan@email1.dk");
+            data.Tag.should.be.eql("KB");
+            done();
+          });
+        });
+    });
+  });
+
+  after(function(done) {
+    db.cleanDatabase(function(data) {
+      done();
     });
   });
 });

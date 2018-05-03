@@ -10,7 +10,7 @@
                     <ul class="menu-list">
                       <li><a routerLink="/dashboard" [class.is-active]="router.url==='/dashboard'">Dashboard</a></li>
                       
-                      <li><a routerLink="settings" routerLinkActive="is-active">Profile Settings</a></li>
+                      <li><a routerLink="indstillinger" [class.is-active]="router.url==='/indstillinger'">Indstillinger</a></li>
                     </ul>
                     <p class="menu-label">
                       Odds
@@ -24,8 +24,9 @@
                       Turneringer
                     </p>
                     <ul class="menu-list">
-                      <li><a>Invitationer</a></li>
-                      <li><a>Historik</a></li>
+                      <li><a routerLink="turneringer" routerLinkActive="is-active">Turneringer</a></li>
+                     
+
                     </ul>
                   </aside>
 

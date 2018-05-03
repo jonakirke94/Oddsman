@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Scraper.Core.Model.Data
+namespace Scraper.Core.Scraper.DanskeSpil.Model
 {
     public class CombFactors
     {

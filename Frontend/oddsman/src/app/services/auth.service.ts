@@ -65,8 +65,9 @@ export class AuthService {
 
     authResult.data.isAdmin ? this.isAdmin.next(true) : this.isAdmin.next(false);
 
-    let authInfo = new CurrentUser(email);
-    localStorage.setItem("authInfo", JSON.stringify(authInfo));
+    //if using this remember to reset values when updating the user
+    //let authInfo = new CurrentUser(email);
+    //localStorage.setItem("authInfo", JSON.stringify(authInfo));
   }
 
   logout() {
@@ -74,7 +75,7 @@ export class AuthService {
     this.isAdmin.next(false);
     localStorage.removeItem("accesstoken");
     localStorage.removeItem("refresh_expiresAt");
-    localStorage.removeItem("authInfo");
+   // localStorage.removeItem("authInfo");
   }
 
   public isLoggedIn() {

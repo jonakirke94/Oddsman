@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
     //let test points pass
     if(process.env.NODE_ENV === 'test') {
         next();
-    }
+    } else {
 
     //token is sent as "Bearer  xxxxx" so we split it to retrieve token
     const token = req.headers.authorization.split(' ');
@@ -65,4 +65,5 @@ module.exports = (req, res, next) => {
             }   
         }
     }) 
+    }
 }

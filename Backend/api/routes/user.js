@@ -10,6 +10,7 @@ const userController = require('../../controllers/user');
 router.post("/signup", userController.user_signup);
 router.post("/login", userController.user_login)
 router.get("/", adminguard, userController.user_all)
+router.patch("/", guard, userController.update)
 
 module.exports = router;
   
