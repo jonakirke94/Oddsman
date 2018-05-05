@@ -1,4 +1,4 @@
-process.env.NODE_ENV = "test";
+/* process.env.NODE_ENV = "test";
 
 const config = require("config");
 const chai = require("chai");
@@ -29,3 +29,4 @@ describe("Tokens", () => {
   });
 
 });
+ */

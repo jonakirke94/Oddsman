@@ -5,10 +5,15 @@ const msg = require("../db/http");
 const mysql = require("mysql");
 const jwtDecode = require('jwt-decode');
 
+const seq = require('../models');
+const Tournament = seq.tournaments;
+
 exports.create = (req, res, next) => {
   const start = req.body.start;
   const end = req.body.end;
   const name = req.body.name;
+
+  console.log(name, start, end) 
 
   const startDate = new Date(start).toISOString().substring(0, 10);
   const endDate = new Date(end).toISOString().substring(0, 10);
@@ -26,27 +31,23 @@ exports.create = (req, res, next) => {
     return msg.show400(req, res, errors);
   }
 
-  //check if name is unique
-  module.exports.getByName(name, function(data) {
-    if (data) {
-      return msg.show409(req, res, "Tournament name exists");
-    }
+  const newTournament = {
+    Name: name,
+    Start: startDate,
+    End: endDate
+  }
 
-
-
-    const sql = `INSERT INTO Tournaments (Name,Start,End)
-            VALUES (${mysql.escape(name)}, ${mysql.escape(
-      startDate
-    )}, ${mysql.escape(endDate)})`;
-
-    db.executeSql(sql, function(data, err) {
-      if (err) {
-        console.log(err)
-        return msg.show500(req, res, err);
-      }
-      return msg.show200(req, res, "Success");
-    });
-  });
+  Tournament
+  .create(newTournament)
+  .then(tour => {
+    return msg.show200(req, res, "Success", tour);
+  })
+  .catch(seq.Sequelize.ValidationError, function (err) {
+        return msg.show400(req, res, err.errors[0].message);
+  }).catch(function (err) {
+    console.log(err);
+    return msg.show500(req, res, err);
+  })
 };
 
 exports.getByName = (name, callback) => {

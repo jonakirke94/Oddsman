@@ -5,7 +5,9 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const server = require("../server");
 const should = chai.should();
-const db = require("../db/db");
+/* const db = require("../db/db"); */
+const db = require('../models');
+const Tournament = db.tournaments;
 const tokenController = require('../controllers/token')
 
 const token = require("../controllers/token");
@@ -20,13 +22,25 @@ describe("Tournaments", () => {
     IsAdmin: false
   });
   beforeEach(done => {
-    db.cleanDatabase(function(data) {
-      done();
+    db
+    .sequelize
+    .query('SET FOREIGN_KEY_CHECKS = 0', null, {raw: true})
+    .then(function(results) {
+        db.sequelize.sync({force: true})
+        .then(() => {
+          done()
+        });
     });
   });
   after(function(done) {
-    db.cleanDatabase(function(data) {
-      done();
+    db
+    .sequelize
+    .query('SET FOREIGN_KEY_CHECKS = 0', null, {raw: true})
+    .then(function(results) {
+        db.sequelize.sync({force: true})
+        .then(() => {
+          done()
+        });
     });
   });
   //Test post tournament
@@ -47,7 +61,7 @@ describe("Tournaments", () => {
           done();
         });
     });
-    it("it should not create with a start date earlier than today", done => {
+/*     it("it should not create with a start date earlier than today", done => {
       let tourney = {
         name: "Season1",
         start: new Date("2015-03-25T12:00:00Z"),
@@ -118,9 +132,9 @@ describe("Tournaments", () => {
           res.body.err.should.be.a("array");
           done();
         });
-    });
+    }); */
   });
-  describe("/GET tournament", () => {
+ /*  describe("/GET tournament", () => {
     beforeEach(done => {
       //Seed database
       let tourney = {
@@ -203,9 +217,9 @@ describe("Tournaments", () => {
           });
       });
     });
-  });
+  }); */
 })
-
+/* 
 describe("Requests", () => {
   const tokens = tokenController.generateTokens({
     Email: "Bryan@email.dk",
@@ -412,10 +426,10 @@ describe("Requests", () => {
     });
   })
 
+ */
 
-
-
+/* 
 
 })
-
+ */
 

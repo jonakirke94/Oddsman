@@ -1,4 +1,4 @@
-process.env.NODE_ENV = "test";
+/* process.env.NODE_ENV = "test";
 
 const config = require("config");
 const chai = require("chai");
@@ -12,7 +12,6 @@ const user = require("../controllers/user");
 
 chai.use(chaiHttp);
 
-//Our parent block
 describe("Users", () => {
   beforeEach(done => {
     db.cleanDatabase(function(data) {
@@ -20,10 +19,8 @@ describe("Users", () => {
     });
   });
 
-  /****************************** TESTING GETBYPROPERTY *****************************/
   describe("/GET User", () => {
     beforeEach(done => {
-      //Seed a user before all GETBYPROPERTY tests
       let person = {
         name: "Kobe Bryan",
         tag: "KB",
@@ -82,10 +79,10 @@ describe("Users", () => {
         done();
       });
     });
-  });
+  }); */
 
   /****************************** TESTING SIGNUP *****************************/
-  describe("/POST User/signup", () => {
+ /*  describe("/POST User/signup", () => {
     it("it should signup a user ", done => {
       let person = {
         name: "Kobe Bryan",
@@ -208,9 +205,9 @@ describe("Users", () => {
         });
     });
   });
-
+ */
   /****************************** TESTING LOGIN *****************************/
-  describe("/POST User/login", () => {
+/*   describe("/POST User/login", () => {
     beforeEach(done => {
       let person = {
         name: "Kobe Bryan",
@@ -402,3 +399,4 @@ describe("Users", () => {
     });
   });
 });
+ */
