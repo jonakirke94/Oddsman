@@ -8,11 +8,11 @@ node_js:
 before_install:
  - mysql -u root --password="" < test_db_setup.sql
 before_script:
- - dotnet build /home/travis/build/jonakirke94/Oddsman/Scraper/Scraper/Scraper.sln
+ - dotnet build /home/travis/build/jonakirke94/Oddsman/Scraper/Scraper/Scraper.sln --test
 # - cd /home/travis/build/jonakirke94/Oddsman/Backend
 # - npm install
-script:
- - dotnet test /home/travis/build/jonakirke94/Oddsman/Scraper/Scraper/Scraper.Test
+script: 
+ - ASPNETCORE_ENVIRONMENT=Testing dotnet test /home/travis/build/jonakirke94/Oddsman/Scraper/Scraper/Scraper.Test
 # - npm test /home/travis/build/jonakirke94/Oddsman/Backend/test
 notifications:
  email: false

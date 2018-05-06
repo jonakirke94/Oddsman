@@ -17,15 +17,11 @@ namespace Scraper.API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services, IHostingEnvironment env)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddDbContext<DanskeSpilContext>(o =>
-            {
-                o.UseMySql(env.IsEnvironment("Testing")
-                    ? "server=localhost;database=test_db;user=root;password="
-                    : Configuration.GetConnectionString("MySQL"));
-            });
+            DanskeSpilContext.SetConnectionString(Configuration.GetConnectionString("Default"));
+            services.AddDbContext<DanskeSpilContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
