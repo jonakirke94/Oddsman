@@ -8,7 +8,7 @@ node_js:
 before_install:
  - mysql -u root --password="" < test_db_setup.sql
 before_script:
- - dotnet build /home/travis/build/jonakirke94/Oddsman/Scraper/Scraper/Scraper.sln --test
+ - dotnet build /home/travis/build/jonakirke94/Oddsman/Scraper/Scraper/Scraper.sln
 # - cd /home/travis/build/jonakirke94/Oddsman/Backend
 # - npm install
 script: 
