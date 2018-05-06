@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,22 +21,19 @@ namespace Scraper.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            DanskeSpilContext.SetConnectionString(Configuration.GetConnectionString("Default"));
-            services.AddDbContext<DanskeSpilContext>();
+            var x = Configuration.GetConnectionString("Default");
+            services.AddDbContext<DanskeSpilContext>(o => o.UseMySql(Configuration.GetConnectionString("Default")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, DanskeSpilContext db)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            using (var db = new DanskeSpilContext())
-            {
-                db.Database.EnsureCreated();
-            }
+            db.Database.EnsureCreated();
 
             app.UseMvc();
         }

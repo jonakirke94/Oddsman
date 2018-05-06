@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Scraper.API;
 using Scraper.Core.Model;
@@ -19,7 +21,9 @@ namespace Scraper.Test
 
         public DanskeSpilApiTest()
         {
-            _server = new TestServer(new WebHostBuilder()
+            _server = new TestServer(
+                WebHost.CreateDefaultBuilder()
+                .UseEnvironment("Testing") // Should be Testing for travis and Production on PC's
                 .UseStartup<Startup>());
             _client = _server.CreateClient();
         }

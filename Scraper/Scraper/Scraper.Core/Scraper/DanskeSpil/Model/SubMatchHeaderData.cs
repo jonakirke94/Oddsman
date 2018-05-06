@@ -14,7 +14,7 @@ namespace Scraper.Core.Scraper.DanskeSpil.Model
         /// The Id of the Match that this SubMatch belongs to.
         /// </summary>
         [JsonProperty("ev_id")]
-        public int ParentId { get; set; }
+        public int EventId { get; set; }
 
         /// <summary>
         /// Used to identify which SubMatchOddsData betting options that belongs to this Header.

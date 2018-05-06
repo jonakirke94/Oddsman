@@ -1,28 +1,25 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Scraper.Core.Data;
 using Scraper.Core.Model;
+using Scraper.Core.Scraper.DanskeSpil;
 
 namespace Scraper.API.Controllers
 {
     [Route("api/v1/[controller]")]
     public class MatchController : Controller
     {
-        private static readonly Core.Controller.MatchController Mctr = new Core.Controller.MatchController();
-        
-        //[HttpGet("{matchId}")]
-        //[ProducesResponseType(200, Type = typeof(Match))]
-        //[ProducesResponseType(400)]
-        //[ProducesResponseType(404)]
-        //public async Task<IActionResult> GetMatch(int matchId)
-        //{
-        //    if (matchId <= 0) return BadRequest();
+        private static readonly DanskeSpilScraper Scraper = new DanskeSpilScraper();
+        private readonly DanskeSpilContext _db;
 
-        //    var match = Mctr.GetMatch(matchId);
+        public MatchController(DanskeSpilContext db)
+        {
+            _db = db;
+        }
 
-        //    if (match == null) return NotFound();
-
-        //    return Ok(match);
-        //}
 
         [HttpGet("{matchId}/{eventId?}")]
         [ProducesResponseType(200, Type = typeof(Match))]
@@ -30,43 +27,70 @@ namespace Scraper.API.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetMatch(int matchId, int? eventId = null)
         {
-            if (eventId <= 0 || matchId <= 0) return BadRequest();
-
-            var match = Mctr.GetMatch(matchId, eventId);
+            Match match;
+            try
+            {
+                match = _db.Matches.FirstOrDefault(m => m.MatchId == matchId);
+                if (match == null)
+                {
+                    match = Scraper.GetUpcomingMatch(matchId, eventId);
+                    if (match != null)
+                    {
+                        _db.Matches.Add(match);
+                        await _db.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
             if (match == null) return NotFound();
 
             return Ok(match);
         }
 
-        //[HttpGet("Result/{matchRound}/{matchId}")]
-        //[ProducesResponseType(200, Type = typeof(Result))]
-        //[ProducesResponseType(400)]
-        //[ProducesResponseType(404)]
-        //public async Task<IActionResult> GetResult(int matchRound, int matchId)
-        //{
-        //    if (matchId < 0) return BadRequest();
 
-        //    var result = Mctr.GetResult(matchRound, null, matchId);
-
-        //    if (result == null) return NotFound();
-
-        //    return Ok(result);
-        //}
-
-        [HttpGet("Result/{matchRound}/{matchId}/{parentMatchId?}")]
+        [HttpGet("Result/{matchRoundId}/{matchId}/{parentMatchId?}")]
         [ProducesResponseType(200, Type = typeof(Result))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetResult(int matchRound, int matchId, int? parentMatchId = null)
+        public async Task<IActionResult> GetResult(int matchRoundId, int matchId, int? parentMatchId = null)
         {
-            if (matchId < 0) return BadRequest();
+            Result res;
+            try
+            {
+                var match = _db.Matches.Include(m => m.Result).FirstOrDefault(m => m.MatchId == matchId && m.RoundId == matchRoundId);
 
-            var result = Mctr.GetResult(matchRound, matchId, parentMatchId);
+                if (match != null)
+                {
+                    if (match.Result == null)
+                    {
+                        res = Scraper.GetMatchResult(match.RoundId, matchId, parentMatchId);
+                        _db.Results.Add(res);
+                        await _db.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        res = match.Result;
+                    }
+                }
+                else
+                {
+                    res = null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
-            if (result == null) return NotFound();
+            if (res == null) return NotFound();
 
-            return Ok(result);
+            return Ok(res);
         }
 
         

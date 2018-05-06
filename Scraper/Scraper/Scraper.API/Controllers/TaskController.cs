@@ -2,18 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Scraper.Core.Data;
 using Scraper.Core.Model;
 using Scraper.Core.Scraper.DanskeSpil;
 
-namespace Scraper.Core.Controller
+namespace Scraper.API.Controllers
 {
-    public class TaskController
+    public class TaskController : Controller
     {
         private readonly DanskeSpilScraper _scraper = new DanskeSpilScraper();
+        private readonly DanskeSpilContext _db;
+
+        public TaskController(DanskeSpilContext db)
+        {
+            _db = db;
+        }
 
 
-
+        
         public async Task ScrapeUpcomingMatches()
         {
             var matches = new List<Match>(_scraper.GetUpcomingMatches());
@@ -37,15 +44,11 @@ namespace Scraper.Core.Controller
                 subMatches.AddRange(sms);
             });
 
-
             try
             {
-                using (var db = new DanskeSpilContext())
-                {
-                    db.Matches.AddRange(validMatches);
-                    db.Matches.AddRange(subMatches);
-                    await db.SaveChangesAsync();
-                }
+                _db.Matches.AddRange(validMatches);
+                _db.Matches.AddRange(subMatches);
+                await _db.SaveChangesAsync();
             }
             catch (Exception e)
             {

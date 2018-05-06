@@ -3,6 +3,8 @@
 **/test.json
 **/dev.json
 **/appsettings.Production.json
+**/dbsettings.Production.json
+
 # Logs
 logs
 *.log

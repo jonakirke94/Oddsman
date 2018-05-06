@@ -120,7 +120,6 @@ namespace Scraper.Core.Scraper.DanskeSpil
         {
             if (data == null) return null;
             var subMatches = new List<Match>();
-
             foreach (var header in data.Headers)
             {
                 var smOdds = data.Odds.Select(o => o).Where(o => o.HeaderId == header.HeaderId).ToList();
@@ -140,7 +139,8 @@ namespace Scraper.Core.Scraper.DanskeSpil
             return new Match
             {
                 MatchName = header.Names.Da,
-                ParentId = header.ParentId,
+                ParentId = info.ParentId != int.Parse(header.MatchId) ? info.ParentId : null,
+                EventId = header.EventId,
                 MatchId = int.Parse(header.MatchId),
                 MatchDate = DateTime.Parse(info.MatchDate),
                 Option1 = o1?.Names.Da,
@@ -218,6 +218,8 @@ namespace Scraper.Core.Scraper.DanskeSpil
             var info = JsonConvert.DeserializeObject<SubMatchDataInfo>(matches[0].Value);
             var headers = JsonConvert.DeserializeObject<List<SubMatchHeaderData>>($"[{matches[1].Value}]");
             var odds = JsonConvert.DeserializeObject<List<SubMatchOddsData>>($"[{matches[2].Value}]");
+
+            info.ParentId = headers.First().EventId;
 
             return new SubMatchData{ Headers = headers, Odds = odds, Info = info};
         }
