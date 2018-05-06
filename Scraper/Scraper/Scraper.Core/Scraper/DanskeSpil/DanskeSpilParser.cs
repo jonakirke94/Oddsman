@@ -14,7 +14,7 @@ namespace Scraper.Core.Scraper.DanskeSpil
 {
     public static class DanskeSpilParser
     {
-        private const string SubMatchJsonExpression = "(\\[{\"names\":.*\\}\\])";
+        private const string SubMatchJsonExpression = "({\\\"names\\\":.*\\})";
         private const string MatchRoundNumberExpression = "([0-9]*)(?= )";
         private const string MatchRoundDateExpression = "(?<=\\()(.*)(?=\\))";
         private const string MatchEventIdExpression = "(?<=\\-)([0-9]*)(?=\\.)";
@@ -25,7 +25,7 @@ namespace Scraper.Core.Scraper.DanskeSpil
 
 
 
-        public static IList<Match> ParseMatches(HtmlDocument doc)
+        public static IList<Match> ParseMatches(HtmlDocument doc, DateRange dateRange = null)
         {
             var matches = new List<Match>();
 
@@ -44,6 +44,8 @@ namespace Scraper.Core.Scraper.DanskeSpil
                 var dateTxt = c.Descendants("p").First().HtmlDecodedValue().Replace(" ", "");
                 // Parse the date
                 var date = ParseMatchDate(dateTxt);
+
+                if(dateRange != null && !dateRange.WithinRange(date)) continue;
 
                 // Find the table body
                 var eventBody = c.Descendants("tbody").First();
@@ -122,14 +124,14 @@ namespace Scraper.Core.Scraper.DanskeSpil
             foreach (var header in data.Headers)
             {
                 var smOdds = data.Odds.Select(o => o).Where(o => o.HeaderId == header.HeaderId).ToList();
-                subMatches.Add(ParseSubMatch(header, smOdds));
+                subMatches.Add(ParseSubMatch(header, smOdds, data.Info));
             }
 
 
             return subMatches;
         }
 
-        public static Match ParseSubMatch(SubMatchHeaderData header, IList<SubMatchOddsData> odds)
+        public static Match ParseSubMatch(SubMatchHeaderData header, IList<SubMatchOddsData> odds, SubMatchDataInfo info)
         {
             var o1 = odds.FirstOrDefault(o => o.BetOption == "1");
             var o2 = odds.FirstOrDefault(o => o.BetOption == "X");
@@ -140,6 +142,7 @@ namespace Scraper.Core.Scraper.DanskeSpil
                 MatchName = header.Names.Da,
                 ParentId = header.ParentId,
                 MatchId = int.Parse(header.MatchId),
+                MatchDate = DateTime.Parse(info.MatchDate),
                 Option1 = o1?.Names.Da,
                 Option2 = o2?.Names.Da,
                 Option3 = o3?.Names.Da,
@@ -210,13 +213,13 @@ namespace Scraper.Core.Scraper.DanskeSpil
 
             var matches = regex.Matches(doc.ParsedText);
 
-            if (matches.Count < 2) return null;
+            if (matches.Count < 3) return null;
 
-            var headers = JsonConvert.DeserializeObject<List<SubMatchHeaderData>>(matches[0].Value);
-            var odds = JsonConvert.DeserializeObject<List<SubMatchOddsData>>(matches[1].Value);
+            var info = JsonConvert.DeserializeObject<SubMatchDataInfo>(matches[0].Value);
+            var headers = JsonConvert.DeserializeObject<List<SubMatchHeaderData>>($"[{matches[1].Value}]");
+            var odds = JsonConvert.DeserializeObject<List<SubMatchOddsData>>($"[{matches[2].Value}]");
 
-
-            return new SubMatchData{ Headers = headers, Odds = odds };
+            return new SubMatchData{ Headers = headers, Odds = odds, Info = info};
         }
 
 

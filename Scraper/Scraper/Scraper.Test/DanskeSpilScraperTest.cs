@@ -46,7 +46,7 @@ namespace Scraper.Test
         public void GetSubMatch_Test()
         {
             Assert.NotNull(UpcomingMatch);
-            var subMatch = Scraper.GetSubMatch(UpcomingMatch.EventId, SubMatch.MatchId);
+            var subMatch = Scraper.GetUpcomingMatch(SubMatch.MatchId, UpcomingMatch.EventId);
             Assert.NotNull(subMatch);
         }
 
@@ -54,7 +54,7 @@ namespace Scraper.Test
         [Fact]
         public void GetResult_Test()
         {
-            var result = Scraper.GetResult(452, 235);
+            var result = Scraper.GetMatchResult(453, 235);
             Assert.NotNull(result);
         }
         

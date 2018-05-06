@@ -38,7 +38,7 @@ namespace Scraper.Test
         [Fact]
         public async void GetSubMatch_Test()
         {
-            var resp = await _client.GetAsync($"api/v1/Match/{UpcomingMatch.EventId}/{SubMatch.MatchId}");
+            var resp = await _client.GetAsync($"api/v1/Match/{SubMatch.MatchId}/{UpcomingMatch.EventId}");
 
             var submatch = JsonConvert.DeserializeObject<Match>(await resp.Content.ReadAsStringAsync());
             Assert.NotNull(submatch);

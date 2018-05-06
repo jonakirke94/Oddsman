@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Scraper.Core.Data;
 using Scraper.Core.Model;
 using Scraper.Core.Scraper.DanskeSpil;
+using Scraper.Core.Scraper.DanskeSpil.Model;
 
 namespace Scraper.Core.Controller
 {
@@ -10,11 +12,8 @@ namespace Scraper.Core.Controller
     {
         private readonly DanskeSpilScraper _scraper = new DanskeSpilScraper();
 
-        
 
-
-
-        public Match GetUpcomingMatch(int matchId)
+        public Match GetMatch(int matchId, int? eventId = null)
         {
             Match match;
             try
@@ -22,6 +21,12 @@ namespace Scraper.Core.Controller
                 using (var db = new DanskeSpilContext())
                 {
                     match = db.Matches.FirstOrDefault(m => m.MatchId == matchId);
+                    if (match == null)
+                    {
+                        match = _scraper.GetUpcomingMatch(matchId, eventId);
+                        db.Matches.Add(match);
+                        db.SaveChanges();
+                    }
                 }
             }
             catch (Exception e)
@@ -34,22 +39,44 @@ namespace Scraper.Core.Controller
         }
 
 
+        public Result GetResult(int matchRound, int matchId, int? parentMatchId = null)
+        {
+            Result res;
 
-        //public IList<Match> GetUpcomingMatches()
-        //{
-        //    return _scraper.GetUpcomingMatches();
-        //}
+            try
+            {
+                using (var db = new DanskeSpilContext())
+                {
+                    var match = db.Matches.Include(m => m.Result).FirstOrDefault(m => m.MatchId == matchId);
 
-        //public IList<SubMatch> GetSubMatches(string eventUrl)
-        //{
-        //    return _scraper.GetSubMatches(eventUrl);
-        //}
+                    if (match != null)
+                    {
+                        if (match.Result == null)
+                        {
+                            res = _scraper.GetMatchResult(match.RoundId, matchId, parentMatchId);
+                            db.Results.Add(res);
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            res = match.Result;
+                        }
+                    }
+                    else
+                    {
+                        res = null;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
+            return res;
+        }
 
-
-        //public IList<Result> GetResults()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        
     }
 }

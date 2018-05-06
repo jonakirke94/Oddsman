@@ -32,6 +32,7 @@ namespace Scraper.Core.Controller
                 {
                     sm.ParentId = match.MatchId;
                     sm.EventId = match.EventId;
+                    sm.RoundId = sm.RoundId == -1 ? match.RoundId : -1;
                 }
                 subMatches.AddRange(sms);
             });

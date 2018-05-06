@@ -7,7 +7,15 @@ namespace Scraper.Core.Data
     {
         public DbSet<Match> Matches { get; set; }
         public DbSet<Result> Results { get; set; }
-        
+
+        public DanskeSpilContext(DbContextOptions o) : base(o)
+        {
+            
+        }
+        public DanskeSpilContext() 
+        {
+
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

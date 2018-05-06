@@ -66,14 +66,14 @@ namespace Scraper.Core.Scraper.DanskeSpil
             return result;
         }
 
-        public IList<Match> GetUpcomingMatches()
+        public IList<Match> GetUpcomingMatches(DateRange dateRange = null)
         {
             var matches = new List<Match>();
             var doc = LoadHtmlPage(DenLange);
 
             try
             {
-                matches = new List<Match>(DanskeSpilParser.ParseMatches(doc));
+                matches = new List<Match>(DanskeSpilParser.ParseMatches(doc, dateRange));
                 Parallel.ForEach(matches, m => m.RoundId = MatchRoundIds.GetMatchRoundId(m.MatchDate));
             }
             catch (Exception e)
@@ -121,15 +121,30 @@ namespace Scraper.Core.Scraper.DanskeSpil
             return rounds;
         }
 
-        public Match GetUpcomingMatch(int matchId)
+
+
+        public Match GetUpcomingMatch(int matchId, int? eventId = null)
         {
             Match m = null;
-            var doc = LoadHtmlPage(string.Format(MatchSearch, matchId));
+            var doc = LoadHtmlPage(eventId == null 
+                ? string.Format(MatchSearch, matchId) 
+                : string.Format(SubMatchUrl, eventId));
 
             try
             {
-                m = DanskeSpilParser.ParseMatchSearch(doc);
-                m.RoundId = MatchRoundIds.GetMatchRoundId(m.MatchDate);
+                if (eventId == null)
+                {
+                    m = DanskeSpilParser.ParseMatchSearch(doc);
+                    m.RoundId = MatchRoundIds.GetMatchRoundId(m.MatchDate);
+                }
+                else
+                {
+                    var data = DanskeSpilParser.ParseSubMatchData(doc);
+                    var header = data.Headers.First(h => int.Parse(h.MatchId) == matchId);
+                    var odds = data.Odds.Select(o => o).Where(o => o.HeaderId == header.HeaderId).ToList();
+                    m = DanskeSpilParser.ParseSubMatch(header, odds, data.Info);
+                    m.RoundId = MatchRoundIds.GetMatchRoundId(m.MatchDate);
+                }
             }
             catch (Exception e)
             {
@@ -139,33 +154,14 @@ namespace Scraper.Core.Scraper.DanskeSpil
             return m;
         }
 
-        public Match GetSubMatch(int? parentMatchId, int matchId)
-        {
-            Match sm = null;
-            var doc = LoadHtmlPage(string.Format(SubMatchUrl, parentMatchId));
-
-            try
-            {
-                var data = DanskeSpilParser.ParseSubMatchData(doc);
-                var header = data.Headers.First(h => int.Parse(h.MatchId) == matchId);
-                var odds = data.Odds.Select(o => o).Where(o => o.HeaderId == header.HeaderId).ToList();
-                sm = DanskeSpilParser.ParseSubMatch(header, odds);
-                sm.RoundId = MatchRoundIds.GetMatchRoundId(sm.MatchDate);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-            return sm;
-        }
 
 
-
-        public Result GetResult(int matchRound, int matchId)
+        public Result GetMatchResult(int matchRound, int matchId, int? parentMatchId = null)
         {
             Result res = null;
-            var doc = LoadHtmlPage(string.Format(ResultSearch, matchRound, matchId));
+            var doc = LoadHtmlPage(parentMatchId == null 
+                ? string.Format(ResultSearch, matchRound, matchId) 
+                : string.Format(ResultSearch, matchRound, parentMatchId));
 
             try
             {
@@ -178,8 +174,6 @@ namespace Scraper.Core.Scraper.DanskeSpil
 
             return res;
         }
-
-        // TODO: Fix ParentId/MatchId naming discrepencies (naming convention refactor needed).
 
     }
 }

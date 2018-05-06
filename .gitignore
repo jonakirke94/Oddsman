@@ -2,7 +2,7 @@
 **/default.json
 **/test.json
 **/dev.json
-
+**/appsettings.Production.json
 # Logs
 logs
 *.log

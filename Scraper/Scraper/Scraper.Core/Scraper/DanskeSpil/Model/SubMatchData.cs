@@ -6,5 +6,6 @@ namespace Scraper.Core.Scraper.DanskeSpil.Model
     {
         public IList<SubMatchHeaderData> Headers { get; set; }
         public IList<SubMatchOddsData> Odds { get; set; }
+        public SubMatchDataInfo Info { get; set; }
     }
 }
