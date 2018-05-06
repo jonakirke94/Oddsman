@@ -7,7 +7,7 @@ const guard = require('../guards/authguard');
 
 const tournamentController = require('../../controllers/tournament');
 
-router.post("/",/*  adminguard, */ tournamentController.create);
+router.post("/",  adminguard,  tournamentController.create);
 router.post("/:tourid/requests/:userid", adminguard, tournamentController.handle_request);
 router.post("/:tourid/requests/", guard, tournamentController.request)
 router.get("/requests/", guard, tournamentController.get_users_requests)

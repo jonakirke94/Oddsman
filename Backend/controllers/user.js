@@ -1,15 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db/db");
+ const db = require("../db/db"); 
 const msg = require("../db/http");
 const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 const tokenController = require('../controllers/token');
 const jwtDecode = require('jwt-decode');
 
+const seq = require('../models');
+const User = seq.users;
 
 
-exports.getUserByProperty = (column, value, callback) => {
+
+ exports.getUserByProperty = (column, value, callback) => {
   const sql = `SELECT * FROM Users WHERE ${column}=${mysql.escape(value)}`;
   db.executeSql(sql, function(data, err) {
     if (err) {
@@ -77,6 +80,14 @@ exports.update = (req, res, next) => {
 
         return msg.show200(req, res, "Success");
     })
+} 
+
+exports.get_by_id = (id) => {
+  return User.findById(id, {logging:false}).then(user => {
+    console.log('FINDBYID')
+    console.log(user.dataValues);
+     return user.dataValues
+  });
 }
 
 exports.user_signup = (req, res, next) => {
@@ -84,6 +95,8 @@ exports.user_signup = (req, res, next) => {
   const tag = req.body.tag;
   const email = req.body.email;
   const password = req.body.password;
+
+ 
 
   //check if valid email
   req.check("email", "Email is not a valid email").isEmail();
@@ -100,30 +113,32 @@ exports.user_signup = (req, res, next) => {
       msg.show500(req, res, err);
     } 
 
-      const sql = `INSERT INTO Users (Name,Tag,Email,Password)
-      VALUES (${mysql.escape(name)}, ${mysql.escape(tag)}, ${mysql.escape(
-        email
-      )}, ${mysql.escape(hash)})`;
+    const newUser = {
+      Name: name,
+      Tag: tag,
+      Email: email,
+      Password: password,
+      IsAdmin: false
+    }
 
-      db.executeSql(sql, function(data, err) {
-        if (err) {    
-          if(err.sqlMessage.includes('email_unique') || err.sqlMessage.includes('tag_unique')) {
-            let errors = 'Error';
-            if(err.sqlMessage.includes('email_unique')) errors ='Email is already taken';
-            if(err.sqlMessage.includes('tag_unique')) errors ='Tag is already taken';
-            return msg.show409(req, res, "Duplicate entries", errors);
-          }
-
-          return msg.show500(req, res, err);
-        }
-
-        return msg.show200(req, res, "Success");
-      });
-    
+    User
+      .create(newUser, {logging: false})
+      .then(user => {
+        console.log('Signed up user...')
+        console.log(user.dataValues);
+        return msg.show200(req, res, "Success", user.dataValues);
+      })
+      .catch(seq.Sequelize.ValidationError, function (err) {
+        //console.log( err.errors[0].message)
+            return msg.show400(req, res, err.errors[0].message);
+      }).catch(function (err) {
+        console.log(err);
+        return msg.show500(req, res, err);
+      })
   });
 
   //check if email is unique
-/*   module.exports.getUserByProperty('Email', email, function(emailuser) {
+   module.exports.getUserByProperty('Email', email, function(emailuser) {
     if (emailuser) {
       return msg.show409(req, res, "Email exists");
     } 
@@ -152,10 +167,10 @@ exports.user_signup = (req, res, next) => {
           
         });
       })
-  }); */
+  }); 
 };
 
-exports.user_login = (req, res, next) => {
+ exports.user_login = (req, res, next) => {
   const email = req.body.email;
 
   module.exports.getUserByProperty('Email', email, function(data, err) {
@@ -190,7 +205,7 @@ exports.user_login = (req, res, next) => {
       }
     })
   })
-}
+} 
 
 exports.user_all = (req, res, next) => {
 
@@ -214,9 +229,9 @@ exports.user_all = (req, res, next) => {
   });
 }
 
-
+ 
 /* HELPER */
-function getUserId(req) {
+ function getUserId(req) {
   //decode the token and fetch id
   const token = req.headers.authorization.split(' ');
 
@@ -226,4 +241,4 @@ function getUserId(req) {
   } catch (err) {
     return -1;
   }
-}
+} 

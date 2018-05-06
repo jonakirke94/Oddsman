@@ -7,13 +7,17 @@ const jwtDecode = require('jwt-decode');
 
 const seq = require('../models');
 const Tournament = seq.tournaments;
+const Request = seq.requests;
+const Tournament_User = seq.users_tournaments;
+const User = seq.users;
+const { Op } = require('sequelize')
+var moment = require('moment');
+
 
 exports.create = (req, res, next) => {
   const start = req.body.start;
   const end = req.body.end;
   const name = req.body.name;
-
-  console.log(name, start, end) 
 
   const startDate = new Date(start).toISOString().substring(0, 10);
   const endDate = new Date(end).toISOString().substring(0, 10);
@@ -36,18 +40,16 @@ exports.create = (req, res, next) => {
     Start: startDate,
     End: endDate
   }
-
   Tournament
-  .create(newTournament)
-  .then(tour => {
-    return msg.show200(req, res, "Success", tour);
-  })
-  .catch(seq.Sequelize.ValidationError, function (err) {
-        return msg.show400(req, res, err.errors[0].message);
-  }).catch(function (err) {
-    console.log(err);
-    return msg.show500(req, res, err);
-  })
+    .create(newTournament, {logging: false})
+    .then(tour => {
+      return msg.show200(req, res, "Success", tour);
+    })
+    .catch(seq.Sequelize.ValidationError, function (err) {
+          return msg.show400(req, res, err.errors[0].message);
+    }).catch(function (err) {
+      return msg.show500(req, res, err);
+    })
 };
 
 exports.getByName = (name, callback) => {
@@ -62,21 +64,36 @@ exports.getByName = (name, callback) => {
 };
 
 exports.get_all = (req, res, next) => {
-  /* const sql = `SELECT json_array(
-    'TournamentId', t.TournamentId ,'tourName', t.Name) ,'UserId' ,u.UserId, 'UserName' ,u.Name
-    FROM  Tournament_Users tu
-    LEFT JOIN  Tournaments t ON tu.Tournament_Id = t.TournamentId
-    LEFT JOIN  Users u ON u.UserId = tu.User_Id 
-`; */
-const sql = 'SELECT * FROM Tournaments';
+
+  Tournament.findAll({
+  attributes: ['Name', 'Start', 'End'], raw: true,
+  include: {
+    model: seq.users,
+    attributes: ['Name', 'Email', 'Tag'],
+    through: {attributes: []},
+
+
+  },
+  logging: false
+
+  }).then(results => {
+    //console.log(results);
+    return msg.show200(req, res, "Success", results);
+  })
+
+} 
+
+
+/* const sql = 'SELECT * FROM Tournaments';
 
   db.executeSql(sql, function(data, err) {
     if (err) {
       return msg.show500(req, res, err);
     }
     return msg.show200(req, res, "Success", data);
-  });
-};
+  }); */
+
+
 
 exports.request = (req, res, next) => {
   const userId = getUserId(req);
@@ -87,7 +104,49 @@ exports.request = (req, res, next) => {
 
   const tourId = req.params.tourid
 
-  has_requested(userId, tourId, function(result, duplicate, error){
+  has_requested(userId, tourId).then(hasRequest => {
+    if(hasRequest) {
+      console.log('hasrequest')
+      console.log(hasRequest)
+      return msg.show409(req, res, 'User already has a request');
+    }
+
+    is_enrolled(userId, tourId).then(isEnrolled => {
+      if(isEnrolled) {
+        console.log('isEnrolled')
+        console.log(isEnrolled)
+        return msg.show409(req, res, 'User is already enrolled');
+      }
+
+      is_tournament_started(tourId).then(isStarted => {
+        if(isStarted) {
+          console.log('isStarted')
+          console.log(isStarted)
+          return msg.show409(req, res, 'Tournament already started or doesnt exist');
+        }
+
+        //insert request
+        const request = {
+          tournamentTournamentId: tourId,
+          userUserId: userId,
+          Status: 'pending'
+        }
+
+        Request.create(request, {logging: false})
+          .then(req => {
+            return msg.show200(req, res, "Success", req.dataValues);
+          })
+          .catch(function (err) {
+            return msg.show500(req, res, err);
+        })
+      })
+    })
+  })
+
+  
+
+
+  /* has_requested(userId, tourId, function(result, duplicate, error){
     if (error) {
       return msg.show500(req, res, err);
     }
@@ -130,7 +189,7 @@ exports.request = (req, res, next) => {
 
       }) //end is_enrolled
 
-   })  //end has_requested
+   })  //end has_requested */
 }
 
 exports.get_tournament_requests= (req, res, next) => {
@@ -187,20 +246,6 @@ exports.handle_request = (req, res, next) => {
 
 exports.get_participants = (req, res, next) => {
   const tourId = req.params.tourid;
-
-  /* const sql = `SELECT t.Name as tourName, u.Name as userName
-  FROM  Tournament_Users tu
-  JOIN  Tournaments t ON tu.Tournament_Id = t.TournamentId
-  JOIN  Users u ON u.UserId = tu.User_Id 
-  WHERE t.TournamentId = ${mysql.escape(tourId)}`;
-  db.executeSql(sql, function(data, err) {
-    if (err) {
-      return msg.show500(req, res, err);
-    }
-
-    return msg.show200(req, res, "Success", data);
-  }) */
-
   const sql = `SELECT * FROM Tournaments `;
   db.executeSql(sql, function(data, err) {
     if (err) {
@@ -233,7 +278,45 @@ function accept_request(req, res, next) {
   const tourId = req.params.tourid;
   const userId = req.params.userid;
 
-  is_enrolled(userId, tourId, function(result, duplicate, err) {
+    is_enrolled(userId, tourId).then(isEnrolled => {
+      if(isEnrolled) {
+
+        return msg.show409(req, res, 'User is already enrolled');
+      }
+
+      is_tournament_started(tourId).then(isStarted => {
+        if(isStarted) {
+          return msg.show409(req, res, 'Tournament already started or doesnt exist');
+        }
+
+        //set request to accepted
+        Request.update(
+          { Status: 'accepted' },
+          { where: { tournamentTournamentId: tourId, userUserId: userId }}
+        )
+          .then(request => {
+
+            //add user to tournament
+            const tour_user = {
+              tournamentTournamentId: tourId,
+              userUserId: userId,
+            }
+            Tournament_User.create(tour_user, {logging: false})
+            .then(tour_user => {
+              return msg.show200(req, res, "Success");
+            }).catch(err =>{
+              return msg.show500(req, res, err);
+          })
+
+       
+          })
+          .catch(err =>{
+              return msg.show500(req, res, err);
+          })
+      })
+    })
+
+ /*  is_enrolled(userId, tourId, function(result, duplicate, err) {
     if (err) {
       return msg.show500(req, res, err);
     }
@@ -276,7 +359,7 @@ function accept_request(req, res, next) {
         }); //insert into tournament ends
       }); //update request ends
     }); //is_tournament_started ends
-  }); //is_enrolled ends
+  }); //is_enrolled ends */
 };
 
 exports.get_enrolled_tournaments = (req, res, next) => {
@@ -286,7 +369,26 @@ exports.get_enrolled_tournaments = (req, res, next) => {
     return msg.show500(req, res, err);
   }
 
-  const sql = `SELECT *
+  console.log(userId);
+  User.findById(userId).then(user => {
+    console.log('999')
+    console.log(user);
+    return msg.show200(req, res, "Success");
+  })
+
+  /* Tournament.findAll({
+    include: { model: Tournament_User}
+    }).then(results => {
+      console.log('55555')
+      console.log(results);
+      return msg.show200(req, res, "Success", results);
+    }).catch(err => {
+      console.log('CAUGHT ERR')
+      console.log(err)
+      return msg.show500(req, res, err);
+    }) */
+
+  /* const sql = `SELECT *
   FROM Tournaments tour
   LEFT OUTER JOIN Tournament_Users req
   ON (tour.TournamentId = req.Tournament_Id AND req.User_Id = ${mysql.escape(userId)})
@@ -297,7 +399,7 @@ exports.get_enrolled_tournaments = (req, res, next) => {
       return msg.show500(req, res, err);
     }
     return msg.show200(req, res, "Success", data);
-  });
+  }); */
 }
 
 
@@ -339,7 +441,7 @@ function getUserId(req) {
   }
 }
 
-function is_enrolled(userId, tourId, callback) {
+/* function is_enrolled(userId, tourId, callback) {
   const sql = `SELECT * FROM Tournament_Users WHERE User_Id=${mysql.escape(userId)} AND Tournament_ID=${mysql.escape(tourId)}`;
   db.executeSql(sql, function(result, err) {
     if (err) {
@@ -352,9 +454,9 @@ function is_enrolled(userId, tourId, callback) {
 
     callback(result)   
   })
-}
+} */
 
-function has_requested(userId, tourId, callback) {
+/* function has_requested(userId, tourId, callback) {
   const sql = `SELECT * FROM Requests WHERE User_Id=${mysql.escape(userId)} AND Tournament_ID=${mysql.escape(tourId)}`;
   db.executeSql(sql, function(result, err) {
     if (err) {
@@ -367,9 +469,9 @@ function has_requested(userId, tourId, callback) {
 
     callback(result)   
   })
-}
+} */
 
-function is_tournament_started(tourId, callback) {
+/* function is_tournament_started(tourId, callback) {
   const sql = `SELECT * FROM Tournaments WHERE TournamentId=${mysql.escape(tourId)} AND Start > CURDATE()`;
   db.executeSql(sql, function(result, err) {
     if (err) {
@@ -379,4 +481,39 @@ function is_tournament_started(tourId, callback) {
 
     callback(result[0])   
   })
+} */
+
+
+function has_requested(userId, tourId) {
+  return Request.count({
+    where: { tournamentTournamentId: tourId, userUserId: userId }
+  },  {logging: false} ).then(count => {
+    if (count == 0) {
+      return false;
+    }
+    return true;
+  });
+}
+
+function is_enrolled(userId, tourId) {
+  return Tournament_User.count({
+    where: { tournamentTournamentId: tourId, userUserId: userId }
+  }, {logging: false}).then(count => {
+    if (count == 0) {
+      return false;
+    }
+    return true;
+  });
+}
+
+function is_tournament_started(tourId) {
+  const myDate = moment().toDate();
+  return Tournament.count({
+    where: { TournamentId: tourId, Start: { $lt: myDate} }
+  },  {logging: false}).then(count => {
+    if (count == 0) {
+      return false;
+    }
+    return true;
+  });
 }

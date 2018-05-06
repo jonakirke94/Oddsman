@@ -1,4 +1,4 @@
-/* process.env.NODE_ENV = "test";
+ process.env.NODE_ENV = "test";
 
 const config = require("config");
 const chai = require("chai");
@@ -6,20 +6,28 @@ const chaiHttp = require("chai-http");
 const server = require("../server");
 const should = chai.should();
 const tokenController = require("../controllers/token");
-const db = require("../db/db");
+//const db = require("../db/db");
+const truncate = require('../test/truncate');
 
-const user = require("../controllers/user");
+const userController = require("../controllers/user");
 
 chai.use(chaiHttp);
 
 describe("Users", () => {
   beforeEach(done => {
-    db.cleanDatabase(function(data) {
+    truncate.clear(function(result) {
       done();
-    });
+    })
+  });
+  after(function(done) {
+    truncate.clear(function(result) {
+      done();
+
+    })
   });
 
   describe("/GET User", () => {
+
     beforeEach(done => {
       let person = {
         name: "Kobe Bryan",
@@ -36,15 +44,16 @@ describe("Users", () => {
         });
     });
     it("it should GET a user by id 1", done => {
-      //2 since admin has been seeded
-      user.getUserByProperty("UserId", 1, function(data, err) {
-        should.equal(err, undefined);
-        should.equal(data.UserId, 1);
-        should.equal(data.Name, "Kobe Bryan");
+      userController.get_by_id(1).then(match => {
+        should.equal(match.UserId, 1);
+        should.equal(match.Name, 'Kobe Bryan');
+        console.log('Done..')
         done();
-      });
+      })
+      
     });
-    it("it should not GET anything with a crazy id", done => {
+  });
+/*     it("it should not GET anything with a crazy id", done => {
       user.getUserByProperty("UserId", 13249, function(data, err) {
         should.equal(data, undefined);
         done();
@@ -78,8 +87,7 @@ describe("Users", () => {
         should.equal(data, undefined);
         done();
       });
-    });
-  }); */
+    }); */
 
   /****************************** TESTING SIGNUP *****************************/
  /*  describe("/POST User/signup", () => {
@@ -207,7 +215,7 @@ describe("Users", () => {
   });
  */
   /****************************** TESTING LOGIN *****************************/
-/*   describe("/POST User/login", () => {
+/*    describe("/POST User/login", () => {
     beforeEach(done => {
       let person = {
         name: "Kobe Bryan",
@@ -391,12 +399,8 @@ describe("Users", () => {
           });
         });
     });
-  });
+  }); */
 
-  after(function(done) {
-    db.cleanDatabase(function(data) {
-      done();
-    });
-  });
+
 });
- */
+ 

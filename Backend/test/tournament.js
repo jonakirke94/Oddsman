@@ -1,56 +1,52 @@
-process.env.NODE_ENV = "test";
+ process.env.NODE_ENV = "test";
 
 const config = require("config");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const server = require("../server");
 const should = chai.should();
-/* const db = require("../db/db"); */
 const db = require('../models');
 const Tournament = db.tournaments;
 const tokenController = require('../controllers/token')
-
 const token = require("../controllers/token");
+const truncate = require('../test/truncate');
 
-chai.use(chaiHttp);
+chai.use(chaiHttp); 
 
-//Our tournament block
-describe("Tournaments", () => {
-  const tokens = tokenController.generateTokens({
-    Email: "Bryan@email.dk",
-    UserId: 1,
-    IsAdmin: false
-  });
-  beforeEach(done => {
-    db
-    .sequelize
-    .query('SET FOREIGN_KEY_CHECKS = 0', null, {raw: true})
-    .then(function(results) {
-        db.sequelize.sync({force: true})
-        .then(() => {
-          done()
-        });
+
+const tokens = tokenController.generateTokens({
+  Email: "Bryan@email.dk",
+  UserId: 1,
+  IsAdmin: false
+});
+
+const user = {
+  name: "Kobe Bryan",
+  tag: "KB",
+  email: "Bryan@email.dk",
+  password: "123456789",
+};
+
+const tourney = {
+  name: "Season1",
+  start: new Date("2021-03-25T12:00:00Z"),
+  end: new Date("2021-03-25T12:00:00Z")
+};
+
+
+
+describe("/POST tournament", () => {
+    beforeEach(done => {
+      truncate.clear(function(result) {
+        done();
+      })
     });
-  });
-  after(function(done) {
-    db
-    .sequelize
-    .query('SET FOREIGN_KEY_CHECKS = 0', null, {raw: true})
-    .then(function(results) {
-        db.sequelize.sync({force: true})
-        .then(() => {
-          done()
-        });
+    after(function(done) {
+      truncate.clear(function(result) {
+        done();
+      })
     });
-  });
-  //Test post tournament
-  describe("/POST tournament", () => {
     it("it should create a tournament", done => {
-      let tourney = {
-        name: "Season1",
-        start: new Date("2021-03-25T12:00:00Z"),
-        end: new Date("2021-03-25T12:00:00Z")
-      };
       chai
         .request(server)
         .post("/tournament")
@@ -61,8 +57,8 @@ describe("Tournaments", () => {
           done();
         });
     });
-/*     it("it should not create with a start date earlier than today", done => {
-      let tourney = {
+    it("it should not create with a start date earlier than today", done => {
+      const invTour = {
         name: "Season1",
         start: new Date("2015-03-25T12:00:00Z"),
         end: new Date("2015-03-25T12:00:00Z")
@@ -70,7 +66,7 @@ describe("Tournaments", () => {
       chai
         .request(server)
         .post("/tournament")
-        .send(tourney)
+        .send(invTour)
         .end((err, res) => {
           res.should.have.status(400);
           should.exist(res.body.err);
@@ -79,7 +75,7 @@ describe("Tournaments", () => {
         });
     });
     it("it should not create with an end date earlier than start", done => {
-      let tourney = {
+      const invTour = {
         name: "Season1",
         start: new Date("2021-03-25T12:00:00Z"),
         end: new Date("2020-03-25T12:00:00Z")
@@ -87,7 +83,7 @@ describe("Tournaments", () => {
       chai
         .request(server)
         .post("/tournament")
-        .send(tourney)
+        .send(invTour)
         .end((err, res) => {
           res.should.have.status(400);
           should.exist(res.body.err);
@@ -96,11 +92,6 @@ describe("Tournaments", () => {
         });
     });
     it("it should only create on unique name", done => {
-      let tourney = {
-        name: "Season1",
-        start: new Date("2021-03-25T12:00:00Z"),
-        end: new Date("2021-03-25T12:00:00Z")
-      };
       chai
         .request(server)
         .post("/tournament")
@@ -111,51 +102,60 @@ describe("Tournaments", () => {
             .post("/tournament")
             .send(tourney)
             .end((err, res) => {
-              res.should.have.status(409);
-              res.body.msg.should.be.eql("Tournament name exists");
+              res.should.have.status(400);
+              res.body.err.should.be.eql("Name must be unique");
               done();
             });
         });
     });
     it("it not create with missing arguments", done => {
-      let tourney = {
+      const invTour = {
         start: new Date("2021-03-25T12:00:00Z"),
         end: new Date("2021-03-25T12:00:00Z")
       };
       chai
         .request(server)
         .post("/tournament")
-        .send(tourney)
+        .send(invTour)
         .end((err, res) => {
           res.should.have.status(400);
           should.exist(res.body.err);
           res.body.err.should.be.a("array");
           done();
         });
-    }); */
-  });
- /*  describe("/GET tournament", () => {
+    });    
+});
+
+describe("/GET tournaments", () => {
     beforeEach(done => {
-      //Seed database
-      let tourney = {
-        name: "Season1",
-        start: new Date("2021-03-25T12:00:00Z"),
-        end: new Date("2021-03-25T12:00:00Z")
-      };
-      chai
-        .request(server)
-        .post("/tournament")
-        .send(tourney)
-        .end((err, res) => {
-          done();
-        });
+      truncate.clear(function(result) {   
+        chai
+          .request(server)
+          .post("/tournament")
+          .send(tourney)
+          .end((err, res) => {
+              chai
+              .request(server)
+              .post("/user/signup")
+              .send(user)
+              .end((err, res) => {
+                  done();
+              });
+          });
+      })
+    });
+    after(function(done) {
+      truncate.clear(function(result) {
+        done();
+      })
     });
 
-    it("it should fetch all tournaments", done => {
+    it("it should get all tournaments", done => {
       chai
         .request(server)
         .get("/tournament")
         .end((err, res) => {
+          console.log('4444')
           res.should.have.status(200);
           res.body.data.should.be.a("array");
           res.body.data.should.have.length(1);
@@ -163,8 +163,46 @@ describe("Tournaments", () => {
           done();
         });
     });
+/*     it("it should get the enrolled tournament", done => {
+      chai
+        .request(server)
+        .post(`/tournament/1/requests`)
+        .set("authorization", "Bearer " + tokens.access_token)
+        .end((err, res) => {
+          res.should.have.status(200);
+          chai
+            .request(server)
+            .post(`/tournament/1/requests/1`)
+            .send({status: 'accepted'})
+            .end((err, res) => {
+              res.should.have.status(200);
+              chai
+                .request(server)
+                .get("/tournament/enrolled")
+                .set("authorization", "Bearer " + tokens.access_token)
+                .end((err, res) => {
+              
+                  res.should.have.status(200);
+                  done();
+                });
+            });
+        });
+    }); */
+  /*   it("it should NOT get the enrolled tournament with no token", done => {
+      chai
+        .request(server)
+        .get("/tournament/enrolled")
+        .set("authorization", "Bearer ")
+        .end((err, res) => {
+          res.should.have.status(500);
+          done();
+        });
+    });   */
+})
+    
+    
     //ENROLLED TOURNAMENTS FOR USER
-    describe("/Should get enrolled tournaments", () => {
+/*       describe("/Should get enrolled tournaments", () => {
       const user = {
         name: "Kobe Bryan",
         tag: "KB",
@@ -179,7 +217,7 @@ describe("Tournaments", () => {
           .end((err, res) => {
             done();
           });
-      });
+      });  
       it("it should get the enrolled tournament", done => {
         chai
           .request(server)
@@ -205,8 +243,8 @@ describe("Tournaments", () => {
                   });
               });
           });
-      });
-      it("it should NOT get the enrolled tournament with no token", done => {
+      });  */
+    /*   it("it should NOT get the enrolled tournament with no token", done => {
         chai
           .request(server)
           .get("/tournament/enrolled")
@@ -215,11 +253,16 @@ describe("Tournaments", () => {
             res.should.have.status(500);
             done();
           });
-      });
-    });
-  }); */
-})
+      }); */
+  
+
+  //Test post tournament
+
+
+    
+ 
 /* 
+
 describe("Requests", () => {
   const tokens = tokenController.generateTokens({
     Email: "Bryan@email.dk",
@@ -424,12 +467,7 @@ describe("Requests", () => {
             });
         });
     });
-  })
+  }) */
 
- */
 
-/* 
-
-})
- */
 
