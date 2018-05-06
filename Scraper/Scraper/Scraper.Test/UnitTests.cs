@@ -5,19 +5,19 @@ using Xunit;
 
 namespace Scraper.Test
 {
-    public class DanskeSpilScraperTest : BaseTest
+    public class UnitTests : BaseTest
     {
         
 
         [Fact]
-        public void GetMatches_Test()
+        public void GetMatches()
         {
             var matches = Scraper.GetUpcomingMatches();
             Assert.NotEmpty(matches);
         }
 
         [Fact]
-        public void GetSubMatches_Test()
+        public void GetSubMatches()
         {
             Assert.NotNull(UpcomingMatch);
             var submatches = Scraper.GetSubMatches(UpcomingMatch.EventId);
@@ -26,14 +26,14 @@ namespace Scraper.Test
 
 
         [Fact]
-        public void GetMatchRounds_Test()
+        public void GetMatchRounds()
         {
             var rounds = Scraper.GetMatchRounds();
             Assert.NotEmpty(rounds);
         }
 
         [Fact]
-        public void GetMatch_Test()
+        public void GetMatch()
         {
             Assert.NotNull(UpcomingMatch);
             var match = Scraper.GetUpcomingMatch(UpcomingMatch.MatchId);
@@ -43,7 +43,7 @@ namespace Scraper.Test
 
 
         [Fact]
-        public void GetSubMatch_Test()
+        public void GetSubMatch()
         {
             Assert.NotNull(UpcomingMatch);
             var subMatch = Scraper.GetUpcomingMatch(SubMatch.MatchId, UpcomingMatch.EventId);
@@ -52,7 +52,7 @@ namespace Scraper.Test
 
 
         [Fact]
-        public void GetResult_Test()
+        public void GetResult()
         {
             var result = Scraper.GetMatchResult(453, 235);
             Assert.NotNull(result);

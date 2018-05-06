@@ -14,12 +14,12 @@ using Xunit;
 namespace Scraper.Test
 {
     [Collection("Sequential")]
-    public class DanskeSpilApiTest : BaseTest
+    public class IntegrationTests : BaseTest
     {
         private readonly TestServer _server;
         private readonly HttpClient _client;
 
-        public DanskeSpilApiTest()
+        public IntegrationTests()
         {
             _server = new TestServer(
                 WebHost.CreateDefaultBuilder()
@@ -30,7 +30,7 @@ namespace Scraper.Test
 
 
         [Fact]
-        public async void GetUpcomingMatch_Test()
+        public async void GetUpcomingMatch()
         {
             var resp = await _client.GetAsync($"api/v1/Match/{UpcomingMatch.MatchId}");
 
@@ -40,7 +40,7 @@ namespace Scraper.Test
         }
 
         [Fact]
-        public async void GetSubMatch_Test()
+        public async void GetSubMatch()
         {
             var resp = await _client.GetAsync($"api/v1/Match/{SubMatch.MatchId}/{UpcomingMatch.EventId}");
 

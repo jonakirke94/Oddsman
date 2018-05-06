@@ -12,12 +12,12 @@ namespace Scraper.Test
     public class BaseTest
     {
 
-        protected readonly IList<Match> UpcomingMatches;
-        protected readonly Match UpcomingMatch;
-        protected readonly Match SubMatch;
-        protected readonly DanskeSpilScraper Scraper;
+        protected static readonly IList<Match> UpcomingMatches;
+        protected static readonly Match UpcomingMatch;
+        protected static readonly Match SubMatch;
+        protected static readonly DanskeSpilScraper Scraper;
 
-        public BaseTest()
+        static BaseTest()
         {
             Scraper = new DanskeSpilScraper();
 

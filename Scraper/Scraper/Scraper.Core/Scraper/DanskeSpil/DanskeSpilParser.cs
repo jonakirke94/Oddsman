@@ -219,7 +219,8 @@ namespace Scraper.Core.Scraper.DanskeSpil
             var headers = JsonConvert.DeserializeObject<List<SubMatchHeaderData>>($"[{matches[1].Value}]");
             var odds = JsonConvert.DeserializeObject<List<SubMatchOddsData>>($"[{matches[2].Value}]");
 
-            info.ParentId = headers.First().EventId;
+            info.ParentId = int.Parse(headers.First().MatchId);
+            headers.RemoveAt(0); // remove ParentMatch
 
             return new SubMatchData{ Headers = headers, Odds = odds, Info = info};
         }

@@ -20,5 +20,7 @@ namespace Scraper.Core.Data
         {
             base.OnModelCreating(modelBuilder);
         }
+
+        
     }
 }
