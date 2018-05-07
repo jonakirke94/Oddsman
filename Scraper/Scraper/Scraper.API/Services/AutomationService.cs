@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.Extensions.DependencyInjection;
 using Scraper.Core.Data;
 using Scraper.Core.Model;
 using Scraper.Core.Scraper.DanskeSpil;
+using Scraper.Core.Scraper.DanskeSpil.Model;
 
 namespace Scraper.API.Services
 {
@@ -21,7 +23,11 @@ namespace Scraper.API.Services
 
         public async Task ScrapeUpcomingMatches()
         {
-            var matches = new List<Match>(_scraper.GetUpcomingMatches());
+            var matches = new List<Match>(_scraper.GetUpcomingMatches(
+                new DateRange
+                {   
+                    Start = DateTime.Now.AddDays(2).Date, End = DateTime.Now.AddDays(5).Date
+                }));
 
             var validMatches = matches
                 .Select(m => m)
@@ -42,15 +48,46 @@ namespace Scraper.API.Services
                 subMatches.AddRange(sms);
             });
 
+            var allValidMatches = validMatches.Concat(subMatches).ToList();
+
             try
             {
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     using (var db = scope.ServiceProvider.GetRequiredService<DanskeSpilContext>())
                     {
-                        db.Matches.AddRange(validMatches);
-                        db.Matches.AddRange(subMatches);
+                        db.Matches.AddRange(allValidMatches);
                         await db.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task ScrapeMatchResult(int matchId)
+        {
+            try
+            {
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    using (var db = scope.ServiceProvider.GetRequiredService<DanskeSpilContext>())
+                    {
+                        var match = db.Matches.Find(matchId);
+                        if (match != null)
+                        {
+                            var result = _scraper.GetMatchResult(match.RoundId, matchId, match.ParentId);
+                            if (result != null)
+                            {
+                                db.Results.Add(result);
+                                await db.SaveChangesAsync();
+                            }
+                            // TODO: Add complete failure notifications
+                        }
+                        // TODO: Add complete failure notifications
                     }
                 }
             }
@@ -69,9 +106,19 @@ namespace Scraper.API.Services
         /// <returns></returns>
         private static bool WithinValidDate(DateTime date)
         {
+            var today = DateTime.Now.Date;
+            switch (today.DayOfWeek) // Making sure that the next occuring weekday is Monday or Saturday (not counting the current day).
+            {
+                case DayOfWeek.Monday:
+                    today = today.AddDays(1);
+                    break;
+                case DayOfWeek.Saturday:
+                    today = today.AddDays(1);
+                    break;
+            }
 
-            var nextSaturday = GetNextWeekday(DateTime.Now.Date, DayOfWeek.Saturday).AddHours(12);
-            var nextMonday = GetNextWeekday(DateTime.Now.Date, DayOfWeek.Monday).AddHours(23).AddMinutes(59);
+            var nextSaturday = GetNextWeekday(today, DayOfWeek.Saturday).AddHours(12);
+            var nextMonday = GetNextWeekday(today, DayOfWeek.Monday).AddHours(23).AddMinutes(59);
 
             return date >= nextSaturday && date <= nextMonday;
         }
