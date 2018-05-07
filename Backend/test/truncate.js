@@ -1,29 +1,27 @@
 const db = require('../models');
 
+/* 
+db.sequelize.query("set FOREIGN_KEY_CHECKS=0").then(
+  db.users_tournaments.sync({force:true, logging: false}).then(
+      db.requests.sync({force:true, logging: false}).then(
+          db.users.sync({force:true, logging: false}).then(
+              db.tournaments.sync({force:true, logging: false}).then(
+                  done() 
+              )
+          )
+      )
+  )   
+ 
+);  
+ */
 
 
 
-/*     const user = db.users;
-    const tournament = db.tournaments
-    const usertournament = db.users_tournaments
-    const request = db.requests  */
-
-
-    /* db.sequelize.query("set FOREIGN_KEY_CHECKS=0").then(
-        db.users_tournaments.sync({force:true, logging: false}).then(
-            db.requests.sync({force:true, logging: false}).then(
-                db.users.sync({force:true, logging: false}).then(
-                    db.tournaments.sync({force:true, logging: false}).then(
-                        done() 
-                    )
-                )
-            )
-        )   
-       
-    );  */
 
 
 exports.clear = (done) => {
+
+
     let multiQueryArr = [];    
     multiQueryArr.push('SET FOREIGN_KEY_CHECKS = 0;');
     Object.values(db.sequelize.models).forEach(element => {

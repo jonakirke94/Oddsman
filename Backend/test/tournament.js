@@ -33,19 +33,18 @@ const tourney = {
   end: new Date("2021-03-25T12:00:00Z")
 };
 
-
+beforeEach(done => {
+  truncate.clear(function(result) {
+    done();
+  })
+});
+afterEach(function(done) {
+  truncate.clear(function(result) {
+    done();
+  })
+});
 
 describe("/POST tournament", () => {
-    beforeEach(done => {
-      truncate.clear(function(result) {
-        done();
-      })
-    });
-    after(function(done) {
-      truncate.clear(function(result) {
-        done();
-      })
-    });
     it("it should create a tournament", done => {
       chai
         .request(server)
@@ -128,7 +127,6 @@ describe("/POST tournament", () => {
 
 describe("/GET tournaments", () => {
     beforeEach(done => {
-      truncate.clear(function(result) {   
         chai
           .request(server)
           .post("/tournament")
@@ -141,13 +139,7 @@ describe("/GET tournaments", () => {
               .end((err, res) => {
                   done();
               });
-          });
-      })
-    });
-    afterEach(function(done) {
-      truncate.clear(function(result) {
-        done();
-      })
+          });    
     });
 
     it("it should get all tournaments", done => {
@@ -161,9 +153,8 @@ describe("/GET tournaments", () => {
           res.body.data[0].should.be.a("object");
           done();
         });
-    }); 
-  }) 
-/*     it("it should get the enrolled tournament", done => {
+    });
+    it("it should get the enrolled tournament", done => {
       chai
         .request(server)
         .post(`/tournament/1/requests`)
@@ -181,24 +172,29 @@ describe("/GET tournaments", () => {
                 .get("/tournament/enrolled")
                 .set("authorization", "Bearer " + tokens.access_token)
                 .end((err, res) => {
-              
+                  res.body.data.should.be.a("array");
+                  res.body.data.should.have.length(1);
                   res.should.have.status(200);
                   done();
                 });
             });
         });
-    }); 
-  /*   it("it should NOT get the enrolled tournament with no token", done => {
+    });
+    it("it should NOT get the enrolled tournament with no token", done => {
       chai
         .request(server)
         .get("/tournament/enrolled")
         .set("authorization", "Bearer ")
         .end((err, res) => {
-          res.should.have.status(500);
+          res.body.err.should.eql('No token provided')
+          res.should.have.status(400);
           done();
         });
-    });   */
-/* }) */
+    });    
+}) 
+       
+   
+/* }) 
     
     
     //ENROLLED TOURNAMENTS FOR USER
@@ -373,8 +369,23 @@ describe("Requests", () => {
       });
     })
   });
-
+ */
   describe("/POST handle request request", () => {
+    beforeEach(done => {
+      chai
+        .request(server)
+        .post("/tournament")
+        .send(tourney)
+        .end((err, res) => {
+            chai
+            .request(server)
+            .post("/user/signup")
+            .send(user)
+            .end((err, res) => {
+                done();
+            });
+        });    
+    });
     it("it should accept a request", done => {
         chai
           .request(server)
@@ -394,21 +405,24 @@ describe("Requests", () => {
           res.should.have.status(200);      
           done();         
         })
-    })
-    
+    })  
     it("it should NOT accept a request if already enrolled", done => {
-      db.executeSql(`INSERT INTO Tournament_Users (User_Id,Tournament_Id)
-      VALUES (1,1)`, function(data, err){
         chai
         .request(server)
         .post("/tournament/1/requests/1") //accept request
         .send({status: 'accepted'})
         .end((err, res) => {
-          res.body.msg.should.be.eql("User is already enrolled");
-          res.should.have.status(409);      
-          done();         
+          res.should.have.status(200);   
+          chai
+            .request(server)
+            .post("/tournament/1/requests/1") //accept request
+            .send({status: 'accepted'})
+            .end((err, res) => {
+              res.body.msg.should.be.eql("User is already enrolled");
+              res.should.have.status(409);      
+              done();         
+            })    
         })
-      })
     })
     it("it should NOT accept a request to an invalid tournament", done => {
       chai
@@ -421,6 +435,7 @@ describe("Requests", () => {
             done();         
           })
     })
+    
     it("it should NOT accept a request from an invalid user", done => {
       chai
           .request(server)
@@ -431,6 +446,7 @@ describe("Requests", () => {
             done();         
           })
     })
+      
     it("it should NOT accept a request to a started tournament", done => {
       const tourney = { name: "Season1", start: new Date("2014-03-25T12:00:00Z"), end: new Date("2014-03-25T12:00:00Z") };
       chai
@@ -449,6 +465,7 @@ describe("Requests", () => {
             });
         }); 
     });
+    
     it("it should NOT post a request to a started tournament", done => {
       const tourney = { name: "Season1", start: new Date("2014-03-25T12:00:00Z"), end: new Date("2014-03-25T12:00:00Z") };
       chai
@@ -466,8 +483,8 @@ describe("Requests", () => {
               done();
             });
         });
-    });
-  }) */
+    }); 
+  })
 
 
 

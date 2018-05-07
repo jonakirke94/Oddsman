@@ -27,7 +27,6 @@ exports.show401 = function(req, res, next) {
 exports.show404 = function(req, res, next) {
     const error = new Error("Not Found");
     error.status = 404;
-    console.log('404 ERR!')
     next(error);
 };
 
@@ -55,6 +54,5 @@ exports.show500 = function(req, res, err) {
         message: err.message
       }
     });
-    console.log(err.message);
-    next();
+    res.end();
   }

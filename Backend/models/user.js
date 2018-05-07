@@ -1,6 +1,6 @@
 module.exports = function(sequelize, DataTypes) {
     const User = sequelize.define("users", {
-        UserId: {type: DataTypes.INTEGER, primaryKey: true, allowNull: false, autoIncrement: true},
+        Id: {type: DataTypes.INTEGER, primaryKey: true, allowNull: false, autoIncrement: true},
         Name: {type: DataTypes.TEXT, allowNull: false},
         Tag: {type: DataTypes.STRING(5), unique: true, allowNull: false},
         Email: {type: DataTypes.STRING(45), validate: {isEmail: true}, allowNull: false, unique: true},
