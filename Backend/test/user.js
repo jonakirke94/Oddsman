@@ -6,53 +6,130 @@ const chaiHttp = require("chai-http");
 const server = require("../server");
 const should = chai.should();
 const tokenController = require("../controllers/token");
-//const db = require("../db/db");
-const truncate = require('../test/truncate');
 
 const userController = require("../controllers/user");
 
+const truncate = require('../test/truncate');
 chai.use(chaiHttp);
 
-describe("Users", () => {
-  beforeEach(done => {
-    truncate.clear(function(result) {
-      done();
-    })
-  });
-  after(function(done) {
-    truncate.clear(function(result) {
-      done();
+const user = {
+  name: "Kobe Bryan",
+  tag: "KB",
+  email: "Bryan@email.dk",
+  password: "123456789"
+};
 
-    })
-  });
 
-/*   describe("/GET User", () => {
+beforeEach(done => {
+  truncate.clear(function(result) {   
+          chai
+          .request(server)
+          .post("/user/signup")
+          .send(user)
+          .end((err, res) => {
+              done();
+          });    
+  })
+});
+afterEach(function(done) {
+  truncate.clear(function(result) {
+    done();
+  })
+});
 
-    beforeEach(done => {
-      let person = {
-        name: "Kobe Bryan",
-        tag: "KB",
-        email: "Bryan@email.dk",
-        password: "123456789"
-      };
-      chai
-        .request(server)
-        .post("/user/signup")
-        .send(person)
-        .end((err, res) => {
-          done();
-        });
-    });
-    it("it should GET a user by id 1", done => {
-      userController.get_by_id(1).then(match => {
-        should.equal(match.UserId, 1);
-        should.equal(match.Name, 'Kobe Bryan');
-        console.log('Done..')
-        done();
-      })
+describe("/GET Users", () => {
+  it("it should get a user with id 1", () => {
+    return userController.get_by_id(1, function(user) {
+      should.equal(user.UserId, 1);
+      should.equal(user.Name, "Kobe Bryan");
       
-    });
-  }); */
+    })
+  })   
+
+  it("it should not GET anything with a crazy id", () => {
+    return userController.get_by_id(12314).then(user => {
+      should.equal(user, null);
+    })
+   })   
+}) 
+
+/* 
+beforeEach( done => {
+  return truncate.clear(function(result) {  
+    done();
+  })
+});
+after( done =>  {
+  return truncate.clear(function(result) {  
+    done();
+  })
+});
+
+describe("GET /Users", () => {
+    let person = {
+      name: "Kobe Bryan",
+      tag: "KB",
+      email: "Bryan@email.dk",
+      password: "123456789"
+    };
+    beforeEach( done => {
+       chai
+      .request(server)
+      .post("/user/signup")
+      .send(person)
+      .end((err, res) => {
+        console.log(res.statusCode);
+        return done();
+      });  
+    })
+
+    it("it should GET a user by id 2", done => {
+
+     done();
+   });
+
+   
+    it("it should not GET anything with a crazy id", done => {
+   
+     done();
+    })   
+
+  })
+
+ 
+ */
+ 
+
+
+  /* userController.get_by_id(1239, function(user) {
+       done();
+     }) */  
+ 
+
+
+
+  
+   /*  */
+  
+
+ 
+
+     /* it("it should not GET anything with a crazy id", function() {
+      return userController.get_by_id(13249)
+      .then(function(match) {
+        //should.equal(data, undefined);
+      })
+    })  */
+
+
+
+
+
+
+
+ 
+
+
 /*     it("it should not GET anything with a crazy id", done => {
       user.getUserByProperty("UserId", 13249, function(data, err) {
         should.equal(data, undefined);
@@ -89,6 +166,8 @@ describe("Users", () => {
       });
     }); */
 
+
+ 
   /****************************** TESTING SIGNUP *****************************/
  /*  describe("/POST User/signup", () => {
     it("it should signup a user ", done => {
@@ -401,6 +480,3 @@ describe("Users", () => {
     });
   }); */
 
-
-});
- 

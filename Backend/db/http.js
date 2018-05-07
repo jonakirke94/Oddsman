@@ -13,6 +13,7 @@ exports.show400 = function(req, res, err) {
   res.status(400).json({
     err: err
   });
+  res.end();
 };
 
 //unauthorized
@@ -26,6 +27,7 @@ exports.show401 = function(req, res, next) {
 exports.show404 = function(req, res, next) {
     const error = new Error("Not Found");
     error.status = 404;
+    console.log('404 ERR!')
     next(error);
 };
 
@@ -35,6 +37,7 @@ exports.show409 = function(req, res, msg, err) {
     msg: msg,
     err: err
   });
+  res.end();
 };
 
 //token refresh
@@ -52,4 +55,6 @@ exports.show500 = function(req, res, err) {
         message: err.message
       }
     });
+    console.log(err.message);
+    next();
   }

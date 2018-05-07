@@ -2,11 +2,11 @@ const db = require('../models');
 
 
 
-exports.clear = (done) => {
-    const user = db.users;
+
+/*     const user = db.users;
     const tournament = db.tournaments
     const usertournament = db.users_tournaments
-    const request = db.requests 
+    const request = db.requests  */
 
 
     /* db.sequelize.query("set FOREIGN_KEY_CHECKS=0").then(
@@ -22,16 +22,19 @@ exports.clear = (done) => {
        
     );  */
 
-    var multiQueryArr = [];    
+
+exports.clear = (done) => {
+    let multiQueryArr = [];    
     multiQueryArr.push('SET FOREIGN_KEY_CHECKS = 0;');
     Object.values(db.sequelize.models).forEach(element => {
       multiQueryArr.push('TRUNCATE '+ element.name + ";");
     });
     multiQueryArr.push('SET FOREIGN_KEY_CHECKS = 1;');
 
-    db.sequelize.query(multiQueryArr.join(' '), {type: db.sequelize.QueryTypes.RAW}).then(function(){
+    db.sequelize.query(multiQueryArr.join(' ')).then(function(){
       done();
-    });
+    })
+}
     
 
     /* Object.values(db.sequelize.models).map(function(model) {
@@ -80,4 +83,3 @@ exports.clear = (done) => {
           )
       );  */  
  
-}

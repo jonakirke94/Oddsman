@@ -83,11 +83,13 @@ exports.update = (req, res, next) => {
 } 
 
 exports.get_by_id = (id) => {
-  return User.findById(id, {logging:false}).then(user => {
-    console.log('FINDBYID')
-    console.log(user.dataValues);
-     return user.dataValues
-  });
+  return User.findById(id).then(user => {
+    if(user == null) {
+      return null;
+    } else {
+     return user.dataValues;
+    }
+  })
 }
 
 exports.user_signup = (req, res, next) => {
@@ -95,8 +97,6 @@ exports.user_signup = (req, res, next) => {
   const tag = req.body.tag;
   const email = req.body.email;
   const password = req.body.password;
-
- 
 
   //check if valid email
   req.check("email", "Email is not a valid email").isEmail();
@@ -110,7 +110,7 @@ exports.user_signup = (req, res, next) => {
 
   bcrypt.hash(password, 10, (err, hash) => {
     if (err) {
-      msg.show500(req, res, err);
+      return msg.show500(req, res, err);
     } 
 
     const newUser = {
@@ -122,52 +122,14 @@ exports.user_signup = (req, res, next) => {
     }
 
     User
-      .create(newUser, {logging: false})
-      .then(user => {
-        console.log('Signed up user...')
-        console.log(user.dataValues);
+      .create(newUser).then(user => {
         return msg.show200(req, res, "Success", user.dataValues);
       })
       .catch(seq.Sequelize.ValidationError, function (err) {
         //console.log( err.errors[0].message)
-            return msg.show400(req, res, err.errors[0].message);
-      }).catch(function (err) {
-        console.log(err);
-        return msg.show500(req, res, err);
+        return msg.show400(req, res, err.errors[0].message);
       })
   });
-
-  //check if email is unique
-   module.exports.getUserByProperty('Email', email, function(emailuser) {
-    if (emailuser) {
-      return msg.show409(req, res, "Email exists");
-    } 
-      //check if tag is unique
-      module.exports.getUserByProperty('Tag', tag, function(taguser) {
-        if(taguser) {
-          return msg.show409(req, res, "Tag exists");    
-        }
-
-        bcrypt.hash(password, 10, (err, hash) => {
-          if (err) {
-            msg.show500(req, res, err);
-          } 
-
-            const sql = `INSERT INTO Users (Name,Tag,Email,Password)
-            VALUES (${mysql.escape(name)}, ${mysql.escape(tag)}, ${mysql.escape(
-              email
-            )}, ${mysql.escape(hash)})`;
-    
-            db.executeSql(sql, function(data, err) {
-              if (err) {
-                return msg.show500(req, res, err);
-              }
-              return msg.show200(req, res, "Success");
-            });
-          
-        });
-      })
-  }); 
 };
 
  exports.user_login = (req, res, next) => {

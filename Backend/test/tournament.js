@@ -144,7 +144,7 @@ describe("/GET tournaments", () => {
           });
       })
     });
-    after(function(done) {
+    afterEach(function(done) {
       truncate.clear(function(result) {
         done();
       })
@@ -155,14 +155,14 @@ describe("/GET tournaments", () => {
         .request(server)
         .get("/tournament")
         .end((err, res) => {
-          console.log('4444')
           res.should.have.status(200);
           res.body.data.should.be.a("array");
           res.body.data.should.have.length(1);
           res.body.data[0].should.be.a("object");
           done();
         });
-    });
+    }); 
+  }) 
 /*     it("it should get the enrolled tournament", done => {
       chai
         .request(server)
@@ -187,7 +187,7 @@ describe("/GET tournaments", () => {
                 });
             });
         });
-    }); */
+    }); 
   /*   it("it should NOT get the enrolled tournament with no token", done => {
       chai
         .request(server)
@@ -198,7 +198,7 @@ describe("/GET tournaments", () => {
           done();
         });
     });   */
-})
+/* }) */
     
     
     //ENROLLED TOURNAMENTS FOR USER
