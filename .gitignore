@@ -1,9 +1,10 @@
-**/config.json
 **/nodemon.json
 **/default.json
 **/test.json
 **/dev.json
-
+**/appsettings.Production.json
+**/dbsettings.Production.json
+**/config/config.json
 # Logs
 logs
 *.log

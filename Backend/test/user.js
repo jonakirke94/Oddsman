@@ -26,7 +26,7 @@ describe("Users", () => {
     })
   });
 
-  describe("/GET User", () => {
+/*   describe("/GET User", () => {
 
     beforeEach(done => {
       let person = {
@@ -52,7 +52,7 @@ describe("Users", () => {
       })
       
     });
-  });
+  }); */
 /*     it("it should not GET anything with a crazy id", done => {
       user.getUserByProperty("UserId", 13249, function(data, err) {
         should.equal(data, undefined);

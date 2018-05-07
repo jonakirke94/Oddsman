@@ -9,7 +9,7 @@ exports.clear = (done) => {
     const request = db.requests 
 
 
-/*     db.sequelize.query("set FOREIGN_KEY_CHECKS=0").then(
+    /* db.sequelize.query("set FOREIGN_KEY_CHECKS=0").then(
         db.users_tournaments.sync({force:true, logging: false}).then(
             db.requests.sync({force:true, logging: false}).then(
                 db.users.sync({force:true, logging: false}).then(
@@ -22,9 +22,24 @@ exports.clear = (done) => {
        
     );  */
 
-     
+    var multiQueryArr = [];    
+    multiQueryArr.push('SET FOREIGN_KEY_CHECKS = 0;');
+    Object.values(db.sequelize.models).forEach(element => {
+      multiQueryArr.push('TRUNCATE '+ element.name + ";");
+    });
+    multiQueryArr.push('SET FOREIGN_KEY_CHECKS = 1;');
+
+    db.sequelize.query(multiQueryArr.join(' '), {type: db.sequelize.QueryTypes.RAW}).then(function(){
+      done();
+    });
+    
+
+    /* Object.values(db.sequelize.models).map(function(model) {
+      return model.destroy({ truncate: true });
+    });  */
+    //sequelize.query();
  
-    db.sequelize
+    /* db.sequelize
       .query("set FOREIGN_KEY_CHECKS=0", {logging: false})
       .then(
         usertournament
@@ -63,6 +78,6 @@ exports.clear = (done) => {
                   )
               )
           )
-      );   
+      );  */  
  
 }
