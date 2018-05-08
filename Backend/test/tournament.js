@@ -8,6 +8,7 @@
  const db = require('../models');
  const Tournament = db.tournaments;
  const tokenController = require('../controllers/token')
+ const token = require("../controllers/token");
  const helper = require('../test/helper');
 
  chai.use(chaiHttp);
@@ -18,7 +19,13 @@
    IsAdmin: false
  });
 
-
+/*  const user = {
+   name: "Kobe Bryan",
+   tag: "KB",
+   email: "Bryan@email.dk",
+   password: "123456789",
+ };
+ */
 
   /************************************************
  * ENDPOINT EXPLANATION
@@ -33,15 +40,17 @@
 
  beforeEach(done => {
   helper.clean(function (result) {
+    const tour = helper.getTour({});
+    const user = helper.getUser({});
     chai
     .request(server)
     .post("/tournament") //ENDPOINT[1]
-    .send(helper.getTour({}))
+    .send(tour)
     .end((err, res) => {
       chai
         .request(server)
         .post("/user/signup") //ENDPOINT[2]
-        .send(helper.getUser({}))
+        .send(user)
         .end((err, res) => {
           done();
         });
@@ -54,7 +63,7 @@
    })
  });
 
-/* describe("/POST tournament", () => {
+describe("/POST tournament", () => {
   it("it should create a tournament", done => {
     chai
       .request(server)
@@ -299,7 +308,11 @@ describe("/POST manage request", () => {
       });
   });
   it("it should NOT accept a request to a started tournament", done => {
-
+    const tourney = {
+      name: "Season1",
+      start: new Date("2014-03-25T12:00:00Z"),
+      end: new Date("2014-03-25T12:00:00Z")
+    };
     chai
       .request(server)
       .post("/tournament") //ENDPOINT[1]
@@ -321,6 +334,7 @@ describe("/POST manage request", () => {
       });
   });
   it("it should NOT post a request to a started tournament", done => {
+
     chai
       .request(server)
       .post("/tournament")  //ENDPOINT[1]
@@ -415,4 +429,3 @@ describe("/POST request", () => {
   });
 });
 
- */

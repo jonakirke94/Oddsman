@@ -33,7 +33,7 @@ exports.clean = (done) => {
 
 exports.getTour = (options) => {
   const createTour = ({
-    name = 'Season 1',
+    name = "Season 1",
     start = new Date("2021-03-25T12:00:00Z"),
     end = new Date("2021-03-25T12:00:00Z")
   } = options) => ({

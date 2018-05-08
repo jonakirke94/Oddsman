@@ -49,11 +49,22 @@ exports.create = (req, res, next) => {
       return msg.show200(req, res, "Success", tour);
     })
     .catch(seq.Sequelize.ValidationError, function (err) {
-      return msg.show409(req, res, "Validation Error", err.errors[0].message);
+      return msg.show409(req, res,"Validation Error" ,  err.errors[0].message);
     }).catch(function (err) {
       return msg.show500(req, res, err);
     })
 };
+
+/* exports.getByName = (name, callback) => {
+  const sql = `SELECT * FROM Tournaments WHERE Name=${mysql.escape(name)}`;
+  db.executeSql(sql, function (data, err) {
+    if (err) {
+      callback(null, err);
+    } else {
+      callback(data[0]);
+    }
+  });
+}; */
 
 exports.get_all = (req, res, next) => {
 
@@ -68,8 +79,12 @@ exports.get_all = (req, res, next) => {
       },
     },
   }).then(results => {
-
+    console.log('Found All tournaments')
+    console.log(results);
     return msg.show200(req, res, "Success", results);
+  }).catch(function (err) {
+    console.log(err);
+    return msg.show500(req, res, err);
   })
 
 }
@@ -266,6 +281,8 @@ exports.get_enlisted_tournaments = (req, res, next) => {
     }
   }).then(user => {
     return msg.show200(req, res, "Success", user.dataValues.tournaments);
+  }).catch(err => {
+    return msg.show500(req, res, err);
   }).catch(err => {
     return msg.show500(req, res, err);
   })

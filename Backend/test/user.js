@@ -49,7 +49,7 @@ afterEach(function(done) {
   })
 });
  
-describe("/GET Users", () => {
+/* describe("/GET Users", () => {
   it("it should get a user with id 1", () => {
     return userController.getById(1, function(user) {
       should.equal(user.Id, 1);
@@ -302,4 +302,4 @@ describe("/PATCH Users", () => {
 
 })
  
-  
+   */
