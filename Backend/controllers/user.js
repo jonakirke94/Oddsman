@@ -117,7 +117,7 @@ exports.user_signup = (req, res, next) => {
       Name: name,
       Tag: tag,
       Email: email,
-      Password: password,
+      Password: hash,
       IsAdmin: false
     }
 
