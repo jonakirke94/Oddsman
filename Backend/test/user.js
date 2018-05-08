@@ -1,4 +1,4 @@
- process.env.NODE_ENV = "test";
+/*  process.env.NODE_ENV = "test";
 
 const config = require("config");
 const chai = require("chai");
@@ -323,7 +323,7 @@ describe("/PATCH Users", () => {
       });
   });
 
-  it("it should not anything with empty inputs", done => {
+  it("it should not anything with empty inputs", done =>  {
     chai
       .request(server)
       .patch("/user/")
@@ -337,3 +337,4 @@ describe("/PATCH Users", () => {
 
 })
  
+ */

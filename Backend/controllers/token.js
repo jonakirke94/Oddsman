@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const db = require('../db/db');
+//const db = require('../db/db');
 const msg = require("../db/http");
 const mysql = require('mysql');
 const config = require('config');
 const jwt = require("jsonwebtoken");
+
 const userController = require('./user');
 const seq = require('../models');
 const User = seq.users;

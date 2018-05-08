@@ -1,4 +1,4 @@
-/* process.env.NODE_ENV = "test";
+ process.env.NODE_ENV = "test";
 
 const config = require("config");
 const chai = require("chai");
@@ -12,21 +12,17 @@ const token = require("../controllers/token");
 chai.use(chaiHttp);
 
 
-
-//Our parent block
-describe("Tokens", () => {
-  //Test generate tokens
-  describe("/Generate tokens", () => {
-    it("it should return tokens and expirations", done => {
-      const user = {Email: "Test@Test.dk", UserId: 1}
-      const tokens = token.generateTokens(user);
-      should.not.equal(tokens.access_token, undefined);
-      should.not.equal(tokens.refresh_token, undefined);
-      should.not.equal(tokens.access_exp, undefined);
-      should.not.equal(tokens.refresh_exp, undefined);
-      done();
-    });
+describe("/Generate tokens", () => {
+  it("it should return tokens and expirations", done => {
+    const user = {Email: "Test@Test.dk", UserId: 1}
+    const tokens = token.generateTokens(user);
+    should.not.equal(tokens.access_token, undefined);
+    should.not.equal(tokens.refresh_token, undefined);
+    should.not.equal(tokens.access_exp, undefined);
+    should.not.equal(tokens.refresh_exp, undefined);
+    done();
   });
-
 });
- */
+
+
+ 
