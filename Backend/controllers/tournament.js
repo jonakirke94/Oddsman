@@ -79,8 +79,6 @@ exports.get_all = (req, res, next) => {
       },
     },
   }).then(results => {
-    console.log('Found All tournaments')
-    console.log(results);
     return msg.show200(req, res, "Success", results);
   }).catch(function (err) {
     console.log(err);

@@ -19,15 +19,7 @@
    IsAdmin: false
  });
 
-/*  const user = {
-   name: "Kobe Bryan",
-   tag: "KB",
-   email: "Bryan@email.dk",
-   password: "123456789",
- };
- */
-
-  /************************************************
+ /************************************************
  * ENDPOINT EXPLANATION
  * 1: CREATE A TOURNAMENT
  * 2: CREATE A USER
@@ -38,37 +30,41 @@
  * 7: GET DELISTED TOURNAMENTS FOR A USER
 ************************************************/
 
- beforeEach(done => {
-  helper.clean(function (result) {
-    const tour = helper.getTour({});
-    const user = helper.getUser({});
-    chai
-    .request(server)
-    .post("/tournament") //ENDPOINT[1]
-    .send(tour)
-    .end((err, res) => {
+describe('TOURNAMENTS', () => {
+  beforeEach(done => {
+    helper.clean(function (result) {
+      const tour = helper.getTour({});
+      const user = helper.getUser({});
       chai
-        .request(server)
-        .post("/user/signup") //ENDPOINT[2]
-        .send(user)
-        .end((err, res) => {
-          done();
-        });
-    });
-   })
- });
- afterEach(function (done) {
-   helper.clean(function (result) {
-     done();
-   })
- });
+      .request(server)
+      .post("/tournament") //ENDPOINT[1]
+      .send(tour)
+      .end((err, res) => {
+        chai
+          .request(server)
+          .post("/user/signup") //ENDPOINT[2]
+          .send(user)
+          .end((err, res) => {
+            done();
+          });
+      });
+     })
+   });
+   afterEach(function (done) {
+     helper.clean(function (result) {
+       done();
+     })
+   });
+
+
 
 describe("/POST tournament", () => {
   it("it should create a tournament", done => {
+    const tour = helper.getTour({name: 'Season 28'})
     chai
       .request(server)
       .post("/tournament") //ENDPOINT[1]
-      .send(helper.getTour({name: 'Season 28'}))
+      .send(tour)
       .end((err, res) => {
         res.should.have.status(200);
         res.body.msg.should.be.eql("Success");
@@ -110,20 +106,15 @@ describe("/POST tournament", () => {
       });
   });
   it("it should only create on unique name", done => {
-    chai
-      .request(server)
-      .post("/tournament")
-      .send(helper.getTour({}))
-      .end((err, res) => {
+    const tour = helper.getTour({})
         chai
           .request(server)
           .post("/tournament") //ENDPOINT[1]
-          .send(helper.getTour({}))
+          .send(tour)
           .end((err, res) => {
             res.should.have.status(409);
             res.body.err.should.be.eql("Name must be unique");
             done();
-          });
       });
   });
   it("it not create with missing arguments", done => {
@@ -158,10 +149,11 @@ describe("/GET tournaments", () => {
       });
   });
   it("it should get all delisted tournaments", done => {
+    const tour = helper.getTour({name: 'Season 2'})
     chai
       .request(server)
       .post("/tournament") //ENDPOINT[1]
-      .send(helper.getTour({name: 'Season 2'}))
+      .send(tour)
       .end((err, res) => {
         chai
           .request(server)
@@ -308,15 +300,11 @@ describe("/POST manage request", () => {
       });
   });
   it("it should NOT accept a request to a started tournament", done => {
-    const tourney = {
-      name: "Season1",
-      start: new Date("2014-03-25T12:00:00Z"),
-      end: new Date("2014-03-25T12:00:00Z")
-    };
+    const tour = helper.getTour({start: new Date("2014-03-25T12:00:00Z")});
     chai
       .request(server)
       .post("/tournament") //ENDPOINT[1]
-      .send(helper.getTour({start: new Date("2014-03-25T12:00:00Z")}))
+      .send(tour)
       .end((err, res) => {
         chai
           .request(server)
@@ -334,11 +322,11 @@ describe("/POST manage request", () => {
       });
   });
   it("it should NOT post a request to a started tournament", done => {
-
+    const tour = helper.getTour({start: new Date("2014-03-25T12:00:00Z")})
     chai
       .request(server)
       .post("/tournament")  //ENDPOINT[1]
-      .send(helper.getTour({start: new Date("2014-03-25T12:00:00Z")}))
+      .send(tour)
       .end((err, res) => {
         chai
           .request(server)
@@ -429,3 +417,4 @@ describe("/POST request", () => {
   });
 });
 
+})

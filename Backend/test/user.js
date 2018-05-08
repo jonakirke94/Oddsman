@@ -32,24 +32,26 @@ const tokens2 = tokenController.generateTokens({
  * 3: UPDATE A USER
 ************************************************/
 
-beforeEach(done => {
-  helper.clean(function(result) {   
-          chai
-          .request(server)
-          .post("/user/signup") //ENDPOINT[1]
-          .send(helper.getUser({}))
-          .end((err, res) => {
-              done();
-          });    
-  })
-});
-afterEach(function(done) {
-  helper.clean(function(result) {
-    done();
-  })
-});
+describe("/Users", () => {
+  beforeEach(done => {
+    const user = helper.getUser({})
+    helper.clean(function(result) {   
+            chai
+            .request(server)
+            .post("/user/signup") //ENDPOINT[1]
+            .send(user)
+            .end((err, res) => {
+                done();
+            });    
+    })
+  });
+  afterEach(function(done) {
+    helper.clean(function(result) {
+      done();
+    })
+  });
  
-/* describe("/GET Users", () => {
+describe("/GET Users", () => {
   it("it should get a user with id 1", () => {
     return userController.getById(1, function(user) {
       should.equal(user.Id, 1);
@@ -76,11 +78,11 @@ afterEach(function(done) {
 
 describe("/POST Users/Signup", () => {
   it("it should signup a user ", done => {
-
+    const user = helper.getUser({tag: 'RS', email: 'new@email.dk'})
     chai
       .request(server)
       .post("/user/signup") //ENDPOINT[1]
-      .send(helper.getUser({tag: 'RS', email: 'new@email.dk'}))
+      .send(user)
       .end((err, res) => {
         res.should.have.status(200);
         res.body.msg.should.be.eql("Success");
@@ -301,5 +303,4 @@ describe("/PATCH Users", () => {
   });
 
 })
- 
-   */
+})
