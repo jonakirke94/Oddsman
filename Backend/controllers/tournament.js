@@ -55,17 +55,6 @@ exports.create = (req, res, next) => {
     })
 };
 
-/* exports.getByName = (name, callback) => {
-  const sql = `SELECT * FROM Tournaments WHERE Name=${mysql.escape(name)}`;
-  db.executeSql(sql, function (data, err) {
-    if (err) {
-      callback(null, err);
-    } else {
-      callback(data[0]);
-    }
-  });
-}; */
-
 exports.get_all = (req, res, next) => {
 
   Tournament.findAll({
@@ -277,8 +266,6 @@ exports.get_enlisted_tournaments = (req, res, next) => {
     }
   }).then(user => {
     return msg.show200(req, res, "Success", user.dataValues.tournaments);
-  }).catch(err => {
-    return msg.show500(req, res, err);
   }).catch(err => {
     return msg.show500(req, res, err);
   })

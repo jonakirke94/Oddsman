@@ -1,16 +1,15 @@
  process.env.NODE_ENV = "test";
 
  const config = require("config");
-
- const tokenController = require('../controllers/token')
- const db = require('../models');
- const Tournament = db.tournaments;
- const helper = require('../test/helper');
-
  const chai = require("chai");
  const chaiHttp = require("chai-http");
  const server = require("../server");
  const should = chai.should();
+ const db = require('../models');
+ const Tournament = db.tournaments;
+ const tokenController = require('../controllers/token')
+ const helper = require('../test/helper');
+
  chai.use(chaiHttp);
 
  const tokens = tokenController.generateTokens({
@@ -18,6 +17,7 @@
    UserId: 1,
    IsAdmin: false
  });
+
 
 
   /************************************************
@@ -54,7 +54,7 @@
    })
  });
 
-describe("/POST tournament", () => {
+/* describe("/POST tournament", () => {
   it("it should create a tournament", done => {
     chai
       .request(server)
@@ -299,6 +299,7 @@ describe("/POST manage request", () => {
       });
   });
   it("it should NOT accept a request to a started tournament", done => {
+
     chai
       .request(server)
       .post("/tournament") //ENDPOINT[1]
@@ -414,3 +415,4 @@ describe("/POST request", () => {
   });
 });
 
+ */

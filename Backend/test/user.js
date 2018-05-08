@@ -1,30 +1,17 @@
-/*  process.env.NODE_ENV = "test";
+process.env.NODE_ENV = "test";
 
 const config = require("config");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const server = require("../server");
 const should = chai.should();
-const tokenController = require("../controllers/token");
 
+const tokenController = require("../controllers/token");
 const userController = require("../controllers/user");
 
-const truncate = require('../test/truncate');
+const helper = require('../test/helper');
+
 chai.use(chaiHttp);
-
-const user = {
-  name: "Kobe Bryan",
-  tag: "KB",
-  email: "Bryan@email.dk",
-  password: "123456789"
-};
-
-const user2 = {
-  name: "Ryan",
-  tag: "RB",
-  email: "Ryan@email1.dk",
-  password: "123456789"
-};
 
 const tokens = tokenController.generateTokens({
   Email: "Bryan@email.dk",
@@ -38,46 +25,48 @@ const tokens2 = tokenController.generateTokens({
   IsAdmin: false
 });
 
+  /************************************************
+ * ENDPOINT EXPLANATION
+ * 1: CREATE A USER
+ * 2: LOG A USER IN
+ * 3: UPDATE A USER
+************************************************/
 
 beforeEach(done => {
-  truncate.clear(function(result) {   
+  helper.clean(function(result) {   
           chai
           .request(server)
-          .post("/user/signup")
-          .send(user)
+          .post("/user/signup") //ENDPOINT[1]
+          .send(helper.getUser({}))
           .end((err, res) => {
               done();
           });    
   })
 });
 afterEach(function(done) {
-  truncate.clear(function(result) {
+  helper.clean(function(result) {
     done();
   })
 });
-
+ 
 describe("/GET Users", () => {
   it("it should get a user with id 1", () => {
     return userController.getById(1, function(user) {
       should.equal(user.Id, 1);
-      should.equal(user.Name, "Kobe Bryan");
-      
+      should.equal(user.Name, "Kobe Bryan");   
     })
   })   
-
   it("it should not GET anything with a crazy id", () => {
     return userController.getById(12314).then(user => {
       should.equal(user, null);
     })
   })
-  
   it("it should GET a user by email correctly", () => {
       return userController.getByEmail('Bryan@email.dk').then(user => {
       should.equal(user.Id, 1);
       should.equal(user.Name, "Kobe Bryan");   
     })
   });
-
   it("it should not GET anything with a crazy email", () => {
     return userController.getByEmail('asdasda@email.dk').then(user => {
       should.equal(user, null);
@@ -87,16 +76,11 @@ describe("/GET Users", () => {
 
 describe("/POST Users/Signup", () => {
   it("it should signup a user ", done => {
-    let person = {
-      name: "RonnieOSullivan",
-      tag: "RS",
-      email: "RonnieOSullivan@email.dk",
-      password: "123456789"
-    };
+
     chai
       .request(server)
-      .post("/user/signup")
-      .send(person)
+      .post("/user/signup") //ENDPOINT[1]
+      .send(helper.getUser({tag: 'RS', email: 'new@email.dk'}))
       .end((err, res) => {
         res.should.have.status(200);
         res.body.msg.should.be.eql("Success");
@@ -105,16 +89,11 @@ describe("/POST Users/Signup", () => {
   });
 
   it("it should only signup unique emails", done => {
-    let duplicateEmail = {
-      name: "Test",
-      tag: "LL",
-      email: "Bryan@email.dk",
-      password: "123456789"
-    };
+       const user = helper.getUser({name: 'FancyName', tag: 'FF'})
         chai
           .request(server)
-          .post("/user/signup")
-          .send(duplicateEmail)
+          .post("/user/signup")  //ENDPOINT[1]
+          .send(user)
           .end((err, res) => {
             res.should.have.status(409);
             done();
@@ -122,16 +101,11 @@ describe("/POST Users/Signup", () => {
   });
 
   it("it should only signup unique tags", done => {
-    let duplicateTag = {
-      name: "Kobe Bryan",
-      tag: "KB",
-      email: "Kobe@smail.dk",
-      password: "123456789"
-    };
+    const user = helper.getUser({name: 'FancyName', email: 'fancy@email.dk'})
         chai
           .request(server)
-          .post("/user/signup")
-          .send(duplicateTag)
+          .post("/user/signup") //ENDPOINT[1]
+          .send(user)
           .end((err, res) => {
             res.should.have.status(409);
             done();
@@ -139,16 +113,11 @@ describe("/POST Users/Signup", () => {
   });
 
   it("it should not signup invalid emails", done => {
-    let invalidEmail = {
-      name: "Kobe Bryan",
-      tag: "KB",
-      email: "Bryanemail.dk",
-      password: "123456789"
-    };
+    const user = helper.getUser({email: 'Bryanemail.dk'})
     chai
       .request(server)
-      .post("/user/signup")
-      .send(invalidEmail)
+      .post("/user/signup") //ENDPOINT[1]
+      .send(user)
       .end((err, res) => {
         res.should.have.status(400);
         should.exist(res.body.err);
@@ -159,16 +128,11 @@ describe("/POST Users/Signup", () => {
 
   
   it("it should not signup with a short password", done => {
-    let invalidPassword = {
-      name: "Kobe Bryan",
-      tag: "KB",
-      email: "Bryanmail.dk",
-      password: "1234567"
-    };
+    const user = helper.getUser({password: '123456'})
     chai
       .request(server)
-      .post("/user/signup")
-      .send(invalidPassword)
+      .post("/user/signup") //ENDPOINT[1]
+      .send(user)
       .end((err, res) => {
         res.should.have.status(400);
         should.exist(res.body.err);
@@ -185,7 +149,7 @@ describe("/POST Users/Signup", () => {
     };
     chai
       .request(server)
-      .post("/user/signup")
+      .post("/user/signup") //ENDPOINT[1]
       .send(missingFields)
       .end((err, res) => {
         res.should.have.status(409);
@@ -203,7 +167,7 @@ describe("/POST Users/Login", () => {
   it("it should login a user ", done => {
     chai
       .request(server)
-      .post("/user/login")
+      .post("/user/login") //ENDPOINT[2]
       .send(login)
       .end((err, res) => {
           userController.getById(1).then(user => {
@@ -216,7 +180,7 @@ describe("/POST Users/Login", () => {
   it("it should return generated tokens",  done => {
     chai
       .request(server)
-      .post("/user/login")
+      .post("/user/login") //ENDPOINT[2]
       .send(login)
       .end((err, res) => {
         userController.getById(1).then(user => {
@@ -231,7 +195,7 @@ describe("/POST Users/Login", () => {
   it("it should save a refresh token on login", done => {
     chai
       .request(server)
-      .post("/user/login")
+      .post("/user/login") //ENDPOINT[2]
       .send(login)
       .end((err, res) => {
         userController.getById(1).then(user => {
@@ -245,7 +209,7 @@ describe("/POST Users/Login", () => {
     let invalidLogin = { email: "Bryan@email1.dk", password: "123456" };
     chai
       .request(server)
-      .post("/user/login")
+      .post("/user/login") //ENDPOINT[2]
       .send(invalidLogin)
       .end((err, res) => {
         res.should.have.status(401);
@@ -257,7 +221,7 @@ describe("/POST Users/Login", () => {
     let invalidLogin = { email: "Bryan@email2.dk", password: "123456789" };
     chai
       .request(server)
-      .post("/user/login")
+      .post("/user/login") //ENDPOINT[2]
       .send(invalidLogin)
       .end((err, res) => {
         res.should.have.status(401);
@@ -268,10 +232,11 @@ describe("/POST Users/Login", () => {
 })
 
 describe("/PATCH Users", () => {
+  const user2 = helper.getUser({name: 'Ryan', tag: 'RB', email: 'Ryan@email1.dk'})
   beforeEach(done => {
     chai
       .request(server)
-      .post("/user/signup")
+      .post("/user/signup") //ENDPOINT[1]
       .send(user2)
       .end((err, res) => {
         done();
@@ -282,7 +247,7 @@ describe("/PATCH Users", () => {
     let values = { tag: "XXX", name: "newname" };
     chai
       .request(server)
-      .patch("/user/")
+      .patch("/user/") //ENDPOINT[3]
       .set("authorization", "Bearer " + tokens.access_token)
       .send(values)
       .end((err, res) => {
@@ -299,7 +264,7 @@ describe("/PATCH Users", () => {
     let values = { email: "Bryan@email.dk", name: "newname" };
     chai
       .request(server)
-      .patch("/user/")
+      .patch("/user/") //ENDPOINT[3]
       .set("authorization", "Bearer " + tokens2.access_token)
       .send(values)
       .end((err, res) => {
@@ -313,7 +278,7 @@ describe("/PATCH Users", () => {
     let values = { tag: "KB", name: "newname" };
     chai
       .request(server)
-      .patch("/user/")
+      .patch("/user/") //ENDPOINT[3]
       .set("authorization", "Bearer " + tokens2.access_token)
       .send(values)
       .end((err, res) => {
@@ -326,7 +291,7 @@ describe("/PATCH Users", () => {
   it("it should not anything with empty inputs", done =>  {
     chai
       .request(server)
-      .patch("/user/")
+      .patch("/user/") //ENDPOINT[3]
       .set("authorization", "Bearer " + tokens.access_token)
       .send({})
       .end((err, res) => {
@@ -337,4 +302,4 @@ describe("/PATCH Users", () => {
 
 })
  
- */
+  
