@@ -33,7 +33,7 @@ const tourney = {
   end: new Date("2021-03-25T12:00:00Z")
 };
 
-beforeEach(done => {
+/* beforeEach(done => {
   truncate.clear(function(result) {
     done();
   })
@@ -191,7 +191,10 @@ describe("/GET tournaments", () => {
           done();
         });
     });    
-}) 
+})  */
+
+
+/* ABOVE WORKS */
        
    
 /* }) 

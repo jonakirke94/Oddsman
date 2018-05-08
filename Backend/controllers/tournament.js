@@ -136,8 +136,6 @@ exports.request = (req, res, next) => {
     })
   })
 
-  
-
 
   /* has_requested(userId, tourId, function(result, duplicate, error){
     if (error) {

@@ -12,7 +12,7 @@ const User = seq.users;
 
 
 
- exports.getUserByProperty = (column, value, callback) => {
+/*  exports.getUserByProperty = (column, value, callback) => {
   const sql = `SELECT * FROM Users WHERE ${column}=${mysql.escape(value)}`;
   db.executeSql(sql, function(data, err) {
     if (err) {
@@ -21,12 +21,12 @@ const User = seq.users;
       callback(data[0]);
     }
   });
-};
+}; */
 
 exports.update = (req, res, next) => {
-  const userid = getUserId(req);
+  const userId = getUserId(req);
 
-  if(userid === -1) {
+  if(userId === -1) {
     return msg.show500(req, res, 'Couldnt fetch userid');
   }
 
@@ -34,19 +34,64 @@ exports.update = (req, res, next) => {
   const email = req.body.email;
   const tag = req.body.tag;
 
-  if(!name && !email && !tag) {
-    return msg.show400(req, res, "No inputs provided");
+  //array to hold fields which will be updated
+  let fields = [];
+
+  if(name) {
+    fields.push('Name')
   }
 
-   //check if valid email
-   if(email) {
-    req.check("email", "Email is not a valid email").isEmail(); 
+  if (email) {
+    req.check("email", "Email is not a valid email").isEmail();
     const errors = req.validationErrors();
     if (errors) {
       return msg.show400(req, res, errors);
     }
-   }
 
+    fields.push("Email");
+  }
+
+  if(tag) {
+    fields.push('Tag')
+  }
+
+  if(fields.length === 0) {
+    return msg.show400(req, res, "No inputs provided");
+  }
+
+ console.log('Fields:');
+ console.log(fields)
+
+ console.log('UserId:' + userId)
+
+  module.exports.getById(userId).then(user => {
+    user.update(
+    
+      { Name: name, Tag: tag, Email: email },
+      { where: { Id : userId } },
+      { fields: fields}, //only update fields with a value
+      
+    ).then(success => {
+      return msg.show200(req, res, "Success");
+    }).catch(err, function (err) {
+          console.log(err);
+            //seq.Sequelize.ValidationError
+          //return msg.show409(req, res,'Validation Error', err.errors[0].message);
+                  return msg.show409(req, res,'Validation Error', err);
+  
+    })
+  })
+
+
+ 
+  
+
+
+
+ 
+
+
+/* 
   let buildSql = "UPDATE Users SET ";
 
     //add if new email isn't empty
@@ -79,12 +124,25 @@ exports.update = (req, res, next) => {
       }
 
         return msg.show200(req, res, "Success");
-    })
+    }) */
 } 
 
-exports.get_by_id = (id) => {
+exports.getById = (id) => {
   return User.findById(id).then(user => {
+    console.log(user);
     if(user == null) {
+      return null;
+    } else {
+     return user.dataValues;
+    }
+  })
+}
+
+exports.getByEmail = (email) => {
+  return User.findOne({
+    where: {'Email': email}
+  }).then(user => {
+    if(user === null) {
       return null;
     } else {
      return user.dataValues;
@@ -126,48 +184,49 @@ exports.user_signup = (req, res, next) => {
         return msg.show200(req, res, "Success", user.dataValues);
       })
       .catch(seq.Sequelize.ValidationError, function (err) {
-        //console.log( err.errors[0].message)
-        return msg.show400(req, res, err.errors[0].message);
+        return msg.show409(req, res,'Validation Error', err.errors[0].message);
       })
   });
 };
 
  exports.user_login = (req, res, next) => {
-  const email = req.body.email;
+   const email = req.body.email;
 
-  module.exports.getUserByProperty('Email', email, function(data, err) {
+   module.exports.getByEmail(email).then(user => {
+     if (!user || !req.body.password) {
+       return msg.show401(req, res, next);
+     }
 
-    //check if the user exists
-    if (typeof data == 'undefined' || !req.body.password) {
-      return msg.show401(req, res, next);
-    }
+     //check if passwords match
+     bcrypt.compare(req.body.password, user.Password, (err, result) => {
+       if (err) {
+         return msg.show500(req, res, err);
+       }
+       if (result) {
+         //generate tokens
+         const tokens = tokenController.generateTokens(user);
 
-    //check if passwords match
-    bcrypt.compare(req.body.password, data.Password, (err, result) => {
-      if (err) {
-        return msg.show500(req, res, err);
-      }
-      if (result) {
+         //save refreshtoken to user
+         tokenController.saveRefreshToken(
+           user.Id,
+           tokens.refresh_token,
+           function(success) {
+             const client_data = {
+               access_token: tokens.access_token,
+               refresh_exp: tokens.refresh_exp,
+               isAdmin: user.IsAdmin
+             };
 
-        //generate tokens
-        const tokens = tokenController.generateTokens(data);
-
-        tokenController.saveRefreshToken(data.UserId, tokens.refresh_token, function(success) {
-          const client_data = {
-            access_token: tokens.access_token,
-            refresh_exp: tokens.refresh_exp,
-            isAdmin: data.IsAdmin
-          }
-  
-          return msg.show200(req, res, "Success", client_data)
-        });
-
-      }  else {
-        return msg.show401(req, res, next);
-      }
-    })
-  })
-} 
+             return msg.show200(req, res, "Success", client_data);
+           }
+         );
+       } else {
+         //wrong password
+         return msg.show401(req, res, next);
+       }
+     });
+   });
+ }; 
 
 exports.user_all = (req, res, next) => {
 

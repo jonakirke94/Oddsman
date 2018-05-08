@@ -6,7 +6,8 @@ const mysql = require('mysql');
 const config = require('config');
 const jwt = require("jsonwebtoken");
 const userController = require('./user');
-
+const seq = require('../models');
+const User = seq.users;
 
 
 exports.refreshToken = (req, res, next) => {
@@ -36,18 +37,15 @@ exports.refreshToken = (req, res, next) => {
   });
 }
 
-exports.saveRefreshToken = (id, refreshtoken, callback) => { 
-    db.executeSql(
-      `UPDATE Users SET Refreshtoken=${mysql.escape(refreshtoken)} WHERE UserId=${mysql.escape(id)}`,
-      function(data, err) {
-        if (err) {
-          msg.show500(req, res, err);
-        }
+exports.saveRefreshToken = (id, refreshtoken, callback) => {
 
-        return callback(data);
-
-      }
-    );
+    User.update({ RefreshToken: refreshtoken }, { where: { Id: id } })
+      .then(success => {
+        return callback(success);
+      })
+      .catch(function(err) {
+        return msg.show500(req, res, err);
+      });
   };
 
 exports.generateTokens = user => {
