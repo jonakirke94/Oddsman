@@ -19,6 +19,25 @@ const user = {
   password: "123456789"
 };
 
+const user2 = {
+  name: "Ryan",
+  tag: "RB",
+  email: "Ryan@email1.dk",
+  password: "123456789"
+};
+
+const tokens = tokenController.generateTokens({
+  Email: "Bryan@email.dk",
+  UserId: 1,
+  IsAdmin: false
+});
+
+const tokens2 = tokenController.generateTokens({
+  Email: "Ryan@email1.dk",
+  UserId: 2,
+  IsAdmin: false
+});
+
 
 beforeEach(done => {
   truncate.clear(function(result) {   
@@ -249,6 +268,16 @@ describe("/POST Users/Login", () => {
 })
 
 describe("/PATCH Users", () => {
+  beforeEach(done => {
+    chai
+      .request(server)
+      .post("/user/signup")
+      .send(user2)
+      .end((err, res) => {
+        done();
+      });
+  });
+
   it("it should update a user", done => {
     let values = { tag: "XXX", name: "newname" };
     chai
@@ -266,125 +295,45 @@ describe("/PATCH Users", () => {
         })
       });
   });
+  it("it should not update a user with a non-unique email", done => {
+    let values = { email: "Bryan@email.dk", name: "newname" };
+    chai
+      .request(server)
+      .patch("/user/")
+      .set("authorization", "Bearer " + tokens2.access_token)
+      .send(values)
+      .end((err, res) => {
+        res.should.have.status(409);
+        res.body.err.should.be.eql("Email must be unique");
+        done();
+      });
+  });
+
+  it("it should not update a user with duplicate tag", done => {
+    let values = { tag: "KB", name: "newname" };
+    chai
+      .request(server)
+      .patch("/user/")
+      .set("authorization", "Bearer " + tokens2.access_token)
+      .send(values)
+      .end((err, res) => {
+        res.should.have.status(409);
+        res.body.err.should.be.eql("Tag must be unique");
+        done();
+      });
+  });
+
+  it("it should not anything with empty inputs", done => {
+    chai
+      .request(server)
+      .patch("/user/")
+      .set("authorization", "Bearer " + tokens.access_token)
+      .send({})
+      .end((err, res) => {
+        res.should.have.status(400);
+        done();
+      });
+  });
 
 })
  
-
- 
-
- /* 
-
- */
-  /****************************** TESTING LOGIN *****************************/
-/*    describe("/POST User/login", () => {
-   
-    });
-  
-
-
-
-  describe("/PATCH User/", () => {
-    beforeEach(done => {
-      let person = {
-        name: "Kobe Bryan",
-        tag: "KB",
-        email: "Bryan@email1.dk",
-        password: "123456789"
-      };
-      const tokens = tokenController.generateTokens({
-        Email: "Bryan@email1.dk",
-        UserId: 1,
-        IsAdmin: false
-      });
-      chai
-        .request(server)
-        .post("/user/signup")
-        .send(person)
-        .end((err, res) => {
-          done();
-        });
-    });
-
-    it("it should update a user", done => {
-      let values = { tag: "XXX", name: "newname" };
-      chai
-        .request(server)
-        .patch("/user/")
-        .set("authorization", "Bearer " + tokens.access_token)
-        .send(values)
-        .end((err, res) => {
-          res.should.have.status(200);
-          user.getUserByProperty("UserId", 1, function(data, err) {
-            data.Name.should.be.eql("newname");
-            data.Email.should.be.eql("Bryan@email1.dk");
-            data.Tag.should.be.eql("XXX");
-            done();
-          });
-        });
-    });
-    describe("/PATCH User/ duplicate inputs", () => {
-      const xtokensx = tokenController.generateTokens({
-        Email: "Ryan@email1.dk",
-        UserId: 2,
-        IsAdmin: false
-      });
-      beforeEach(done => {
-        let person = {
-          name: "Ryan",
-          tag: "RB",
-          email: "Ryan@email1.dk",
-          password: "123456789"
-        };
-        chai
-          .request(server)
-          .post("/user/signup")
-          .send(person)
-          .end((err, res) => {
-            done();
-          });
-      });
-      it("it should not update a user with duplicate email", done => {
-        let values = { email: "Bryan@email1.dk", name: "newname" };
-        chai
-          .request(server)
-          .patch("/user/")
-          .set("authorization", "Bearer " + xtokensx.access_token)
-          .send(values)
-          .end((err, res) => {
-            res.should.have.status(409);
-            res.body.err.should.be.eql("Email is already taken");
-            done();
-          });
-      });
-      it("it should not update a user with duplicate tag", done => {
-        let values = { tag: "KB", name: "newname" };
-        chai
-          .request(server)
-          .patch("/user/")
-          .set("authorization", "Bearer " + xtokensx.access_token)
-          .send(values)
-          .end((err, res) => {
-            res.should.have.status(409);
-            res.body.err.should.be.eql("Tag is already taken");
-            done();
-          });
-      });
-    });
-    it("it should not anything with empty inputs", done => {
-      chai
-        .request(server)
-        .patch("/user/")
-        .set("authorization", "Bearer " + tokens.access_token)
-        .send({})
-        .end((err, res) => {
-          res.should.have.status(400);
-          user.getUserByProperty("UserId", 1, function(data, err) {
-            data.Name.should.be.eql("Kobe Bryan");
-            data.Email.should.be.eql("Bryan@email1.dk");
-            data.Tag.should.be.eql("KB");
-            done();
-          });
-        });
-    });
-  }); */
-

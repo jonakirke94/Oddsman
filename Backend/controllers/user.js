@@ -1,27 +1,16 @@
 const express = require("express");
-const router = express.Router();
- const db = require("../db/db"); 
-const msg = require("../db/http");
-const mysql = require("mysql");
+const router = express.Router(); 
+
+
 const bcrypt = require("bcrypt");
-const tokenController = require('../controllers/token');
 const jwtDecode = require('jwt-decode');
 
-const seq = require('../models');
-const User = seq.users;
+const tokenController = require('../controllers/token');
 
+const msg = require("../db/http");
+const db = require('../models');
+const User = db.users;
 
-
-/*  exports.getUserByProperty = (column, value, callback) => {
-  const sql = `SELECT * FROM Users WHERE ${column}=${mysql.escape(value)}`;
-  db.executeSql(sql, function(data, err) {
-    if (err) {
-      callback(null, err);
-    } else {
-      callback(data[0]);
-    }
-  });
-}; */
 
 exports.update = (req, res, next) => {
   const userId = getUserId(req);
@@ -59,77 +48,20 @@ exports.update = (req, res, next) => {
     return msg.show400(req, res, "No inputs provided");
   }
 
- console.log('Fields:');
- console.log(fields)
-
- console.log('UserId:' + userId)
-
-  module.exports.getById(userId).then(user => {
-    user.update(
-    
-      { Name: name, Tag: tag, Email: email },
-      { where: { Id : userId } },
-      { fields: fields}, //only update fields with a value
-      
-    ).then(success => {
-      return msg.show200(req, res, "Success");
-    }).catch(err, function (err) {
-          console.log(err);
-            //seq.Sequelize.ValidationError
-          //return msg.show409(req, res,'Validation Error', err.errors[0].message);
-                  return msg.show409(req, res,'Validation Error', err);
-  
-    })
-  })
-
-
- 
-  
-
-
-
- 
-
-
-/* 
-  let buildSql = "UPDATE Users SET ";
-
-    //add if new email isn't empty
-    if (email) {
-      buildSql += `Email=${mysql.escape(email)},`
-    }
-
-    if(name) {
-      buildSql += `Name=${mysql.escape(name)},`
-    }
-
-    if(tag) {
-      buildSql += `Tag=${mysql.escape(tag)},`
-    }
-
-      //remove trailing comma
-      buildSql = buildSql.slice(0, -1);
-      buildSql += ` WHERE UserId = ${mysql.escape(userid)}`;
-    
-    db.executeSql(buildSql, function(data, err) {
-      if(err) {
-        if(err.sqlMessage.includes('email_unique') || err.sqlMessage.includes('tag_unique')) {
-          let errors = 'Error';
-          if(err.sqlMessage.includes('email_unique')) errors ='Email is already taken';
-          if(err.sqlMessage.includes('tag_unique')) errors ='Tag is already taken';
-          return msg.show409(req, res, "Duplicate entries", errors);
-        }
-
-        return msg.show500(req, res, err);
-      }
-
+  User.findById(userId).then(userToUpdate => {
+    userToUpdate
+      .update({ Name: name, Tag: tag, Email: email }, { fields: fields }) //only update fields with a value
+      .then(success => {
         return msg.show200(req, res, "Success");
-    }) */
+      })
+      .catch(db.Sequelize.ValidationError, function(err) {
+        return msg.show409(req, res, "Validation Error", err.errors[0].message);
+      });
+  });
 } 
 
 exports.getById = (id) => {
   return User.findById(id).then(user => {
-    console.log(user);
     if(user == null) {
       return null;
     } else {
@@ -183,7 +115,7 @@ exports.user_signup = (req, res, next) => {
       .create(newUser).then(user => {
         return msg.show200(req, res, "Success", user.dataValues);
       })
-      .catch(seq.Sequelize.ValidationError, function (err) {
+      .catch(db.Sequelize.ValidationError, function (err) {
         return msg.show409(req, res,'Validation Error', err.errors[0].message);
       })
   });

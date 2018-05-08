@@ -52,7 +52,7 @@
 
 
 
- describe("/POST tournament", () => {
+/*  describe("/POST tournament", () => {
    it("it should create a tournament", done => {
      chai
        .request(server)
@@ -237,6 +237,11 @@
        });
    });
  })
+
+
+ /* WORKS */
+ 
+
 
 
  /* }) 
