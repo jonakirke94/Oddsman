@@ -47,6 +47,7 @@ exports.update = (req, res, next) => {
     return msg.show400(req, res, "No inputs provided");
   }
 
+
   User.findById(userId).then(userToUpdate => {
     userToUpdate
       .update({ Name: name, Tag: tag, Email: email }, { fields: fields }) //only update fields with a value
@@ -155,7 +156,7 @@ exports.user_all = (req, res, next) => {
   });
 }
  
-/* HELPER */
+
 function getUserId(req) {
   //decode the token and fetch id
   const token = req.headers.authorization.split(' ');

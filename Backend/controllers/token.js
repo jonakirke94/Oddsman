@@ -19,7 +19,6 @@ exports.refreshToken = (req, res, next) => {
     ignoreExpiration: true
   });
 
-  //const userId = decoded.userId;
  const email = decoded.email;
 
  userController.getByEmail(email).then(user => {
@@ -58,7 +57,7 @@ exports.generateTokens = user => {
  
     const ACCESS_TOKEN = jwt.sign({
         email: user.Email,
-        userId: user.Id,
+        userId: user.UserId,
         isAdmin: user.IsAdmin
       },
       config.JWT_ACCESS_SECRET,
