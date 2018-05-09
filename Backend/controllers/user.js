@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router(); 
 
-
 const bcrypt = require("bcrypt");
 const jwtDecode = require('jwt-decode');
 
@@ -59,28 +58,6 @@ exports.update = (req, res, next) => {
       });
   });
 } 
-
-exports.getById = (id) => {
-  return User.findById(id).then(user => {
-    if(user == null) {
-      return null;
-    } else {
-     return user.dataValues;
-    }
-  })
-}
-
-exports.getByEmail = (email) => {
-  return User.findOne({
-    where: {'Email': email}
-  }).then(user => {
-    if(user === null) {
-      return null;
-    } else {
-     return user.dataValues;
-    }
-  })
-}
 
 exports.user_signup = (req, res, next) => {
   const name = req.body.name;
@@ -162,29 +139,24 @@ exports.user_signup = (req, res, next) => {
 
 exports.user_all = (req, res, next) => {
 
-  const sql = `SELECT * FROM Users WHERE NOT IsAdmin=True`;
+  const attributes = ['id', 'name', 'tag', 'email']
 
-  db.executeSql(sql, function(data, err) {
-    if (err) {
-      return msg.show500(req, res, err);
+  User.findAll({
+    attributes: attributes,
+    raw: true,
+    where: {
+      IsAdmin: false
     }
-
-    const users = data.map(x => { 
-      return { 
-        id: x.UserId, 
-        name: x.Name,
-        email: x.Email,
-        tag: x.Tag       
-      }
-    })
-      
-    return msg.show200(req, res, "Success", users);
+  }).then(users => {
+    return msg.show200(req, res, "Fetched Users", users);
+  }).catch(function(err) {
+    console.log(err);
+    return msg.show500(req, res, err);
   });
 }
-
  
 /* HELPER */
- function getUserId(req) {
+function getUserId(req) {
   //decode the token and fetch id
   const token = req.headers.authorization.split(' ');
 
@@ -194,4 +166,26 @@ exports.user_all = (req, res, next) => {
   } catch (err) {
     return -1;
   }
-} 
+}
+
+exports.getById = (id) => {
+  return User.findById(id).then(user => {
+    if(user == null) {
+      return null;
+    } else {
+     return user.dataValues;
+    }
+  })
+}
+
+exports.getByEmail = (email) => {
+  return User.findOne({
+    where: {'Email': email}
+  }).then(user => {
+    if(user === null) {
+      return null;
+    } else {
+     return user.dataValues;
+    }
+  })
+}

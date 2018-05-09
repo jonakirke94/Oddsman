@@ -30,6 +30,7 @@ const tokens2 = tokenController.generateTokens({
  * 1: CREATE A USER
  * 2: LOG A USER IN
  * 3: UPDATE A USER
+ * 4: GET ALL USERS
 ************************************************/
 
 describe("/Users", () => {
@@ -73,6 +74,25 @@ describe("/GET Users", () => {
     return userController.getByEmail('asdasda@email.dk').then(user => {
       should.equal(user, null);
     })
+  });
+  it("it should GET all users", done => {
+    const user = helper.getUser({tag: 'RS', email: 'new@email.dk'})
+    chai
+      .request(server)
+      .post("/user/signup") //ENDPOINT[1]
+      .send(user)
+      .end((err, res) => {
+        chai
+        .request(server)
+        .get("/user/")  //ENDPOINT[4]
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.data.should.be.a("array");
+          res.body.data.should.have.length(2);
+          done();
+        });
+      });
+ 
   });
 }) 
 

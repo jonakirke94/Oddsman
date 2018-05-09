@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-//const db = require('../db/db');
+
 const msg = require("../db/http");
 const mysql = require('mysql');
 const config = require('config');
@@ -19,23 +19,42 @@ exports.refreshToken = (req, res, next) => {
     ignoreExpiration: true
   });
 
-  const userId = decoded.userId;
-  userController.getUserByProperty('UserId', userId, function(data) {
-    const user = data;
-    const tokens = module.exports.generateTokens(user);
+  //const userId = decoded.userId;
+ const email = decoded.email;
+
+ userController.getByEmail(email).then(user => {
+   if(!user) {
+    return msg.show400(req, res, err);
+   }
+   const tokens = module.exports.generateTokens(user);
+   
+   module.exports.saveRefreshToken(userId, tokens.refresh_token, function(data) {
+    const newTokens = {
+      access_token: tokens.access_token,
+      refresh_exp: tokens.refresh_exp
+    };
+
+    return msg.show200(req, res, "Refreshed Succesfully", newTokens);
+  });
+
+ })
+
+ /*  userController.getUserByProperty('UserId', userId, function(data) { */
+    //const user = data;
+    //const tokens = module.exports.generateTokens(user);
 
     //this saves the new refreshtoken to the db
-    module.exports.saveRefreshToken(userId, tokens.refresh_token, function(data) {
+    /* module.exports.saveRefreshToken(userId, tokens.refresh_token, function(data) {
       const newTokens = {
         access_token: tokens.access_token,
         refresh_exp: tokens.refresh_exp
       };
   
       return msg.show200(req, res, "Refreshed Succesfully", newTokens);
-    });
+    }); */
     
-    
-  });
+   /*  
+  }); */
 }
 
 exports.saveRefreshToken = (id, refreshtoken, callback) => {
@@ -47,7 +66,7 @@ exports.saveRefreshToken = (id, refreshtoken, callback) => {
       .catch(function(err) {
         return msg.show500(req, res, err);
       });
-  };
+};
 
 exports.generateTokens = user => {
     const REFRESH_EXP = 691200; // 691200s = 8d
@@ -81,5 +100,5 @@ exports.generateTokens = user => {
       refresh_token: REFRESH_TOKEN,
       refresh_exp: REFRESH_EXP
     };
-  };
+};
 

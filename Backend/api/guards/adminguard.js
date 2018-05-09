@@ -29,8 +29,7 @@ module.exports = (req, res, next) => {
                 })
 
                 const userId = decoded.userId;
-                userController.getUserByProperty('UserId', userId, function(data) {          
-                    //check if expired else we generate new tokens
+                userController.getById(userId).then(data => {
                     jwt.verify(data.RefreshToken, REFRESH_SECRET, function(err, decoded){
                         if(err) {
                             if(err["name"] == 'TokenExpiredError'){
@@ -48,8 +47,12 @@ module.exports = (req, res, next) => {
                             //inform the client that the accesstoken needs to be refreshed
                             return msg.show419(req, res);
                         }
-                    });                                                                             
-                });
+                    });     
+                })
+               /*  userController.getUserByProperty('UserId', userId, function(data) {         */  
+                    //check if expired else we generate new tokens
+                                                                                         
+                /* }); */
             }
             else {
                 //something else went wrong while decoding the token
