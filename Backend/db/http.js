@@ -13,6 +13,7 @@ exports.show400 = function(req, res, err) {
   res.status(400).json({
     err: err
   });
+  res.end();
 };
 
 //unauthorized
@@ -35,6 +36,7 @@ exports.show409 = function(req, res, msg, err) {
     msg: msg,
     err: err
   });
+  res.end();
 };
 
 //token refresh
@@ -52,4 +54,5 @@ exports.show500 = function(req, res, err) {
         message: err.message
       }
     });
+    res.end();
   }

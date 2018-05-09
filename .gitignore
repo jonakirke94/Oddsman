@@ -4,7 +4,7 @@
 **/dev.json
 **/appsettings.Production.json
 **/dbsettings.Production.json
-**/config.json
+**/config/config.json
 # Logs
 logs
 *.log
@@ -394,4 +394,3 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 
-Backend/config/config.json

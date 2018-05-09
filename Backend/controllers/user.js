@@ -1,29 +1,20 @@
 const express = require("express");
-const router = express.Router();
-const db = require("../db/db");
-const msg = require("../db/http");
-const mysql = require("mysql");
+const router = express.Router(); 
+
 const bcrypt = require("bcrypt");
-const tokenController = require('../controllers/token');
 const jwtDecode = require('jwt-decode');
 
+const tokenController = require('../controllers/token');
 
+const msg = require("../db/http");
+const db = require('../models');
+const User = db.users;
 
-exports.getUserByProperty = (column, value, callback) => {
-  const sql = `SELECT * FROM Users WHERE ${column}=${mysql.escape(value)}`;
-  db.executeSql(sql, function(data, err) {
-    if (err) {
-      callback(null, err);
-    } else {
-      callback(data[0]);
-    }
-  });
-};
 
 exports.update = (req, res, next) => {
-  const userid = getUserId(req);
+  const userId = getUserId(req);
 
-  if(userid === -1) {
+  if(userId === -1) {
     return msg.show500(req, res, 'Couldnt fetch userid');
   }
 
@@ -31,53 +22,43 @@ exports.update = (req, res, next) => {
   const email = req.body.email;
   const tag = req.body.tag;
 
-  if(!name && !email && !tag) {
-    return msg.show400(req, res, "No inputs provided");
+  //array to hold fields which will be updated
+  let fields = [];
+
+  if(name) {
+    fields.push('Name')
   }
 
-   //check if valid email
-   if(email) {
-    req.check("email", "Email is not a valid email").isEmail(); 
+  if (email) {
+    req.check("email", "Email is not a valid email").isEmail();
     const errors = req.validationErrors();
     if (errors) {
       return msg.show400(req, res, errors);
     }
-   }
 
-  let buildSql = "UPDATE Users SET ";
+    fields.push("Email");
+  }
 
-    //add if new email isn't empty
-    if (email) {
-      buildSql += `Email=${mysql.escape(email)},`
-    }
+  if(tag) {
+    fields.push('Tag')
+  }
 
-    if(name) {
-      buildSql += `Name=${mysql.escape(name)},`
-    }
+  if(fields.length === 0) {
+    return msg.show400(req, res, "No inputs provided");
+  }
 
-    if(tag) {
-      buildSql += `Tag=${mysql.escape(tag)},`
-    }
 
-      //remove trailing comma
-      buildSql = buildSql.slice(0, -1);
-      buildSql += ` WHERE UserId = ${mysql.escape(userid)}`;
-    
-    db.executeSql(buildSql, function(data, err) {
-      if(err) {
-        if(err.sqlMessage.includes('email_unique') || err.sqlMessage.includes('tag_unique')) {
-          let errors = 'Error';
-          if(err.sqlMessage.includes('email_unique')) errors ='Email is already taken';
-          if(err.sqlMessage.includes('tag_unique')) errors ='Tag is already taken';
-          return msg.show409(req, res, "Duplicate entries", errors);
-        }
-
-        return msg.show500(req, res, err);
-      }
-
+  User.findById(userId).then(userToUpdate => {
+    userToUpdate
+      .update({ Name: name, Tag: tag, Email: email }, { fields: fields }) //only update fields with a value
+      .then(success => {
         return msg.show200(req, res, "Success");
-    })
-}
+      })
+      .catch(db.Sequelize.ValidationError, function(err) {
+        return msg.show409(req, res, "Validation Error", err.errors[0].message);
+      });
+  });
+} 
 
 exports.user_signup = (req, res, next) => {
   const name = req.body.name;
@@ -97,125 +78,85 @@ exports.user_signup = (req, res, next) => {
 
   bcrypt.hash(password, 10, (err, hash) => {
     if (err) {
-      msg.show500(req, res, err);
+      return msg.show500(req, res, err);
     } 
 
-      const sql = `INSERT INTO Users (Name,Tag,Email,Password)
-      VALUES (${mysql.escape(name)}, ${mysql.escape(tag)}, ${mysql.escape(
-        email
-      )}, ${mysql.escape(hash)})`;
-
-      db.executeSql(sql, function(data, err) {
-        if (err) {    
-          if(err.sqlMessage.includes('email_unique') || err.sqlMessage.includes('tag_unique')) {
-            let errors = 'Error';
-            if(err.sqlMessage.includes('email_unique')) errors ='Email is already taken';
-            if(err.sqlMessage.includes('tag_unique')) errors ='Tag is already taken';
-            return msg.show409(req, res, "Duplicate entries", errors);
-          }
-
-          return msg.show500(req, res, err);
-        }
-
-        return msg.show200(req, res, "Success");
-      });
-    
-  });
-
-  //check if email is unique
-/*   module.exports.getUserByProperty('Email', email, function(emailuser) {
-    if (emailuser) {
-      return msg.show409(req, res, "Email exists");
-    } 
-      //check if tag is unique
-      module.exports.getUserByProperty('Tag', tag, function(taguser) {
-        if(taguser) {
-          return msg.show409(req, res, "Tag exists");    
-        }
-
-        bcrypt.hash(password, 10, (err, hash) => {
-          if (err) {
-            msg.show500(req, res, err);
-          } 
-
-            const sql = `INSERT INTO Users (Name,Tag,Email,Password)
-            VALUES (${mysql.escape(name)}, ${mysql.escape(tag)}, ${mysql.escape(
-              email
-            )}, ${mysql.escape(hash)})`;
-    
-            db.executeSql(sql, function(data, err) {
-              if (err) {
-                return msg.show500(req, res, err);
-              }
-              return msg.show200(req, res, "Success");
-            });
-          
-        });
-      })
-  }); */
-};
-
-exports.user_login = (req, res, next) => {
-  const email = req.body.email;
-
-  module.exports.getUserByProperty('Email', email, function(data, err) {
-
-    //check if the user exists
-    if (typeof data == 'undefined' || !req.body.password) {
-      return msg.show401(req, res, next);
+    const newUser = {
+      Name: name,
+      Tag: tag,
+      Email: email,
+      Password: hash,
+      IsAdmin: false
     }
 
-    //check if passwords match
-    bcrypt.compare(req.body.password, data.Password, (err, result) => {
-      if (err) {
-        return msg.show500(req, res, err);
-      }
-      if (result) {
+    User
+      .create(newUser).then(user => {
+        return msg.show200(req, res, "Success", user.dataValues);
+      })
+      .catch(db.Sequelize.ValidationError, function (err) {
+        return msg.show409(req, res,'Validation Error', err.errors[0].message);
+      })
+  });
+};
 
-        //generate tokens
-        const tokens = tokenController.generateTokens(data);
+ exports.user_login = (req, res, next) => {
+   const email = req.body.email;
 
-        tokenController.saveRefreshToken(data.UserId, tokens.refresh_token, function(success) {
-          const client_data = {
-            access_token: tokens.access_token,
-            refresh_exp: tokens.refresh_exp,
-            isAdmin: data.IsAdmin
-          }
-  
-          return msg.show200(req, res, "Success", client_data)
-        });
+   module.exports.getByEmail(email).then(user => {
+     if (!user || !req.body.password) {
+       return msg.show401(req, res, next);
+     }
 
-      }  else {
-        return msg.show401(req, res, next);
-      }
-    })
-  })
-}
+     //check if passwords match
+     bcrypt.compare(req.body.password, user.Password, (err, result) => {
+       if (err) {
+         return msg.show500(req, res, err);
+       }
+       if (result) {
+         //generate tokens
+         const tokens = tokenController.generateTokens(user);
+
+         //save refreshtoken to user
+         tokenController.saveRefreshToken(
+           user.Id,
+           tokens.refresh_token,
+           function(success) {
+             const client_data = {
+               access_token: tokens.access_token,
+               refresh_exp: tokens.refresh_exp,
+               isAdmin: user.IsAdmin
+             };
+
+             return msg.show200(req, res, "Success", client_data);
+           }
+         );
+       } else {
+         //wrong password
+         return msg.show401(req, res, next);
+       }
+     });
+   });
+ }; 
 
 exports.user_all = (req, res, next) => {
 
-  const sql = `SELECT * FROM Users WHERE NOT IsAdmin=True`;
+  const attributes = ['id', 'name', 'tag', 'email']
 
-  db.executeSql(sql, function(data, err) {
-    if (err) {
-      return msg.show500(req, res, err);
+  User.findAll({
+    attributes: attributes,
+    raw: true,
+    where: {
+      IsAdmin: false
     }
-
-    const users = data.map(x => { 
-      return { 
-        id: x.UserId, 
-        name: x.Name,
-        email: x.Email,
-        tag: x.Tag       
-      }
-    })
-      
-    return msg.show200(req, res, "Success", users);
+  }).then(users => {
+    return msg.show200(req, res, "Fetched Users", users);
+  }).catch(function(err) {
+    console.log(err);
+    return msg.show500(req, res, err);
   });
 }
+ 
 
-
-/* HELPER */
 function getUserId(req) {
   //decode the token and fetch id
   const token = req.headers.authorization.split(' ');
@@ -226,4 +167,26 @@ function getUserId(req) {
   } catch (err) {
     return -1;
   }
+}
+
+exports.getById = (id) => {
+  return User.findById(id).then(user => {
+    if(user == null) {
+      return null;
+    } else {
+     return user.dataValues;
+    }
+  })
+}
+
+exports.getByEmail = (email) => {
+  return User.findOne({
+    where: {'Email': email}
+  }).then(user => {
+    if(user === null) {
+      return null;
+    } else {
+     return user.dataValues;
+    }
+  })
 }
