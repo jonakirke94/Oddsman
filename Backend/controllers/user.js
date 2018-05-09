@@ -59,28 +59,6 @@ exports.update = (req, res, next) => {
   });
 } 
 
-exports.getById = (id) => {
-  return User.findById(id).then(user => {
-    if(user == null) {
-      return null;
-    } else {
-     return user.dataValues;
-    }
-  })
-}
-
-exports.getByEmail = (email) => {
-  return User.findOne({
-    where: {'Email': email}
-  }).then(user => {
-    if(user === null) {
-      return null;
-    } else {
-     return user.dataValues;
-    }
-  })
-}
-
 exports.user_signup = (req, res, next) => {
   const name = req.body.name;
   const tag = req.body.tag;
@@ -183,7 +161,7 @@ exports.user_all = (req, res, next) => {
 
  
 /* HELPER */
- function getUserId(req) {
+function getUserId(req) {
   //decode the token and fetch id
   const token = req.headers.authorization.split(' ');
 
@@ -193,4 +171,26 @@ exports.user_all = (req, res, next) => {
   } catch (err) {
     return -1;
   }
-} 
+}
+
+exports.getById = (id) => {
+  return User.findById(id).then(user => {
+    if(user == null) {
+      return null;
+    } else {
+     return user.dataValues;
+    }
+  })
+}
+
+exports.getByEmail = (email) => {
+  return User.findOne({
+    where: {'Email': email}
+  }).then(user => {
+    if(user === null) {
+      return null;
+    } else {
+     return user.dataValues;
+    }
+  })
+}
