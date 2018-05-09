@@ -5,7 +5,15 @@ module.exports = function (sequelize, DataTypes) {
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
-        }
+        },
+        EndResult: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+        CorrectBet: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
     })
 
     /* Result.associate = (models) => {

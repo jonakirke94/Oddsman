@@ -1,18 +1,7 @@
 const db = require('../models');
 
+/* db.sequelize.sync({force: true}) */
 
-/* db.sequelize.query("set FOREIGN_KEY_CHECKS=0").then(
-  db.users_tournaments.sync({force:true, logging: false}).then(
-      db.requests.sync({force:true, logging: false}).then(
-          db.users.sync({force:true, logging: false}).then(
-              db.tournaments.sync({force:true, logging: false}).then(
-                  done() 
-              )
-          )
-      )
-  )   
- 
-);  */
 
 
 exports.clean = (done) => {
