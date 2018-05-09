@@ -16,8 +16,6 @@ module.exports = (req, res, next) => {
     const token = req.headers.authorization.split(' ');
     const ACCESS_SECRET = config.JWT_ACCESS_SECRET;
     const REFRESH_SECRET = config.JWT_REFRESH_SECRET;
-
-
    
     jwt.verify(token[1], ACCESS_SECRET, function(err, decoded) {
         //if the accesstoken has expired we fetch the user's refreshtoken and if that is valid we generate new tokens   
@@ -28,6 +26,7 @@ module.exports = (req, res, next) => {
                     ignoreExpiration: true
                 })
 
+     
                 const userId = decoded.userId;
                 userController.getById(userId).then(data => {
                     jwt.verify(data.RefreshToken, REFRESH_SECRET, function(err, decoded){
