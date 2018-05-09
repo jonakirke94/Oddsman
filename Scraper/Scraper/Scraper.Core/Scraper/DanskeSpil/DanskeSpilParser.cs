@@ -253,7 +253,7 @@ namespace Scraper.Core.Scraper.DanskeSpil
                 res = new Result
                 {
                     CorrectBet = correctBet,
-                    Score = score,
+                    EndResult = score,
                     MatchId = id
                 };
                 

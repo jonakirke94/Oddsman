@@ -4,7 +4,7 @@
 **/dev.json
 **/appsettings.Production.json
 **/dbsettings.Production.json
-
+**/config.json
 # Logs
 logs
 *.log
