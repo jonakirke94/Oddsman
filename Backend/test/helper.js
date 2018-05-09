@@ -1,6 +1,6 @@
 const db = require('../models');
 
- 
+
 
 /* 
 db.sequelize.query("set FOREIGN_KEY_CHECKS=0").then(
@@ -31,7 +31,7 @@ exports.clean = (done) => {
   })
 }
 
-exports.getTour = (options) => {
+exports.getTour = (options = {}) => {
   const createTour = ({
     name = "Season 1",
     start = new Date("2021-03-25T12:00:00Z"),
@@ -44,7 +44,7 @@ exports.getTour = (options) => {
   return createTour(options)
 }
 
-exports.getUser = (options) => {
+exports.getUser = (options = {}) => {
   const createUser = ({
     name = "Kobe Bryan",
     tag = "KB",
@@ -59,7 +59,7 @@ exports.getUser = (options) => {
   return createUser(options)
 }
 
-/* exports.getTokens = (options) => {
+/* exports.getTokens = (options = {}) => {
   const createUser = ({
     Email = "Bryan@email.dk",
     UserId = 1,

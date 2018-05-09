@@ -49,7 +49,7 @@ exports.create = (req, res, next) => {
       return msg.show200(req, res, "Success", tour);
     })
     .catch(seq.Sequelize.ValidationError, function (err) {
-      return msg.show409(req, res,"Validation Error" ,  err.errors[0].message);
+      return msg.show409(req, res, "Validation Error", err.errors[0].message);
     }).catch(function (err) {
       return msg.show500(req, res, err);
     })
@@ -80,7 +80,7 @@ exports.request = (req, res, next) => {
   const userId = getUserId(req);
 
   if (userId === -1) {
-    return msg.show500(req, res, err);
+    return msg.show500(req, res, "Could not decode token");
   }
 
   const tourId = req.params.tourid
@@ -123,21 +123,17 @@ exports.request = (req, res, next) => {
 
 exports.get_tournament_requests = (req, res, next) => {
   const tourId = req.params.tourid;
-
-  const sql = `SELECT tour.Name as tourName, tour.TournamentId as tourId, tour.Start as start, req.Status as status, users.Email as userEmail, users.Name as userName, users.Tag as userTag, users.UserId as userId
-  FROM Tournaments tour
-  LEFT OUTER JOIN Requests req
-  ON (tour.TournamentId = req.Tournament_Id AND tour.TournamentId = ${mysql.escape(tourId)})
-  LEFT OUTER JOIN Users users
-  ON (req.User_Id = users.UserId AND tour.TournamentId = ${mysql.escape(tourId)})
-  WHERE req.Status = 'pending'`
-
-  db.executeSql(sql, function (data, err) {
-    if (err) {
-      return msg.show500(req, res, err);
+  Request.findAll({
+    where: {
+      tournamentId: tourId
     }
-    return msg.show200(req, res, "Success", data);
-  });
+  }).then(requests => {
+    console.log(requests);
+    return msg.show200(req, res, "Success", requests);
+  }).catch(function (err) {
+    console.log(err);
+    return msg.show500(req, res, err);
+  })
 }
 
 exports.get_users_requests = (req, res, next) => {
