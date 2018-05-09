@@ -139,26 +139,21 @@ exports.user_signup = (req, res, next) => {
 
 exports.user_all = (req, res, next) => {
 
-  const sql = `SELECT * FROM Users WHERE NOT IsAdmin=True`;
+  const attributes = ['id', 'name', 'tag', 'email']
 
-  db.executeSql(sql, function(data, err) {
-    if (err) {
-      return msg.show500(req, res, err);
+  User.findAll({
+    attributes: attributes,
+    raw: true,
+    where: {
+      IsAdmin: false
     }
-
-    const users = data.map(x => { 
-      return { 
-        id: x.UserId, 
-        name: x.Name,
-        email: x.Email,
-        tag: x.Tag       
-      }
-    })
-      
-    return msg.show200(req, res, "Success", users);
+  }).then(users => {
+    return msg.show200(req, res, "Fetched Users", users);
+  }).catch(function(err) {
+    console.log(err);
+    return msg.show500(req, res, err);
   });
 }
-
  
 /* HELPER */
 function getUserId(req) {
