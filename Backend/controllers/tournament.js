@@ -67,7 +67,7 @@ exports.get_all = (req, res, next) => {
       },
     },
   }).then(results => {
-    console.log(results)
+    //console.log(results)
     return msg.show200(req, res, "Success", results);
   }).catch(function (err) {
     console.log(err);
@@ -306,9 +306,7 @@ exports.get_delisted_tournaments = (req, res, next) => {
     return msg.show200(req, res, "Success", results);
   }).catch(err => {
     return msg.show500(req, res, err);
-  }).catch(err => {
-    return msg.show500(req, res, err);
-  });
+  })
 }
 
 /* HELPERS */
