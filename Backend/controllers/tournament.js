@@ -360,7 +360,7 @@ function isTourStartedOrNull(tourId) {
       where: {
         Id: tourId,
         Start: {
-          $gt: today
+          [Op.gt]: today
         }
       } //$gt = g
     })
