@@ -128,7 +128,6 @@ exports.get_tournament_requests = (req, res, next) => {
       tournamentId: tourId
     }
   }).then(requests => {
-    console.log(requests);
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     console.log(err);
@@ -138,25 +137,22 @@ exports.get_tournament_requests = (req, res, next) => {
 
 exports.get_users_requests = (req, res, next) => {
   const userId = getUserId(req);
-
+  console.log(userId);
   if (userId === -1) {
-    return msg.show500(req, res, err);
+    return msg.show500(req, res, "Could not decode token");
   }
 
-  const sql = `SELECT *
-  FROM Tournaments tour
-  LEFT OUTER JOIN Requests req
-  ON (tour.TournamentId = req.Tournament_Id AND req.User_Id = ${mysql.escape(userId)})
-  LEFT OUTER JOIN Tournament_Users tour_user
-  ON (tour.TournamentId = tour_user.Tournament_Id AND tour_user.User_Id = ${mysql.escape(userId)})
-  WHERE req.Status != 'accepted' AND tour_user.Tournament_Id IS NULL`
-
-  db.executeSql(sql, function (data, err) {
-    if (err) {
-      return msg.show500(req, res, err);
+  Request.findAll({
+    where: {
+      userId: userId
     }
-    return msg.show200(req, res, "Success", data);
-  });
+  }).then(requests => {
+    console.log(requests);
+    return msg.show200(req, res, "Success", requests);
+  }).catch(function (err) {
+    console.log(err);
+    return msg.show500(req, res, err);
+  })
 }
 
 exports.manage_request = (req, res, next) => {
