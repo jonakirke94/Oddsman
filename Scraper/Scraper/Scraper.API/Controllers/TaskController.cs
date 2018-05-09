@@ -2,82 +2,59 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Scraper.API.Services;
 using Scraper.Core.Data;
 using Scraper.Core.Model;
 using Scraper.Core.Scraper.DanskeSpil;
 
 namespace Scraper.API.Controllers
 {
+
+    [Route("api/v1/[controller]")]
     public class TaskController : Controller
     {
-        private readonly DanskeSpilScraper _scraper = new DanskeSpilScraper();
-        private readonly DanskeSpilContext _db;
+        private readonly AutomationService _automate;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public TaskController(DanskeSpilContext db)
+        public TaskController(IServiceScopeFactory scopeFactory)
         {
-            _db = db;
+            _scopeFactory = scopeFactory;
+            _automate = new AutomationService(_scopeFactory);
         }
 
 
-        
-        public async Task ScrapeUpcomingMatches()
+        [HttpPost("{matchId}")]
+        [ProducesResponseType(200, Type = typeof(Match))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> ScheduleMatchResultScrape(int matchId)
         {
-            var matches = new List<Match>(_scraper.GetUpcomingMatches());
-
-            var validMatches = matches
-                .Select(m => m)
-                .Where(m => WithinValidDate(m.MatchDate))
-                .ToList();
-
-            var subMatches = new List<Match>();
-
-            Parallel.ForEach(validMatches, new ParallelOptions { MaxDegreeOfParallelism = 4 }, (match) =>
+            using (var scope = _scopeFactory.CreateScope())
             {
-                var sms = _scraper.GetSubMatches(match.EventId);
-                foreach (var sm in sms)
+                using (var db = scope.ServiceProvider.GetRequiredService<DanskeSpilContext>())
                 {
-                    sm.ParentId = match.MatchId;
-                    sm.EventId = match.EventId;
-                    sm.RoundId = sm.RoundId == -1 ? match.RoundId : -1;
+                    var match = db.Matches.Find(matchId);
+                    if(match == null) return NotFound();
+
+                    try
+                    {
+                        var offset = new DateTimeOffset(match.MatchDate.AddHours(3));
+                        BackgroundJob.Schedule(() => _automate.ScrapeMatchResult(matchId), offset);
+                    }
+                    catch (Exception)
+                    {
+                        return StatusCode(500);
+                    }
                 }
-                subMatches.AddRange(sms);
-            });
-
-            try
-            {
-                _db.Matches.AddRange(validMatches);
-                _db.Matches.AddRange(subMatches);
-                await _db.SaveChangesAsync();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+
+            return Ok("Job Added Succesfully");
         }
 
-        
-        /// <summary>
-        /// Valid matches is found between Saturday 12.00 and Monday 23.59
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        private static bool WithinValidDate(DateTime date)
-        {
 
-            var nextSaturday = GetNextWeekday(DateTime.Now.Date, DayOfWeek.Saturday).AddHours(12);
-            var nextMonday = GetNextWeekday(DateTime.Now.Date, DayOfWeek.Monday).AddHours(23).AddMinutes(59);
 
-            return date >= nextSaturday && date <= nextMonday;
-        }
-
-        private static DateTime GetNextWeekday(DateTime start, DayOfWeek day)
-        {
-            // The (... + 7) % 7 ensures we end up with a value in the range [0, 6]
-            var daysToAdd = ((int)day - (int)start.DayOfWeek + 7) % 7;
-            return start.AddDays(daysToAdd);
-        }
-        
     }
 }
