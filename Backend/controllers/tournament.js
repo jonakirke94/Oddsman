@@ -113,7 +113,7 @@ exports.request = (req, res, next) => {
           })
           .catch(function (err) {
 
-            if(err.name === 'SequelizeForeignKeyConstraintError') {
+            if (err.name === 'SequelizeForeignKeyConstraintError') {
               return msg.show400(req, res, err);
 
             } else {
@@ -144,43 +144,16 @@ exports.get_users_requests = (req, res, next) => {
   if (userId === -1) {
     return msg.show500(req, res, "Could not decode token");
   }
-
-/*   User.findById(userId, {
-    attributes: ['id', 'name', 'email', 'tag'],
-    include: {
-      model: Tournament,
-      attributes: ['id', 'name', 'start', 'end'],
-      through: {
-        attributes: []
-      }
-    }
-  } */
-  User.findById(userId, {
-    include: [{
-      model: Tournament,
-        through: {
-          attributes: ['Status'],
-            where: {userId: userId, Status: 'pending'}
-        }
-     }] 
-   }).then(requests => {
-     //console.log(requests)
-    return msg.show200(req, res, "Success", requests);
-  }).catch(function (err) {
-    return msg.show500(req, res, err);
-  }) 
-  
-
-/*   Request.findAll({
+  Request.findAll({
     where: {
       userId: userId
     }
-
   }).then(requests => {
+    /* console.log(JSON.stringify(requests)) */
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     return msg.show500(req, res, err);
-  }) */
+  })
 }
 
 exports.manage_request = (req, res, next) => {
@@ -240,24 +213,24 @@ function accept_request(req, res, next) {
 
           //add user to tournament
           Tournament.findById(tourId).then((tournament) => {
-            tournament.setUsers(userId).then(() => {
-              return msg.show200(req, res, "Success");
-            }).catch(function (err) {
-              if(err.name === 'SequelizeForeignKeyConstraintError') {
-                return msg.show400(req, res, err.name);
-              } else {
-                return msg.show500(req, res, err);
-              }
-  
+              tournament.setUsers(userId).then(() => {
+                return msg.show200(req, res, "Success");
+              }).catch(function (err) {
+                if (err.name === 'SequelizeForeignKeyConstraintError') {
+                  return msg.show400(req, res, err.name);
+                } else {
+                  return msg.show500(req, res, err);
+                }
+
+              })
+            })
+            .catch(function (err) {
+              return msg.show500(req, res, err);
             })
         })
-        .catch(function (err) {
-          return msg.show500(req, res, err);
-        })
     })
-  })
 
-})
+  })
 };
 
 exports.get_enlisted_tournaments = (req, res, next) => {
@@ -266,18 +239,16 @@ exports.get_enlisted_tournaments = (req, res, next) => {
   if (userId === -1) {
     return msg.show400(req, res, 'No token provided');
   }
-
-  User.findById(userId, {
-    attributes: ['id', 'name', 'email', 'tag'],
-    include: {
-      model: Tournament,
-      attributes: ['id', 'name', 'start', 'end'],
-      through: {
-        attributes: []
+  Tournament.findAll({
+    through: {
+      where: {
+        status: "accepted",
+        userId: userId
       }
     }
-  }).then(user => {
-    return msg.show200(req, res, "Success", user.dataValues.tournaments);
+  }).then(tourneys => {
+    //console.log(JSON.stringify(tourneys));
+    return msg.show200(req, res, "Success", tourneys);
   }).catch(err => {
     return msg.show500(req, res, err);
   }).catch(err => {
@@ -295,38 +266,35 @@ exports.get_delisted_tournaments = (req, res, next) => {
   if (userId === -1) {
     return msg.show500(req, res, err);
   }
-
-  Tournament.findAll({
-    where: {
-      Start: {
-        [Op.gt]: Date.now()
+  Request.findAll({
+    where: {},
+    through: {
+      model: Tournament,
+      where: {
+        Start: {
+          [Op.gt]: Date.now()
+        }
       }
     },
-    attributes: ['id', 'name', 'start', 'end'],
-    include: {
-      model: User,
-      attributes: ['id'],
-      through: {
-        attributes: []
-      }
-    }
-  }).then(tournaments => {
-    let results = [];
-    tournaments.forEach(tournament => {
-      let users = tournament.dataValues.users;
-      let enrolled = users.some(u => {
-        return u.dataValues.id === userId;
-      })
-      if (!enrolled) {
-        results.push(tournament);
-      }
+    attributes: ['userId', 'tournamentId']
+  }).then(reqs => {
+
+    let reqsArr = [];
+    reqs.forEach(r => {
+      reqsArr.push(r.dataValues.tournamentId);
+    });
+    Tournament.findAll({
+      where: {
+        id: {
+          [Op.notIn]: reqsArr
+        }
+      },
+      attributes: ['id', 'name', 'start', 'end']
+    }).then(tourneys => {
+      return msg.show200(req, res, "Success", tourneys);
+    }).catch(err => {
+      return msg.show500(req, res, err);
     })
-
-    console.log(results)
-
-    return msg.show200(req, res, "Success", results);
-  }).catch(err => {
-    return msg.show500(req, res, err);
   })
 }
 
