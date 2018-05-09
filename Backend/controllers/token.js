@@ -74,7 +74,7 @@ exports.generateTokens = user => {
  
     const ACCESS_TOKEN = jwt.sign({
         email: user.Email,
-        userId: user.UserId,
+        userId: user.Id,
         isAdmin: user.IsAdmin
       },
       config.JWT_ACCESS_SECRET,

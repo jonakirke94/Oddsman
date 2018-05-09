@@ -38,13 +38,13 @@ export class TournamentService {
 
   getEnrolledTournaments() {
     return this.http
-    .get(`${this.baseUrl}/enrolled`)
+    .get(`${this.baseUrl}/enlisted`)
     .map(res => res);
   }
 
   getUnEnrolledTournaments() {
     return this.http
-    .get(`${this.baseUrl}/unenrolled/`)
+    .get(`${this.baseUrl}/delisted/`)
     .map(res => res);
   }
 
