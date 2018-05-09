@@ -147,7 +147,6 @@ exports.get_users_requests = (req, res, next) => {
       userId: userId
     }
   }).then(requests => {
-    console.log(requests);
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     console.log(err);
