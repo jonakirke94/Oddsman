@@ -9,6 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     Tournament.associate = (models) => {
       Tournament.belongsToMany(models.users, {through: models.users_tournaments}, { onDelete: 'cascade' });
       Tournament.belongsToMany(models.users, {through: models.requests}, { onDelete: 'cascade' });
+      
   }
     
       return Tournament;
