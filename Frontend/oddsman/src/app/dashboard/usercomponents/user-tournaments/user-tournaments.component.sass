@@ -7,7 +7,7 @@
 .card-footer
     background-color: $dark-prim
 
-.card-footer a
+.card-footer a, i
     color: $white
 
 .card-header-title
@@ -22,3 +22,60 @@
     background-color: darken($danger, 20%)
     cursor: default
 
+.w75
+   flex-basis: 75%
+
+.w25
+   flex-basis: 25%
+
+.error-text
+    padding: 10px 0 10px 0
+    font-size: 14px
+
+.wrapper
+  background: #F7F7F7
+  margin-bottom: 50px
+ 
+  .tournament-card
+    background: #fff
+    box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.11)
+ 
+    .card-title
+      background-color: $dark-prim
+      padding: 2rem
+     
+      h1
+        color: #fff
+        text-align: center
+        font-size: 1.2rem
+       
+    .tournament-container
+      padding: 3rem 2.5rem 3rem
+      background-color: darken($white, 5%)
+   
+    .options
+      color: $grey
+      margin-bottom: 1.5rem
+   
+    button
+      cursor: pointer
+      font-size: 1.2rem
+      color: $prim
+      border-radius: 4rem
+      display: block
+      width: 100%
+      background: transparent
+      border: 2px solid $prim
+      padding: 0.9rem 0 1.1rem
+      transition: color .5s, border-color .5s
+      margin-top: 3rem
+     
+      &:hover,
+      &:focus
+        background: $dark-prim
+        color: white
+     
+      &:active
+        transform: translateY(1px)
+			
+	
