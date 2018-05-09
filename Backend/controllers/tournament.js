@@ -55,17 +55,6 @@ exports.create = (req, res, next) => {
     })
 };
 
-/* exports.getByName = (name, callback) => {
-  const sql = `SELECT * FROM Tournaments WHERE Name=${mysql.escape(name)}`;
-  db.executeSql(sql, function (data, err) {
-    if (err) {
-      callback(null, err);
-    } else {
-      callback(data[0]);
-    }
-  });
-}; */
-
 exports.get_all = (req, res, next) => {
 
   Tournament.findAll({
