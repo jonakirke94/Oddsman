@@ -67,10 +67,8 @@ exports.get_all = (req, res, next) => {
       },
     },
   }).then(results => {
-    //console.log(results)
     return msg.show200(req, res, "Success", results);
   }).catch(function (err) {
-    console.log(err);
     return msg.show500(req, res, err);
   })
 
@@ -114,7 +112,14 @@ exports.request = (req, res, next) => {
             return msg.show200(req, res, "Success", req.dataValues);
           })
           .catch(function (err) {
-            return msg.show500(req, res, err);
+
+            if(err.name === 'SequelizeForeignKeyConstraintError') {
+              return msg.show400(req, res, err);
+
+            } else {
+              return msg.show500(req, res, err);
+            }
+
           })
       })
     })
@@ -130,28 +135,52 @@ exports.get_tournament_requests = (req, res, next) => {
   }).then(requests => {
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
-    console.log(err);
     return msg.show500(req, res, err);
   })
 }
 
 exports.get_users_requests = (req, res, next) => {
   const userId = getUserId(req);
-  console.log(userId);
   if (userId === -1) {
     return msg.show500(req, res, "Could not decode token");
   }
 
-  Request.findAll({
+/*   User.findById(userId, {
+    attributes: ['id', 'name', 'email', 'tag'],
+    include: {
+      model: Tournament,
+      attributes: ['id', 'name', 'start', 'end'],
+      through: {
+        attributes: []
+      }
+    }
+  } */
+  User.findById(userId, {
+    include: [{
+      model: Tournament,
+        through: {
+          attributes: ['Status'],
+            where: {userId: userId, Status: 'pending'}
+        }
+     }] 
+   }).then(requests => {
+     //console.log(requests)
+    return msg.show200(req, res, "Success", requests);
+  }).catch(function (err) {
+    return msg.show500(req, res, err);
+  }) 
+  
+
+/*   Request.findAll({
     where: {
       userId: userId
     }
+
   }).then(requests => {
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
-    console.log(err);
     return msg.show500(req, res, err);
-  })
+  }) */
 }
 
 exports.manage_request = (req, res, next) => {
@@ -163,21 +192,6 @@ exports.manage_request = (req, res, next) => {
     return decline_request(req, res, next);
   }
 }
-
-/* exports.get_participants = (req, res, next) => {
-  const tourId = req.params.tourid;
-  const sql = `SELECT * FROM Tournaments `;
-  db.executeSql(sql, function (data, err) {
-    if (err) {
-      return msg.show500(req, res, err);
-    }
-
-    return msg.show200(req, res, "Success", data);
-  })
-
-} */
-
-
 
 function decline_request(req, res, next) {
   const tourId = req.params.tourid;
@@ -228,18 +242,22 @@ function accept_request(req, res, next) {
           Tournament.findById(tourId).then((tournament) => {
             tournament.setUsers(userId).then(() => {
               return msg.show200(req, res, "Success");
-            }).catch(err => {
-              return msg.show500(req, res, err);
+            }).catch(function (err) {
+              if(err.name === 'SequelizeForeignKeyConstraintError') {
+                return msg.show400(req, res, err.name);
+              } else {
+                return msg.show500(req, res, err);
+              }
+  
             })
-          }).catch(err => {
-            return msg.show500(req, res, err);
-          })
         })
-        .catch(err => {
+        .catch(function (err) {
           return msg.show500(req, res, err);
         })
     })
   })
+
+})
 };
 
 exports.get_enlisted_tournaments = (req, res, next) => {
@@ -248,6 +266,7 @@ exports.get_enlisted_tournaments = (req, res, next) => {
   if (userId === -1) {
     return msg.show400(req, res, 'No token provided');
   }
+
   User.findById(userId, {
     attributes: ['id', 'name', 'email', 'tag'],
     include: {
@@ -302,6 +321,8 @@ exports.get_delisted_tournaments = (req, res, next) => {
         results.push(tournament);
       }
     })
+
+    console.log(results)
 
     return msg.show200(req, res, "Success", results);
   }).catch(err => {

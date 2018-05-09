@@ -54,5 +54,6 @@ exports.show500 = function(req, res, err) {
         message: err.message
       }
     });
+    console.log(err)
     res.end();
   }

@@ -15,7 +15,7 @@
 
  const tokens = tokenController.generateTokens({
    Email: "Bryan@email.dk",
-   UserId: 1,
+   Id: 1,
    IsAdmin: false
  });
 
@@ -299,7 +299,7 @@
            status: "accepted"
          })
          .end((err, res) => {
-           res.should.have.status(500);
+           res.should.have.status(400);
            done();
          });
      });
@@ -413,7 +413,7 @@
      it("it should not POST a request with an invalid id", done => {
        const xtokens = tokenController.generateTokens({
          Email: "Bryan@email.dk",
-         UserId: 100,
+         Id: 100,
          IsAdmin: false
        });
        chai
@@ -421,7 +421,7 @@
          .post("/tournament/1/requests") //ENDPOINT[3]
          .set("authorization", "Bearer " + xtokens.access_token)
          .end((err, res) => {
-           res.should.have.status(500);
+           res.should.have.status(400);
            done();
          });
      });

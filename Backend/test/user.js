@@ -15,13 +15,13 @@ chai.use(chaiHttp);
 
 const tokens = tokenController.generateTokens({
   Email: "Bryan@email.dk",
-  UserId: 1,
+  Id: 1,
   IsAdmin: false
 });
 
 const tokens2 = tokenController.generateTokens({
   Email: "Ryan@email1.dk",
-  UserId: 2,
+  Id: 2,
   IsAdmin: false
 });
 

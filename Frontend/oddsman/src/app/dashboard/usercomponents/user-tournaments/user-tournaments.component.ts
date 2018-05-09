@@ -48,6 +48,9 @@ export class UserTournamentsComponent implements OnInit {
   getUserRequests() {
     this.request$ = this._tournament.getUserRequests().subscribe(res => {
       this.requested = res["data"];
+      console.log('Requested')
+
+      console.log(this.requested)
       this.requestedAny = this.requested.length > 0;
     });
   }
@@ -56,6 +59,7 @@ export class UserTournamentsComponent implements OnInit {
   getUnEnrolledTourneys() {
     this.unenrolled$ = this._tournament.getUnEnrolledTournaments().subscribe(res => {
       this.upcoming = res["data"];
+      //console.log(this.upcoming)
       this.upcomingAny = this.upcoming.length > 0;
     });
   }
@@ -64,6 +68,8 @@ export class UserTournamentsComponent implements OnInit {
   getEnrolledTourneys() {
     this.enrolled$ = this._tournament.getEnrolledTournaments().subscribe(res => {
       this.enrolled = res["data"];
+      console.log('Enrolled')
+      console.log(this.enrolled)
       this.enrolledAny = this.enrolled.length > 0;
     });
   }

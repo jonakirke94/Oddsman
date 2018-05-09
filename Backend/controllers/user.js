@@ -151,7 +151,6 @@ exports.user_all = (req, res, next) => {
   }).then(users => {
     return msg.show200(req, res, "Fetched Users", users);
   }).catch(function(err) {
-    console.log(err);
     return msg.show500(req, res, err);
   });
 }

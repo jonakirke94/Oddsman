@@ -52,12 +52,13 @@ exports.saveRefreshToken = (id, refreshtoken, callback) => {
 };
 
 exports.generateTokens = user => {
+
     const REFRESH_EXP = 691200; // 691200s = 8d
     const ACCESS_EXP = 300; // 300s = 5m
  
     const ACCESS_TOKEN = jwt.sign({
         email: user.Email,
-        userId: user.UserId,
+        userId: user.Id,
         isAdmin: user.IsAdmin
       },
       config.JWT_ACCESS_SECRET,
@@ -69,7 +70,7 @@ exports.generateTokens = user => {
   
     const REFRESH_TOKEN = jwt.sign({
         email: user.Email,
-        userId: user.UserId
+        userId: user.Id
       },
       config.JWT_REFRESH_SECRET,
       {
