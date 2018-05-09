@@ -26,9 +26,10 @@ exports.refreshToken = (req, res, next) => {
    if(!user) {
     return msg.show400(req, res, err);
    }
+
    const tokens = module.exports.generateTokens(user);
-   
-   module.exports.saveRefreshToken(userId, tokens.refresh_token, function(data) {
+
+   module.exports.saveRefreshToken(user.Id, tokens.refresh_token, function(data) {
     const newTokens = {
       access_token: tokens.access_token,
       refresh_exp: tokens.refresh_exp
@@ -38,23 +39,6 @@ exports.refreshToken = (req, res, next) => {
   });
 
  })
-
- /*  userController.getUserByProperty('UserId', userId, function(data) { */
-    //const user = data;
-    //const tokens = module.exports.generateTokens(user);
-
-    //this saves the new refreshtoken to the db
-    /* module.exports.saveRefreshToken(userId, tokens.refresh_token, function(data) {
-      const newTokens = {
-        access_token: tokens.access_token,
-        refresh_exp: tokens.refresh_exp
-      };
-  
-      return msg.show200(req, res, "Refreshed Succesfully", newTokens);
-    }); */
-    
-   /*  
-  }); */
 }
 
 exports.saveRefreshToken = (id, refreshtoken, callback) => {
