@@ -128,28 +128,42 @@ exports.request = (req, res, next) => {
 
 exports.get_tournament_requests = (req, res, next) => {
   const tourId = req.params.tourid;
-  Request.findAll({
-    where: {
-      tournamentId: tourId
+  Tournament.findById(tourId,{
+    include: {
+      model: User,
+      attributes: ['id', 'name', 'tag', 'email']
+    },
+    through: {
+      model: Request,
+      where: {status: "pending"}
     }
   }).then(requests => {
+    //console.log(JSON.stringify(requests));
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     return msg.show500(req, res, err);
   })
 }
 
-exports.get_users_requests = (req, res, next) => {
+exports.get_users_requests = (req, res, next) => { // TODO: Test with an accepted user on tournament 1
   const userId = getUserId(req);
   if (userId === -1) {
     return msg.show500(req, res, "Could not decode token");
   }
-  Request.findAll({
-    where: {
-      userId: userId
+  Tournament.findAll({    
+    through: {
+      model: Request,
+      where: {status: "pending", userId: userId}
+    },
+    through:{
+      model: Tournament_User,
+      include: {
+        model: User,
+        attributes: ['id', 'name', 'tag', 'email']
+      }
     }
   }).then(requests => {
-    /* console.log(JSON.stringify(requests)) */
+    console.log(JSON.stringify(requests))
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     return msg.show500(req, res, err);
@@ -241,8 +255,8 @@ exports.get_enlisted_tournaments = (req, res, next) => {
   }
   Tournament.findAll({
     through: {
+      model: Tournament_User,
       where: {
-        status: "accepted",
         userId: userId
       }
     }
@@ -267,7 +281,7 @@ exports.get_delisted_tournaments = (req, res, next) => {
     return msg.show500(req, res, err);
   }
   Request.findAll({
-    where: {},
+    where: {userId: userId},
     through: {
       model: Tournament,
       where: {
@@ -278,7 +292,6 @@ exports.get_delisted_tournaments = (req, res, next) => {
     },
     attributes: ['userId', 'tournamentId']
   }).then(reqs => {
-
     let reqsArr = [];
     reqs.forEach(r => {
       reqsArr.push(r.dataValues.tournamentId);
@@ -289,8 +302,13 @@ exports.get_delisted_tournaments = (req, res, next) => {
           [Op.notIn]: reqsArr
         }
       },
-      attributes: ['id', 'name', 'start', 'end']
+      attributes: ['id', 'name', 'start', 'end'],
+      include: {
+        model: User,
+        attributes: ['name', 'tag', 'email']
+      }
     }).then(tourneys => {
+      //console.log(JSON.stringify(tourneys));
       return msg.show200(req, res, "Success", tourneys);
     }).catch(err => {
       return msg.show500(req, res, err);

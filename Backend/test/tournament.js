@@ -364,7 +364,7 @@
              .set("authorization", "Bearer" + tokens.access_token)
              .end((err, res) => {
                res.should.have.status(200);
-               res.body.data.should.be.a("array");
+               res.body.data.users.should.be.a("array");
                done();
              });
          });
