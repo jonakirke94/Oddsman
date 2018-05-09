@@ -361,7 +361,24 @@
            chai
              .request(server)
              .get("/tournament/requests/1")
-             .set("authorization", "Bearer" + token.access_token)
+             .set("authorization", "Bearer" + tokens.access_token)
+             .end((err, res) => {
+               res.should.have.status(200);
+               res.body.data.should.be.a("array");
+               done();
+             });
+         });
+     });
+     it("It should get requests for the user", done => {
+       chai
+         .request(server)
+         .post("/tournament/1/requests/") //ENDPOINT[3]
+         .set("authorization", "Bearer " + tokens.access_token)
+         .end((err, res) => {
+           chai
+             .request(server)
+             .get("/tournament/requests")
+             .set("authorization", "Bearer " + tokens.access_token)
              .end((err, res) => {
                res.should.have.status(200);
                res.body.data.should.be.a("array");
