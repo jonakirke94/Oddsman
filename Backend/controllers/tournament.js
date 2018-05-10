@@ -150,7 +150,27 @@ exports.get_users_requests = (req, res, next) => { // TODO: Test with an accepte
   if (userId === -1) {
     return msg.show500(req, res, "Could not decode token");
   }
-  Tournament.findAll({    
+
+  console.log(userId)
+
+  User.findById(userId, {
+    attributes: [],
+    include: {
+      model: Tournament,
+      attributes: ['Id', 'Name', 'Start', 'End'],
+      through: {
+        where: {UserId: userId, status: 'pending'},
+        attributes: ['Status'],
+      }
+    }
+  }).then(requests => {
+    console.log(JSON.stringify(requests))
+    return msg.show200(req, res, "Success", requests);
+  }).catch(function (err) {
+    return msg.show500(req, res, err);
+  })
+
+  /* Tournament.findAll({    
     through: {
       model: Request,
       where: {status: "pending", userId: userId}
@@ -167,7 +187,7 @@ exports.get_users_requests = (req, res, next) => { // TODO: Test with an accepte
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     return msg.show500(req, res, err);
-  })
+  }) */
 }
 
 exports.manage_request = (req, res, next) => {
@@ -250,6 +270,7 @@ function accept_request(req, res, next) {
 exports.get_enlisted_tournaments = (req, res, next) => {
   const userId = getUserId(req);
 
+
   if (userId === -1) {
     return msg.show400(req, res, 'No token provided');
   }
@@ -261,7 +282,7 @@ exports.get_enlisted_tournaments = (req, res, next) => {
       }
     }
   }).then(tourneys => {
-    //console.log(JSON.stringify(tourneys));
+   // console.log(JSON.stringify(tourneys));
     return msg.show200(req, res, "Success", tourneys);
   }).catch(err => {
     return msg.show500(req, res, err);
