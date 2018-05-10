@@ -14,12 +14,12 @@ import { Subscription } from 'rxjs/Subscription';
 export class UserTournamentsComponent implements OnInit {
 
   requested = [];
-  upcoming = [];
-  enrolled = [];
+  delisted = []; //upcoming tournaments
+  enlisted = []; //participating in these
 
   requestedAny: boolean;
-  upcomingAny: boolean;
-  enrolledAny: boolean;
+  delistedAny: boolean;
+  enlistedAny: boolean;
 
    constructor(private _tournament: TournamentService,
      private router: Router
@@ -48,10 +48,6 @@ export class UserTournamentsComponent implements OnInit {
   getRequestedTournaments() {
     this.request$ = this._tournament.getUserRequests().subscribe(res => {
       this.requested = res["data"]['tournaments'];
-      console.log(this.requested[0].Name)
-      console.log('Requested')
-
-      console.log(this.requested)
       this.requestedAny = this.requested.length > 0;
     });
   }
@@ -59,20 +55,18 @@ export class UserTournamentsComponent implements OnInit {
   //tournaments that are not yet started but has no user request
   getDelistedTournaments() {
     this.delisted$ = this._tournament.getDelistedTournaments().subscribe(res => {
-      this.upcoming = res["data"];
-     // console.log('Upcoming')
-     // console.log(this.upcoming)
-      this.upcomingAny = this.upcoming.length > 0;
+      this.delisted = res["data"];
+      this.delistedAny = this.delisted.length > 0;
     });
   }
 
-  //enrolled tournaments
+  //tournaments user is participating in
   getEnlistedTournaments() {
     this.enlisted$ = this._tournament.getEnlistedTournaments().subscribe(res => {
-      this.enrolled = res["data"];
-    //  console.log('Enrolled')
-    //  console.log(this.enrolled)
-      this.enrolledAny = this.enrolled.length > 0;
+      this.enlisted = res["data"]['tournaments'];
+   console.log('enlisted')
+    console.log(this.enlisted)
+      this.enlistedAny = this.enlisted.length > 0;
     });
   }
 

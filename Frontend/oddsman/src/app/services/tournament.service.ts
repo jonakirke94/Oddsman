@@ -33,7 +33,7 @@ export class TournamentService {
   getTournamentRequests(tourId) {
     return this.http
     .get(`${this.baseUrl}/requests/${tourId}`)
-    .map(res => <Request[]>res['data']);
+    .map(res =>  <Request[]>res['data']);
   }
 
   getEnlistedTournaments() {

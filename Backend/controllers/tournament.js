@@ -129,16 +129,18 @@ exports.request = (req, res, next) => {
 exports.get_tournament_requests = (req, res, next) => {
   const tourId = req.params.tourid;
   Tournament.findById(tourId,{
+    attributes: [['id', 'tourId'], ['name', 'tourName'], 'start'],
     include: {
       model: User,
-      attributes: ['id', 'name', 'tag', 'email']
+      attributes: [['id', 'userId'], ['name', 'userName'], ['tag', 'userTag'], ['email', 'userEmail']]
     },
     through: {
       model: Request,
       where: {status: "pending"}
+      
     }
   }).then(requests => {
-    //console.log(JSON.stringify(requests));
+    console.log(JSON.stringify(requests));
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     return msg.show500(req, res, err);
@@ -151,8 +153,6 @@ exports.get_users_requests = (req, res, next) => { // TODO: Test with an accepte
     return msg.show500(req, res, "Could not decode token");
   }
 
-  console.log(userId)
-
   User.findById(userId, {
     attributes: [],
     include: {
@@ -164,7 +164,7 @@ exports.get_users_requests = (req, res, next) => { // TODO: Test with an accepte
       }
     }
   }).then(requests => {
-    console.log(JSON.stringify(requests))
+    //console.log(JSON.stringify(requests))
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     return msg.show500(req, res, err);
@@ -274,7 +274,28 @@ exports.get_enlisted_tournaments = (req, res, next) => {
   if (userId === -1) {
     return msg.show400(req, res, 'No token provided');
   }
-  Tournament.findAll({
+
+  User.findById(userId, {
+    attributes: [],
+    include: {
+      model: Tournament,
+      attributes: ['Id', 'Name', 'Start', 'End'],
+      through: {
+        model: Tournament_User,
+        where: {UserId: userId},
+        attributes: [],
+      }
+    }
+  }).then(tourneys => {
+     //console.log(JSON.stringify(tourneys));
+     return msg.show200(req, res, "Success", tourneys);
+   }).catch(err => {
+     return msg.show500(req, res, err);
+   }).catch(err => {
+     return msg.show500(req, res, err);
+   })
+
+ /*  Tournament.findAll({
     through: {
       model: Tournament_User,
       where: {
@@ -288,7 +309,7 @@ exports.get_enlisted_tournaments = (req, res, next) => {
     return msg.show500(req, res, err);
   }).catch(err => {
     return msg.show500(req, res, err);
-  })
+  }) */
 }
 
 
