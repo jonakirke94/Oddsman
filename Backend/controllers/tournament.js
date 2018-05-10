@@ -135,6 +135,7 @@ exports.get_tournament_requests = (req, res, next) => {
       attributes: [['id', 'userId'], ['name', 'userName'], ['tag', 'userTag'], ['email', 'userEmail']]
     },
     through: {
+      attributes: [''],
       model: Request,
       where: {status: "pending"}
       

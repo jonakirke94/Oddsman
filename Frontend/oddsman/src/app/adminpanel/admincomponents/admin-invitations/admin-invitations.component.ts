@@ -19,6 +19,7 @@ export class AdminInvitationsComponent implements OnInit {
   ) {}
 
   private tourId;
+  
   private params$: Subscription;
   private requests$: Subscription;
   private declined$: Subscription;
@@ -27,6 +28,9 @@ export class AdminInvitationsComponent implements OnInit {
   requests: Request[] = [];
   msgs: Message[] = [];
   loading: boolean;
+  tournamentInfo = {}
+
+
 
   ngOnInit() {
     this.params$ = this.route.params.subscribe(params => {
@@ -47,7 +51,8 @@ export class AdminInvitationsComponent implements OnInit {
     this.loading = true;
     setTimeout(() => {
       this.requests$ = this._tourney.getTournamentRequests(id).subscribe(res => {
-        this.requests = res;
+        this.tournamentInfo = res[0]
+        this.requests = res[1];
         this.loading = false;
       });
   }, 500);
@@ -60,7 +65,7 @@ export class AdminInvitationsComponent implements OnInit {
 
 
   acceptRequest(request: Request) {
-    const tourId = request.tourId;
+    const tourId = this.tourId
     const userId = request.userId;
 
     this.accepted$ = this._tourney.handleRequest("accepted", tourId, userId).subscribe(res => {
@@ -75,8 +80,8 @@ export class AdminInvitationsComponent implements OnInit {
   }
 
   declineRequest(request: Request) {
-    const tourId = request.tourId;
-    const userId = request.tourId;
+    const tourId = this.tourId
+    const userId = request.userId;
 
     this.declined$ = this._tourney.handleRequest("declined", tourId, userId).subscribe(res => {
       this.msgs = [];
@@ -87,5 +92,5 @@ export class AdminInvitationsComponent implements OnInit {
       });
       this.getRequests(this.tourId);
     });
-  }
+  } 
 }

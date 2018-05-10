@@ -1,18 +1,15 @@
 <p-growl [value]="msgs"></p-growl>
 
 <h1 class="title">Turneringsforspørgsler</h1>
+<div class="card-title">
+    <h1 class="title">{{tournamentInfo.tourName}} {{tournamentInfo.start}} {{tournamentInfo.tourId}}</h1>
+
+  </div>
 <p-dataTable [value]="requests" [loading]="loading" loadingIcon="fa-spinner">
-    <p-column field="tourId" hidden='true' header="tourId"></p-column>
-    <p-column field="userId" hidden='true' header="userId"></p-column>
-    <p-column field="tourName" header="Turnering"></p-column>
-    <p-column field="start" header="Start">
-    <ng-template let-col let-file="rowData" pTemplate="body">
-        {{file[col.field] | date:'dd/MM/yyyy'}}
-    </ng-template>
-    </p-column>
-    <p-column field="status" header="Status"></p-column>
+   
+    <p-column field="userId" header="userId"></p-column>
     <p-column field="userTag" header="Tag"> </p-column>
-    <p-column field="userName" header="Navn"></p-column>'
+    <p-column field="userName" header="Navn"></p-column>
     <p-column field="userEmail" header="Email"></p-column>
     <p-column styleClass="col-button">
         <ng-template pTemplate="header">
