@@ -36,13 +36,13 @@ export class TournamentService {
     .map(res => <Request[]>res['data']);
   }
 
-  getEnrolledTournaments() {
+  getEnlistedTournaments() {
     return this.http
     .get(`${this.baseUrl}/enlisted`)
     .map(res => res);
   }
 
-  getUnEnrolledTournaments() {
+  getDelistedTournaments() {
     return this.http
     .get(`${this.baseUrl}/delisted/`)
     .map(res => res);

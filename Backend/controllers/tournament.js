@@ -163,7 +163,7 @@ exports.get_users_requests = (req, res, next) => { // TODO: Test with an accepte
       }
     }
   }).then(requests => {
-    console.log(JSON.stringify(requests))
+    //console.log(JSON.stringify(requests))
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     return msg.show500(req, res, err);
@@ -261,7 +261,7 @@ exports.get_enlisted_tournaments = (req, res, next) => {
       }
     }
   }).then(tourneys => {
-    //console.log(JSON.stringify(tourneys));
+    console.log(JSON.stringify(tourneys));
     return msg.show200(req, res, "Success", tourneys);
   }).catch(err => {
     return msg.show500(req, res, err);

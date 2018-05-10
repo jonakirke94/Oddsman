@@ -27,25 +27,25 @@ export class UserTournamentsComponent implements OnInit {
 
   private join$: Subscription;
   private request$: Subscription;
-  private enrolled$: Subscription;
-  private unenrolled$: Subscription;
+  private enlisted$: Subscription;
+  private delisted$: Subscription;
 
 
   ngOnInit() {
-    this.getUserRequests();
-    this.getEnrolledTourneys();
-    this.getUnEnrolledTourneys(); 
+    this.getRequestedTournaments();
+    this.getEnlistedTournaments();
+    this.getDelistedTournaments(); 
   }
 
   ngOnDestroy() {
     if (this.join$ && this.join$ !== null) this.join$.unsubscribe();
     if (this.request$ && this.request$ !== null) this.request$.unsubscribe();
-    if (this.enrolled$ && this.enrolled$ !== null) this.enrolled$.unsubscribe();
-    if (this.unenrolled$ && this.unenrolled$ !== null) this.unenrolled$.unsubscribe();
+    if (this.enlisted$ && this.enlisted$ !== null) this.enlisted$.unsubscribe();
+    if (this.delisted$ && this.delisted$ !== null) this.delisted$.unsubscribe();
   }
 
   //tournaments with active requests
-  getUserRequests() {
+  getRequestedTournaments() {
     this.request$ = this._tournament.getUserRequests().subscribe(res => {
       this.requested = res["data"];
       console.log('Requested')
@@ -56,17 +56,18 @@ export class UserTournamentsComponent implements OnInit {
   }
   
   //tournaments that are not yet started but has no user request
-  getUnEnrolledTourneys() {
-    this.unenrolled$ = this._tournament.getUnEnrolledTournaments().subscribe(res => {
+  getDelistedTournaments() {
+    this.delisted$ = this._tournament.getDelistedTournaments().subscribe(res => {
       this.upcoming = res["data"];
-      //console.log(this.upcoming)
+      console.log('Upcoming')
+      console.log(this.upcoming)
       this.upcomingAny = this.upcoming.length > 0;
     });
   }
 
   //enrolled tournaments
-  getEnrolledTourneys() {
-    this.enrolled$ = this._tournament.getEnrolledTournaments().subscribe(res => {
+  getEnlistedTournaments() {
+    this.enlisted$ = this._tournament.getEnlistedTournaments().subscribe(res => {
       this.enrolled = res["data"];
       console.log('Enrolled')
       console.log(this.enrolled)
@@ -81,9 +82,9 @@ export class UserTournamentsComponent implements OnInit {
   }
 
   refreshLists() {
-    this.getUserRequests();
-    this.getEnrolledTourneys();
-    this.getUnEnrolledTourneys();
+    this.getRequestedTournaments();
+    this.getEnlistedTournaments();
+    this.getDelistedTournaments();
   }
 
 }
