@@ -83,7 +83,7 @@ namespace Scraper.API
             // Add tasks on startup
             var automate = new AutomationService(scope);
             //RecurringJob.AddOrUpdate("scrape-matches", () => automate.ScrapeUpcomingMatches(), Cron.Weekly(DayOfWeek.Thursday, 6));
-            BackgroundJob.Schedule(() => automate.ScrapeUpcomingMatches(), DateTimeOffset.Now.AddMinutes(1));
+            //BackgroundJob.Schedule(() => automate.ScrapeUpcomingMatches(), DateTimeOffset.Now.AddMinutes(1));
         }
     }
 }

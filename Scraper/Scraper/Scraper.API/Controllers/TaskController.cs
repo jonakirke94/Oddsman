@@ -36,7 +36,7 @@ namespace Scraper.API.Controllers
             {
                 using (var db = scope.ServiceProvider.GetRequiredService<DanskeSpilContext>())
                 {
-                    var match = db.Matches.Find(matchId);
+                    var match = db.Matches.FirstOrDefault(m => m.MatchId == matchId);
                     if(match == null) return NotFound();
 
                     try
