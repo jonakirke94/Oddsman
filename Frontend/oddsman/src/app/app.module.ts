@@ -19,7 +19,6 @@ import { AdminguardGuard } from './guards/adminguard.guard';
 import { ChartsModule } from 'ng2-charts';
 import { UsersettingsComponent } from './dashboard/usercomponents/usersettings/usersettings.component';
 import { UserstatsComponent } from './dashboard/usercomponents/userstats/userstats.component';
-import { SendtipsComponent } from './dashboard/usercomponents/sendtips/sendtips.component';
 import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/admin-stats.component';
 import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adminusers.component';
 import {AccordionModule} from 'primeng/accordion';    
@@ -34,6 +33,7 @@ import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-in
 import { DataTableModule } from 'primeng/primeng'; // Here
 import {GrowlModule} from 'primeng/primeng';
 import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
+import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 
 
 @NgModule({
@@ -47,12 +47,11 @@ import { UserTournamentsComponent } from './dashboard/usercomponents/user-tourna
     AdminpanelComponent,
     UsersettingsComponent,
     UserstatsComponent,
-    SendtipsComponent,
     AdminStatsComponent,
     AdminusersComponent,
     AdminTournamentsComponent,
     AdminInvitationsComponent, 
-    UserTournamentsComponent
+    UserTournamentsComponent, SendBetsComponent
    
   ],
   imports: [
