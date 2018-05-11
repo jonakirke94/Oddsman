@@ -7,7 +7,6 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 export class TournamentService {
 
   baseUrl:string = "http://localhost:3000/tournament"
-  requestInfo = [];
 
   constructor(private http: HttpClient) {
    }
@@ -39,12 +38,11 @@ export class TournamentService {
       const tournament = {
          tourId: res['data']['tourId'],
          tourName: res['data']['tourName'],
-         start: res['data']['start']
+         start: res['data']['start'],
+         requests: <Request[]>res['data']['users']
       }
-      
-      this.requestInfo.push(tournament)
-      this.requestInfo.push(<Request[]>res['data']['users']);
-      return this.requestInfo;
+
+      return tournament
     })
   }
 

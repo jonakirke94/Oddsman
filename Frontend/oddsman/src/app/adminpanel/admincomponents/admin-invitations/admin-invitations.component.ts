@@ -51,8 +51,9 @@ export class AdminInvitationsComponent implements OnInit {
     this.loading = true;
     setTimeout(() => {
       this.requests$ = this._tourney.getTournamentRequests(id).subscribe(res => {
-        this.tournamentInfo = res[0]
-        this.requests = res[1];
+        this.tournamentInfo = res
+        this.requests = res.requests;
+        console.log(this.requests)
         this.loading = false;
       });
   }, 500);

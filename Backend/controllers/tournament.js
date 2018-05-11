@@ -132,14 +132,14 @@ exports.get_tournament_requests = (req, res, next) => {
     attributes: [['id', 'tourId'], ['name', 'tourName'], 'start'],
     include: {
       model: User,
-      attributes: [['id', 'userId'], ['name', 'userName'], ['tag', 'userTag'], ['email', 'userEmail']]
+      attributes: [['id', 'userId'], ['name', 'userName'], ['tag', 'userTag'], ['email', 'userEmail']],
+      through: {
+        attributes: [],
+        model: Request,
+        where: {Status: {[Op.eq] : "pending"}}     
+      }
     },
-    through: {
-      attributes: [''],
-      model: Request,
-      where: {status: "pending"}
-      
-    }
+    
   }).then(requests => {
     console.log(JSON.stringify(requests));
     return msg.show200(req, res, "Success", requests);
