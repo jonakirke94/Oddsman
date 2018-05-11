@@ -6,6 +6,6 @@ const guard = require('../guards/authguard');
 
 const oddsController = require('../../controllers/odds');
 
-router.post("/", guard, oddsController.sendOdds);
+router.post("/:tourid", guard, oddsController.sendOdds);
 
 module.exports = router;
