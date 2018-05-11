@@ -1,0 +1,58 @@
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <div class="column is-4 is-offset-2 is-primary" [@flyInOut]>
+
+          <h1>Send tips for turnering: 2018: Runde: 1</h1>
+
+
+<form [formGroup]="sendbetsForm" novalidate (ngSubmit)="sendBets()">
+<div class="field has-addons">
+  <p class="control is-expanded">
+    <input class="input" type="text" placeholder="111" formControlName="oddsNo1">
+  </p>
+  <p class="control">
+    <span class="select"> 
+        <select required name="Option1" formControlName="oddsOption1">
+          <option *ngFor="let opt of options" [value]="opt">{{opt}}</option>
+
+      </select>
+    </span>
+  </p>
+</div>
+
+<div class="field has-addons">
+  <p class="control is-expanded">
+    <input class="input" type="text" placeholder="222" formControlName="oddsNo2">
+  </p>
+  <p class="control">
+      <span class="select"> 
+      <select required name="Option2"  formControlName="oddsOption2">
+          <option *ngFor="let opt of options" [value]="opt">{{opt}}</option>
+      </select>
+    </span>
+  </p>
+</div>
+
+<div class="field has-addons">
+  <p class="control is-expanded">
+    <input class="input" type="text" placeholder="333" formControlName="oddsNo3">
+  </p>
+  <p class="control">
+    <span class="select"> 
+      <select required name="Option3" formControlName="oddsOption3">
+          <option *ngFor="let opt of options" [value]="opt">{{opt}}</option>
+      </select>
+    </span>
+  </p>
+</div>
+<button class="btn" [disabled]="!sendbetsForm.valid">Afsend tips</button>
+
+</form>
+
+
+</div>
+</div>
+</div>
+</section>

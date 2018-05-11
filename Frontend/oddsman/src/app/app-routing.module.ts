@@ -9,12 +9,12 @@ import { AuthGuard } from './guards/auth.guard';
 import { AdminguardGuard } from './guards/adminguard.guard';
 import { UserstatsComponent } from './dashboard/usercomponents/userstats/userstats.component';
 import { UsersettingsComponent } from './dashboard/usercomponents/usersettings/usersettings.component';
-import { SendtipsComponent } from './dashboard/usercomponents/sendtips/sendtips.component';
 import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/admin-stats.component';
 import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adminusers.component';
 import { AdminTournamentsComponent } from './adminpanel/admincomponents/admin-tournaments/admin-tournaments.component';
 import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-invitations/admin-invitations.component';
 import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
+import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 
 
 const routes: Routes = [
@@ -45,7 +45,7 @@ const routes: Routes = [
       },
       {
         path : 'sendtips',
-        component: SendtipsComponent
+        component: SendBetsComponent
        },
       {
         path : 'turneringer',
