@@ -46,7 +46,7 @@
 
     <div class="card-title">
      <h1 class="title" *ngIf="requestedAny">Dine turneringsforspørgsler</h1>  
-     <h1 class="title" *ngIf="!requestedAny">Du har ingen turneringsforspørgsler</h1>
+     <h1 class="title" *ngIf="!requestedAny">Du har ingen turneringsforspørgsler <i class="fa fa-times empty-icon"></i></h1>
     </div>
     <div class="tournament-container">
     <div class="columns is-multiline" [@listAnimation]="requested.length">
@@ -77,9 +77,9 @@
         </div>
       </div>
     </div>  
-    <div class="has-text-centered">
+  <!--   <div class="has-text-centered">
       <i class="fa fa-times empty-icon" *ngIf="!requestedAny"></i>  
-      </div>
+      </div> -->
     </div>
   </div>
 </div>
