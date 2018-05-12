@@ -35,16 +35,19 @@ exports.sendOdds = (req, res, next) => {
         .then(tourney => {
             if (tourney) {
                 let validDay = isValidWeekDays();
-                let active = isActiveTournament(tourney.dataValues.Start, tourney.dataValues.End); 
-                let count = tourney.dataValues.bets.length;
 
+                if(!validDay){
+                    return msg.show409(req, res, "Det er ikke muligt at oddse på turneringen idag");
+                }
+
+                let active = isActiveTournament(tourney.dataValues.Start, tourney.dataValues.End);
                 
                 if(!active){
                     return msg.show409(req, res, "Turneringen er inaktiv");
                 }
-                if(!validDay){
-                    return msg.show409(req, res, "Det er ikke muligt at oddse på turneringen idag");
-                }
+                
+                let count = tourney.dataValues.bets.length;       
+                
                 if (count > 0) {
                     return msg.show409(req, res, `Mængden af odds for denne turnering er overskredet ${count}/3`);
                 }               
