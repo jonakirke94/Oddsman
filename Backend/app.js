@@ -19,6 +19,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(expressValidator());
 
+
+
 //set up CORS to pass correct headers
 // https://www.youtube.com/watch?v=zoSJ3bNGPp0
 app.use((req, res, next) => {
@@ -32,7 +34,7 @@ app.use((req, res, next) => {
 });
 
 
-  
+
  
  //don't show the log when it is test
 if(config.util.getEnv('NODE_ENV') !== 'test') {

@@ -135,7 +135,7 @@ exports.get_current_tournament = (req, res, next) => {
   const today = moment();
 
   Tournament.findOne({
-    attributes: ['id', 'name', 'start'],
+    attributes: ['id', 'name'],
     where: {
       [Op.and]: [{
         start: {

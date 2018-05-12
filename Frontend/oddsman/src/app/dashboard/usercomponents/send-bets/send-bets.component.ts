@@ -25,6 +25,7 @@ export class SendBetsComponent implements OnInit {
 
   error: string;
   showMessage: boolean;
+  showSpinner: boolean;
 
   private tournament;
   private currentWeek;
@@ -81,22 +82,27 @@ export class SendBetsComponent implements OnInit {
   }
 
   getCurrentTournament() {
-    this.tournament$ = this._tour.getCurrentTournament().subscribe(res => {
+    this.showSpinner = true;
 
-        console.log(res);
-        this.tournament = res;
+    this.tournament$ = this._tour.getCurrentTournament().subscribe(res => {
+        this.tournament = res['data'];
+        this.showSpinner = false;
     }, err => {
-      console.log(err)
         this.showMessage = true;
         if(err.status === 404) {     
           this.error = 'Det ser ikke ud til du har nogle aktive turneringer. Hvis du mener det er en fejl, kontakt webmaster'
         } else {
           this.error = 'Noget gik galt - Prøv igen senere eller kontakt webmaster'
         }
+
+        this.showSpinner = false;
+
     })
   }
 
   sendBets() {
+    this.showSpinner = true;
+
     const odds = [
     {
       matchId: this.sendbetsForm.value.oddsNo1,
@@ -113,13 +119,14 @@ export class SendBetsComponent implements OnInit {
   ]
     console.log(odds);
 
-    this._odds.sendOdds(this.tournament.Id, odds).subscribe(res => {
+    this._odds.sendOdds(this.tournament.id, odds).subscribe(res => {
       this.showMessage = true;
-       //successfully sent odds
+      this.showSpinner = false;
     },
     err => {
       this.showMessage = true;
       this.error = 'Dine odds kunne ikke afsendes - Prøv igen senere eller send dine tegn til webmaster + 2 andre deltager pr mail.'     
+      this.showSpinner = false;
     })
   }
 
