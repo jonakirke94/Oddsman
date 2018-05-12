@@ -209,8 +209,8 @@
                  .get("/tournament/enlisted") //ENDPOINT[6]
                  .set("authorization", "Bearer " + tokens.access_token)
                  .end((err, res) => {
-                   res.body.data.should.be.a("array");
-                   res.body.data.should.have.length(1);
+                   res.body.data.tournaments.should.be.a("array");
+                   res.body.data.tournaments.should.have.length(1);
                    res.should.have.status(200);
                    done();
                  });
@@ -434,7 +434,7 @@
              .set("authorization", "Bearer " + tokens.access_token)
              .end((err, res) => {
                res.should.have.status(200);
-               res.body.data.should.be.a("array");
+               res.body.data.tournaments.should.be.a("array");
                done();
              });
          });
