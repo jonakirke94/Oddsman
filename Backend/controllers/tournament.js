@@ -182,7 +182,7 @@ exports.get_tournament_requests = (req, res, next) => {
       
     }
   }).then(requests => {
-    console.log(JSON.stringify(requests));
+    //console.log(JSON.stringify(requests));
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     console.log(err)

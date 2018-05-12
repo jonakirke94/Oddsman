@@ -258,6 +258,28 @@
            });
          });
      });
+     it("It should try to get the current tournament but wont find any", done => {
+       const user = helper.getUser();
+       chai.request(server)
+         .post("/user/signup") //ENDPOINT[2]
+         .send(user)
+         .end((err, res) => {
+           Tournament.create({
+             Name: "Not Active",
+             Start: moment().add(2, 'M'),
+             End: moment().add(4, 'M')
+           }).then(() => {
+             chai
+               .request(server)
+               .get("/tournament/current") //ENDPOINT[6]
+               .set("authorization", "Bearer ")
+               .end((err, res) => {
+                 res.should.have.status(404);
+                 done();
+               });
+           });
+         });
+     });
    });
 
    describe("/POST manage request", () => {
