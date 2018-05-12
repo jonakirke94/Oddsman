@@ -1,10 +1,11 @@
 <section class="hero">
   <div class="hero-body">
     <div class="container has-text-centered">
-      <div class="column is-4 is-offset-2 is-primary" [@flyInOut]>
-
-        <span *ngIf="!showMessage">
-        <h1 style="color: white">Send tips for turnering:: Runde: {{currentWeek}}</h1>
+      <div class="column is-4 is-offset-2 is-primary" style="min-height: 300px" [@flyInOut]>
+        
+        <loading-spinner *ngIf="showSpinner"></loading-spinner>
+        <span *ngIf="!showMessage && !showSpinner">
+        <h1 style="color: white">Send tips for turnering: {{tournament.name}} Runde: {{currentWeek}}</h1>
 
         <form [formGroup]="sendbetsForm" novalidate (ngSubmit)="sendBets()" >
           <div class="field has-addons">
@@ -53,7 +54,7 @@
 
         <article class="message is-success" *ngIf="showMessage && !error">
           <div class="message-body">
-            Dine tips til  for runde {{currentWeek}} blev afsendt successfuldt. Gå til 'Mine Tips' for at se alle dine odds eller stillingen for turneringen
+            Dine tips til {{tournament.name}} for runde {{currentWeek}} blev afsendt successfuldt. Gå til 'Mine Tips' for at se alle dine odds eller stillingen for turneringen
           </div>
         </article>
 

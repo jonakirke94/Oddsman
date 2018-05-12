@@ -35,3 +35,20 @@ CREATE TABLE `gotomain_net_db2`.`Requests` (
   PRIMARY KEY (Tournament_Id, User_Id));
 
 
+INSERT INTO `gotomain_net_db`.`tournaments`
+(
+`Name`,
+`Start`,
+`End`)
+VALUES
+('STARTEDTOURNAMENT',
+'2018-04-31 00:00:00',
+'2018-07-31 00:00:00'
+);
+
+INSERT INTO `gotomain_net_db`.`users_tournaments`
+(
+`tournamentId`,
+`userId`)
+VALUES
+(4,1);

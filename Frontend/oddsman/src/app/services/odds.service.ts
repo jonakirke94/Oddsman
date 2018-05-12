@@ -9,10 +9,9 @@ export class OddsService {
   constructor(private http: HttpClient) {
   }
 
-
   sendOdds(tourid, odds) {
     return this.http
-    .post(`${this.baseUrl}/${tourid}/sendodds/`, odds)
+    .post(`${this.baseUrl}/${tourid}`, odds)
     .map(res => res);
   }
 
