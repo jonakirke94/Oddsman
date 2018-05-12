@@ -258,7 +258,7 @@
            });
          });
      });
-     it("It should try to get the current tournament but wont find any", done => {
+     it("It should NOT get the current tournament", done => {
        const user = helper.getUser();
        chai.request(server)
          .post("/user/signup") //ENDPOINT[2]
