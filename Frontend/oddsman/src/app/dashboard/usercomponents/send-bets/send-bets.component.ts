@@ -71,14 +71,20 @@ export class SendBetsComponent implements OnInit {
   }
 
   sendBets() {
-    const odds = {
-      oddsNo1: this.sendbetsForm.value.oddsNo1,
-      oddsOption1: this.sendbetsForm.value.oddsOption1,
-      oddsNo2: this.sendbetsForm.value.oddsNo2,
-      oddsOption2: this.sendbetsForm.value.oddsOption2,
-      oddsNo3: this.sendbetsForm.value.oddsNo3,
-      oddsOption3: this.sendbetsForm.value.oddsOption3,
-    }
+    const odds = [
+    {
+      matchId: this.sendbetsForm.value.oddsNo1,
+      option: this.sendbetsForm.value.oddsOption1
+    },
+    {
+      matchId: this.sendbetsForm.value.oddsNo1,
+      option: this.sendbetsForm.value.oddsOption1
+    },
+    {
+      matchId: this.sendbetsForm.value.oddsNo1,
+      option: this.sendbetsForm.value.oddsOption1
+    },
+  ]
 
     console.log(odds);
 
