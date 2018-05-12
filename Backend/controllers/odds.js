@@ -76,7 +76,7 @@ function isActiveTournament(start, end) {
 function saveOdds(userId, tourId, odds, callback) {
     odds.forEach(odds => {
         let matchId = odds.matchId;
-        let option = odds.options;
+        let option = odds.option;
         scraper.getMatch(matchId, null, (m) => {
             if (!m) {
                 m = {
