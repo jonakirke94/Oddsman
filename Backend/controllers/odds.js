@@ -4,6 +4,7 @@ const msg = require("../db/http");
 const moment = require('moment');
 const seq = require('../models');
 const Tournament = seq.tournaments;
+const Match = seq.matches;
 const Request = seq.requests;
 const Bet = seq.bets;
 const Tournament_User = seq.users_tournaments;
@@ -25,35 +26,63 @@ exports.sendOdds = (req, res, next) => {
     Tournament.findById(tourId, {
             include: {
                 model: Bet,
-                where: {
-                    userId: userId,
-                    tournamentId: tourId,
-                    Week: moment().isoWeek()
-                }
+                attributes: ['userId', 'tournamentId', 'week']
             }
         })
         .then(tourney => {
             if (tourney) {
                 let validDay = isValidWeekDays();
 
-                if(!validDay){
+                if (!validDay) {
                     return msg.show409(req, res, "Det er ikke muligt at oddse på turneringen idag");
                 }
 
                 let active = isActiveTournament(tourney.dataValues.Start, tourney.dataValues.End);
-                
-                if(!active){
+
+                if (!active) {
                     return msg.show409(req, res, "Turneringen er inaktiv");
                 }
-                
-                let count = tourney.dataValues.bets.length;       
-                
+
+                let count = tourney.dataValues.bets.length;
+
                 if (count > 0) {
                     return msg.show409(req, res, `Mængden af odds for denne turnering er overskredet ${count}/3`);
-                }               
-                // saveOdds asynchronous (dont wait)
-                //saveOdds(userId, tourId, odds);
-                return msg.show200(req, res, next);
+                }
+
+                let ctr = 0;
+                odds.forEach((o, index, odds) => {
+                    let matchId = o.matchId;
+                    let option = o.option;
+
+                    scraper.getMatch(matchId, null, (m) => {
+                        if (m === null) {
+                            m = {
+                                matchId: matchId,
+                                userId: userId,
+                                tournamentId: tourId,
+                                missing: true
+                            }
+                        }
+                        Match.create(m)
+                            .then(match => {
+                                Bet.create({
+                                    matchId: match.id,
+                                    userId: userId,
+                                    tournamentId: tourId,
+                                    Week: moment().isoWeek()
+                                }).then(() => {
+                                    ctr++;
+                                    if (ctr === odds.length) {
+                                        return msg.show200(req, res, next);
+                                    }
+                                });
+                            });
+                    });
+
+                });
+
+
+
             } else {
                 return msg.show404(req, res, next);
             }

@@ -45,24 +45,30 @@ describe('ODDS', () => {
                         Start: moment().subtract(1, 'M'),
                         End: moment().add(1, 'M')
                     }).then(() => {
-                        chai.request(server)
-                            .post("/user/signup") //ENDPOINT[2]
-                            .send(user)
-                            .end((err, res) => {
-                                Bet.create({
-                                    tournamentId: 1,
-                                    userId: 1,
-                                    Week: moment().isoWeek()
-                                }).then(() => {
+                        Tournament.create({
+                            Name: "Season " + moment().isoWeek() + 1,
+                            Start: moment().subtract(1, 'M'),
+                            End: moment().add(1, 'M')
+                        }).then(() => {
+                            chai.request(server)
+                                .post("/user/signup") //ENDPOINT[2]
+                                .send(user)
+                                .end((err, res) => {
                                     Bet.create({
-                                        tournamentId: 2,
+                                        tournamentId: 1,
                                         userId: 1,
-                                        Week: moment().isoWeek(),
+                                        Week: moment().isoWeek()
                                     }).then(() => {
-                                        done();
+                                        Bet.create({
+                                            tournamentId: 2,
+                                            userId: 1,
+                                            Week: moment().isoWeek(),
+                                        }).then(() => {
+                                            done();
+                                        });
                                     });
                                 });
-                            });
+                        });
                     });
                 });
         })
@@ -77,10 +83,22 @@ describe('ODDS', () => {
         it("it should send Odds and fail on inactive tournament", done => {
             chai
                 .request(server)
-                .post("/odds/1") //ENDPOINT[1]
+                .post("/odds/1") 
                 .set("authorization", "Bearer " + tokens.access_token)
                 .send({
-                    'odds': [1, 2, 3]
+                    'odds': [{
+                            matchId: 1,
+                            option: "1"
+                        },
+                        {
+                            matchId: 4,
+                            option: "X"
+                        },
+                        {
+                            matchId: 9,
+                            option: "2"
+                        },
+                    ]
                 })
                 .end((err, res) => {
                     JSON.parse(res.text).msg.should.eql("Turneringen er inaktiv");
@@ -91,16 +109,56 @@ describe('ODDS', () => {
         it("it should send Odds and fail on having bets already", done => {
             chai
                 .request(server)
-                .post("/odds/2") //ENDPOINT[1]
+                .post("/odds/2") 
                 .set("authorization", "Bearer " + tokens.access_token)
                 .send({
-                    'odds': [1, 2, 3]
+                    'odds': [{
+                            matchId: 1,
+                            option: "1"
+                        },
+                        {
+                            matchId: 4,
+                            option: "X"
+                        },
+                        {
+                            matchId: 9,
+                            option: "2"
+                        },
+                    ]
                 })
                 .end((err, res) => {
-                    let msg = JSON.parse(res.text).msg; 
+                    let msg = JSON.parse(res.text).msg;
                     // msg contains a dynamic 'x/3' bets message, so using a substring for equality check.
-                    msg.substring(0, msg.length-4).should.eql("Mængden af odds for denne turnering er overskredet");
-                    res.should.have.status(409);                    
+                    msg.substring(0, msg.length - 4).should.eql("Mængden af odds for denne turnering er overskredet");
+                    res.should.have.status(409);
+                    done();
+                });
+        });
+
+        it("it should send Odds and save them", done => {
+            chai
+                .request(server)
+                .post("/odds/3") 
+                .set("authorization", "Bearer " + tokens.access_token)
+                .send({
+                    'odds': [{
+                            matchId: 1,
+                            option: "1"
+                        },
+                        {
+                            matchId: 4,
+                            option: "X"
+                        },
+                        {
+                            matchId: 9,
+                            option: "2"
+                        },
+                    ]
+                })
+                .end((err, res) => {
+                   /*  let msg = JSON.parse(res.text).msg;
+                    console.log(msg); */
+                    res.should.have.status(200);
                     done();
                 });
         });

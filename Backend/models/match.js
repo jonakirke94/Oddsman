@@ -20,43 +20,43 @@ module.exports = function (sequelize, DataTypes) {
     },
     RoundId: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     },
     MatchName: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: true
     },
     MatchDate: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     LastUpdated: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     Option1: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: true
     },
     Option2: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: true
     },
     Option3: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: true
     },
     Option1Odds: {
       type: DataTypes.DOUBLE,
-      allowNull: false
+      allowNull: true
     },
     Option2Odds: {
       type: DataTypes.DOUBLE,
-      allowNull: false
+      allowNull: true
     },
     Option3Odds: {
       type: DataTypes.DOUBLE,
-      allowNull: false
+      allowNull: true
     },
     Missing: {
       type: DataTypes.BOOLEAN,
