@@ -10,6 +10,7 @@
  const tokenController = require('../controllers/token')
  const token = require("../controllers/token");
  const helper = require('../test/helper');
+ const moment = require('moment');
 
  chai.use(chaiHttp);
 
@@ -225,6 +226,36 @@
            res.body.err.should.eql("No token provided");
            res.should.have.status(400);
            done();
+         });
+     });
+     it("It should get the current tournament", done => {
+       const user = helper.getUser();
+       chai.request(server)
+         .post("/user/signup") //ENDPOINT[2]
+         .send(user)
+         .end((err, res) => {
+           Tournament.create({
+             Name: "Active",
+             Start: moment().subtract(1, 'M'),
+             End: moment().add(1, 'M')
+           }).then(() => {
+             Tournament.create({
+               Name: "Not Active",
+               Start: moment().add(2, 'M'),
+               End: moment().add(4, 'M')
+             }).then(() => {
+               chai
+                 .request(server)
+                 .get("/tournament/current") //ENDPOINT[6]
+                 .set("authorization", "Bearer ")
+                 .end((err, res) => {
+                   const data = JSON.parse(res.text).data;
+                   res.should.have.status(200);
+                   data.name.should.be.eql("Active");
+                   done();
+                 });
+             });
+           });
          });
      });
    });
