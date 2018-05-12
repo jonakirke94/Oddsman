@@ -5,6 +5,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const server = require("../server");
 const should = chai.should();
+const moment = require("moment");
 
 const tokenController = require("../controllers/token");
 const userController = require("../controllers/user");
@@ -21,12 +22,7 @@ const tokens = tokenController.generateTokens({
     IsAdmin: false
 });
 
-const tokens2 = tokenController.generateTokens({
-    Email: "Ryan@email1.dk",
-    Id: 2,
-    IsAdmin: false
-});
-
+//seq.sequelize.sync();
 
 describe('ODDS', () => {
     beforeEach(done => {
@@ -44,8 +40,9 @@ describe('ODDS', () => {
                         .send(user)
                         .end((err, res) => {
                             Bet.create({
-                                'tournamentId': 1,
-                                "userId": 1
+                                tournamentId: 1,
+                                userId: 1,
+                                Week : moment().isoWeek()
                             }).then(() => {
                                 done();
                             });
@@ -69,8 +66,8 @@ describe('ODDS', () => {
                     'odds': [1, 2, 3]
                 })
                 .end((err, res) => {
+                    console.log(JSON.parse(res.text).msg);
                     res.should.have.status(200);
-                    console.log(JSON.stringify(err));
                     done();
                 });
         });

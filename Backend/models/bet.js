@@ -5,6 +5,10 @@ module.exports = function (sequelize, DataTypes) {
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
+        },
+        Week: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
         }
     })
 

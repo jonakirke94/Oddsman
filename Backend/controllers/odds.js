@@ -22,17 +22,17 @@ exports.sendOdds = (req, res, next) => {
     const odds = req.body.odds;
     const userId = helper.getUserId(req);
 
-    let count = canOdds(odds.length, tourId, userId);
-
+    let count = canOdds(tourId, userId);
+    
     if (count > 0) {
-        return msg.show409(req, res, next, new Error("Mængden af odds for denne turnering er overskredet, ingen odds blev tilføjet"));
+        return msg.show409(req, res, "Mængden af odds for denne turnering er overskredet, ingen odds blev tilføjet");
     }
     if (!isValidDate(tourId)) {
-        return msg.show409(req, res, next, new Error("Det er ikke muligt at oddse på turneringen idag"));
+        return msg.show409(req, res, "Det er ikke muligt at oddse på turneringen idag");
     }
 
-    // ADD INVALID & MISSING BOOL ON MATCH
-
+    // saveOdds asynchronous (dont wait)
+    //saveOdds(userId, tourId, odds);
 
 
 
@@ -40,7 +40,7 @@ exports.sendOdds = (req, res, next) => {
 }
 
 
-function canOdds(oddsAmount, tourId, userId, callback) {
+function canOdds(tourId, userId) {
 
     Tournament.count({
             where: {
@@ -62,6 +62,7 @@ function canOdds(oddsAmount, tourId, userId, callback) {
                 where: {
                     userId: userId,
                     tournamentId: tourId,
+                    Week: moment().isoWeek()
                 }
             }
         })
@@ -82,8 +83,6 @@ function isValidDate(tourId) {
     Tournament.findById(tourId).then(tourney => {
         return validDays && tourney.start <= today <= tourney.end;
     });
-
-
 }
 
 function saveOdds(userId, tourId, odds, callback) {
@@ -99,7 +98,6 @@ function saveOdds(userId, tourId, odds, callback) {
                     missing: true
                 }
             }
-
             Match.create(m)
                 .then(match => {
                     Bet.create({
@@ -107,7 +105,7 @@ function saveOdds(userId, tourId, odds, callback) {
                         userId: userId,
                         tournamentId: tourid
                     }).then(bet => {
-
+                        // TODO: UPDATE FEED & ALERT USER?
                     });
                 });
         });
