@@ -22,41 +22,7 @@ exports.sendOdds = (req, res, next) => {
     const odds = req.body.odds;
     const userId = helper.getUserId(req);
 
-    let count = canOdds(tourId, userId);
-    
-    if (count > 0) {
-        return msg.show409(req, res, "Mængden af odds for denne turnering er overskredet, ingen odds blev tilføjet");
-    }
-    if (!isValidDate(tourId)) {
-        return msg.show409(req, res, "Det er ikke muligt at oddse på turneringen idag");
-    }
-
-    // saveOdds asynchronous (dont wait)
-    //saveOdds(userId, tourId, odds);
-
-
-
-    return msg.show200(req, res, next);
-}
-
-
-function canOdds(tourId, userId) {
-
-    Tournament.count({
-            where: {
-                id: tourId,
-                [Op.and]: [{
-                        start: {
-                            [Op.lte]: today.toDate()
-                        }
-                    },
-                    {
-                        end: {
-                            [Op.gte]: today.toDate()
-                        }
-                    }
-                ]
-            },
+    Tournament.findById(tourId, {
             include: {
                 model: Bet,
                 where: {
@@ -66,23 +32,45 @@ function canOdds(tourId, userId) {
                 }
             }
         })
-        .then((count) => {
-            return count;
+        .then(tourney => {
+            if (tourney) {
+                let validDay = isValidWeekDays();
+                let active = isActiveTournament(tourney.dataValues.Start, tourney.dataValues.End); 
+                let count = tourney.dataValues.bets.length;
+
+                
+                if(!active){
+                    return msg.show409(req, res, "Turneringen er inaktiv");
+                }
+                if(!validDay){
+                    return msg.show409(req, res, "Det er ikke muligt at oddse på turneringen idag");
+                }
+                if (count > 0) {
+                    return msg.show409(req, res, `Mængden af odds for denne turnering er overskredet ${count}/3`);
+                }               
+                // saveOdds asynchronous (dont wait)
+                //saveOdds(userId, tourId, odds);
+                return msg.show200(req, res, next);
+            } else {
+                return msg.show404(req, res, next);
+            }
+
         });
 }
 
-function isValidDate(tourId) {
+
+
+
+function isValidWeekDays() {
     // torsdag kl 12 - lørdag kl 12
-    const startOfWeek = moment().startOf('isoWeek');
-    let start = startOfWeek.add(3, 'd').add(12, 'h');
-    let end = startOfWeek.add(5, 'd').add(12, 'h');
+    let start = moment().startOf('isoWeek').add(3, 'd').add(12, 'h');
+    let end = moment().startOf('isoWeek').add(5, 'd').add(23, 'h').add(59, 'm');
+    console.log(today.isBetween(start, end, null, '[]'));
+    return today.isBetween(start, end, null, '[]'); // inclusive
+}
 
-    let validDays = start <= today <= end;
-
-
-    Tournament.findById(tourId).then(tourney => {
-        return validDays && tourney.start <= today <= tourney.end;
-    });
+function isActiveTournament(start, end) {
+    return today.isBetween(start, end, null, '[]');
 }
 
 function saveOdds(userId, tourId, odds, callback) {

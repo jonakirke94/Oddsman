@@ -11,6 +11,7 @@ const tokenController = require("../controllers/token");
 const userController = require("../controllers/user");
 const seq = require('../models');
 const Bet = seq.bets;
+const Tournament = seq.tournaments;
 
 const helper = require('../test/helper');
 
@@ -29,24 +30,40 @@ describe('ODDS', () => {
         helper.clean(function (result) {
             const tour = helper.getTour();
             const user = helper.getUser();
-            chai
-                .request(server)
+            const user2 = helper.getUser({
+                name: "Günther",
+                tag: "? u wot mate ?",
+                email: "ebaumsworld@90skids.com",
+                password: "halloweldt"
+            });
+            chai.request(server)
                 .post("/tournament") //ENDPOINT[1]
                 .send(tour)
                 .end((err, res) => {
-                    chai
-                        .request(server)
-                        .post("/user/signup") //ENDPOINT[2]
-                        .send(user)
-                        .end((err, res) => {
-                            Bet.create({
-                                tournamentId: 1,
-                                userId: 1,
-                                Week : moment().isoWeek()
-                            }).then(() => {
-                                done();
+                    Tournament.create({
+                        Name: "Season " + moment().isoWeek(),
+                        Start: moment().subtract(1, 'M'),
+                        End: moment().add(1, 'M')
+                    }).then(() => {
+                        chai.request(server)
+                            .post("/user/signup") //ENDPOINT[2]
+                            .send(user)
+                            .end((err, res) => {
+                                Bet.create({
+                                    tournamentId: 1,
+                                    userId: 1,
+                                    Week: moment().isoWeek()
+                                }).then(() => {
+                                    Bet.create({
+                                        tournamentId: 2,
+                                        userId: 1,
+                                        Week: moment().isoWeek(),
+                                    }).then(() => {
+                                        done();
+                                    });
+                                });
                             });
-                        });
+                    });
                 });
         })
     });
@@ -57,7 +74,7 @@ describe('ODDS', () => {
     });
 
     describe("/POST Odds", () => {
-        it("it should send Odds", done => {
+        it("it should send Odds and fail on inactive tournament", done => {
             chai
                 .request(server)
                 .post("/odds/1") //ENDPOINT[1]
@@ -66,8 +83,24 @@ describe('ODDS', () => {
                     'odds': [1, 2, 3]
                 })
                 .end((err, res) => {
-                    console.log(JSON.parse(res.text).msg);
-                    res.should.have.status(200);
+                    JSON.parse(res.text).msg.should.eql("Turneringen er inaktiv");
+                    res.should.have.status(409);
+                    done();
+                });
+        });
+        it("it should send Odds and fail on having bets already", done => {
+            chai
+                .request(server)
+                .post("/odds/2") //ENDPOINT[1]
+                .set("authorization", "Bearer " + tokens.access_token)
+                .send({
+                    'odds': [1, 2, 3]
+                })
+                .end((err, res) => {
+                    let msg = JSON.parse(res.text).msg; 
+                    // msg contains a dynamic 'x/3' bets message, so using a substring for equality check.
+                    msg.substring(0, msg.length-4).should.eql("Mængden af odds for denne turnering er overskredet");
+                    res.should.have.status(409);                    
                     done();
                 });
         });
