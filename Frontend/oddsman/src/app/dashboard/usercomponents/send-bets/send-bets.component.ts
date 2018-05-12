@@ -86,6 +86,7 @@ export class SendBetsComponent implements OnInit {
         console.log(res);
         this.tournament = res;
     }, err => {
+      console.log(err)
         this.showMessage = true;
         if(err.status === 404) {     
           this.error = 'Det ser ikke ud til du har nogle aktive turneringer. Hvis du mener det er en fejl, kontakt webmaster'

@@ -157,9 +157,9 @@ exports.get_current_tournament = (req, res, next) => {
 
   }).then(tour => {
     if(tour === null) {
-      return msg.show404(req, res, 'Could not find any active tournament');
+      return msg.show404(req, res, next);
     }
-    
+
     return msg.show200(req, res, "Found current tournament", tour);
 
   }).catch(function (err) {
@@ -185,6 +185,7 @@ exports.get_tournament_requests = (req, res, next) => {
     console.log(JSON.stringify(requests));
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
+    console.log(err)
     return msg.show500(req, res, err);
   })
 }
