@@ -8,11 +8,12 @@ const tokenController = require('../controllers/token');
 
 const msg = require("../db/http");
 const db = require('../models');
+const helper = require('../controllers/helper');
 const User = db.users;
 
 
 exports.update = (req, res, next) => {
-  const userId = getUserId(req);
+  const userId = helper.getUserId(req);
 
   if(userId === -1) {
     return msg.show500(req, res, 'Couldnt fetch userid');
@@ -155,19 +156,6 @@ exports.user_all = (req, res, next) => {
   });
 }
  
-
-function getUserId(req) {
-  //decode the token and fetch id
-  const token = req.headers.authorization.split(' ');
-
-  try {
-    var decoded = jwtDecode(token[1])
-    return decoded.userId;
-  } catch (err) {
-    return -1;
-  }
-}
-
 exports.getById = (id) => {
   return User.findById(id).then(user => {
     if(user == null) {
