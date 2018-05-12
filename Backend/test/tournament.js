@@ -209,8 +209,8 @@
                  .get("/tournament/enlisted") //ENDPOINT[6]
                  .set("authorization", "Bearer " + tokens.access_token)
                  .end((err, res) => {
-                   res.body.data.should.be.a("array");
-                   res.body.data.should.have.length(1);
+                   res.body.data.tournaments.should.be.a("array");
+                   res.body.data.tournaments.should.have.length(1);
                    res.should.have.status(200);
                    done();
                  });
@@ -258,7 +258,7 @@
            });
          });
      });
-     it("It should try to get the current tournament but wont find any", done => {
+     it("It should NOT get the current tournament", done => {
        const user = helper.getUser();
        chai.request(server)
          .post("/user/signup") //ENDPOINT[2]
@@ -434,7 +434,7 @@
              .set("authorization", "Bearer " + tokens.access_token)
              .end((err, res) => {
                res.should.have.status(200);
-               res.body.data.should.be.a("array");
+               res.body.data.tournaments.should.be.a("array");
                done();
              });
          });
