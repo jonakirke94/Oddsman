@@ -3,11 +3,13 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { Subscriber } from 'rxjs/Subscriber';
 import { Subscription } from 'rxjs/Subscription';
+import { flyInOut } from '../../../animations';
 
 @Component({
   selector: 'app-usersettings',
   templateUrl: './usersettings.component.html',
-  styleUrls: ['./usersettings.component.sass']
+  styleUrls: ['./usersettings.component.sass'],
+  animations: [flyInOut]
 })
 export class UsersettingsComponent implements OnInit {
 
@@ -56,6 +58,8 @@ export class UsersettingsComponent implements OnInit {
 
     if(!name && !tag && !email) {
       this.error = 'Ingen værdier indtastet';
+      document.getElementById('article').classList.remove('is-primary');
+      document.getElementById('article').classList.add('is-danger');
       return;
     }
 
@@ -68,6 +72,8 @@ export class UsersettingsComponent implements OnInit {
       this.update$ = this._user.updateUser(name, tag, email).subscribe(() =>  {
         this.error = '';
         this.msg = "Dine indstillinger blev opdateret!";
+        document.getElementById('article').classList.remove('is-danger');
+        document.getElementById('article').classList.add('is-primary');
         button.classList.remove('is-loading')
       }, 
       err => {
@@ -75,7 +81,9 @@ export class UsersettingsComponent implements OnInit {
           this.error = err.error.err;
         } else {
           this.error = "Server Error";
-        }         
+        }
+        document.getElementById('article').classList.remove('is-primary');
+        document.getElementById('article').classList.add('is-danger');         
         this.msg = '';
         button.classList.remove('is-loading')    
       });

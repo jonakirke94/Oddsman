@@ -1,11 +1,20 @@
-<section class="hero">
-  <div class="hero-body">
+<!-- 
     <div class="container has-text-centered">
-      <div class="column is-4 is-offset-2 is-primary" style="min-height: 300px" [@flyInOut]>
+      <div class="column is-4 is-offset-2 is-primary" >
+ -->
+          <div class="columns is-centered">
+              <div class="column is-three-quarters-mobile is-two-thirds-tablet is-three-quarters-desktop is-half-widescreen is-one-third-fullhd" style="min-height: 300px" [@flyInOut]>
         
         <loading-spinner *ngIf="showSpinner"></loading-spinner>
         <span *ngIf="!showMessage && !showSpinner">
-        <h1 style="color: white">Send tips for turnering: {{tournament.name}} Runde: {{currentWeek}}</h1>
+
+
+            <div class="wrapper">
+                <div class="tournament-card">
+              
+                  <div class="card-title">
+        <h1 class="title">{{tournament.name}} | Runde {{currentWeek}}</h1>
+        </div>
 
         <form [formGroup]="sendbetsForm" novalidate (ngSubmit)="sendBets()" >
           <div class="field has-addons">
@@ -16,7 +25,6 @@
               <span class="select">
                 <select required name="Option1" formControlName="oddsOption1">
                   <option *ngFor="let opt of options" [value]="opt">{{opt}}</option>
-
                 </select>
               </span>
             </p>
@@ -47,9 +55,18 @@
               </span>
             </p>
           </div>
-          <button class="btn" [disabled]="!sendbetsForm.valid">Afsend tips</button>
+
+          <div class="field">
+              <div class="control has-text-right">
+                <button class="button is-primary is-medium" id="submit"  [disabled]="!sendbetsForm.valid">Afsend tips</button>
+              </div>
+            </div>
 
         </form>
+
+        </div>
+        </div>
+
         </span>
 
         <article class="message is-success" *ngIf="showMessage && !error">
@@ -68,5 +85,3 @@
 
       </div>
     </div>
-  </div>
-</section>

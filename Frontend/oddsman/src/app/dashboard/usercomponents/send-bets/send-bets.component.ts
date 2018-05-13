@@ -69,7 +69,7 @@ export class SendBetsComponent implements OnInit {
   createForm() {
     this.sendbetsForm = new FormGroup({
       oddsNo1: this.oddsNo1,
-      oddsNo2: this.oddsNo3,
+      oddsNo2: this.oddsNo2,
       oddsNo3: this.oddsNo3,
       oddsOption1: this.oddsOption1,
       oddsOption2: this.oddsOption2,

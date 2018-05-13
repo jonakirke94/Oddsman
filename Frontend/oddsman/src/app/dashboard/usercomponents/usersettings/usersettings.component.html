@@ -1,47 +1,57 @@
-<h1 class="title has-text-centered">Ret din profil</h1>
-
 <div class="columns is-centered">
-  <div class="column is-three-quarters-mobile is-two-thirds-tablet is-three-quarters-desktop is-half-widescreen is-one-third-fullhd ">
+  <div class="column is-three-quarters-mobile is-two-thirds-tablet is-three-quarters-desktop is-half-widescreen is-one-third-fullhd"  [@flyInOut]>
  
-    <form [formGroup]="settingsForm" novalidate (ngSubmit)="updateUser()">
-
-  <div class="field">
-    <label class="label">Name</label>
-    <div class="control">
-      <input class="input is-medium" type="text" placeholder="eg. Anders Andersen" formControlName="name" name="name">
-    </div>
-  </div>
+      <div class="card-title">
+          <h1 class="title">Ret din profil</h1>
+          </div>
+    <article class="message" id="article">
+      <div class="message-body">
+        <form [formGroup]="settingsForm" novalidate (ngSubmit)="updateUser()">
   
-  <div class="field">
-    <label class="label">Email</label>
-    <div class="control">
-        <input [ngClass]="{'is-danger': email.invalid  && (email.dirty || email.touched),'is-success': email.valid && (email.dirty || email.touched)
-        }" class="input is-medium" id="email" type="email" name="email" title="email" placeholder="eg. anders@gmail.com" formControlName="email" autocomplete="email"
-          >
+          <div class="field">
+            <div class="control">
+              <input class="input is-medium" type="text" placeholder="Name" formControlName="name" name="name" id="name">
+            </div>
+          </div>
+          
+          <div class="field">
+            <div class="control">
+                <input [ngClass]="{'is-invalid': email.invalid  && (email.dirty || email.touched),'is-success': email.valid && (email.dirty || email.touched)
+                }" class="input is-medium" id="email" type="email" name="email" title="email" placeholder="Email" formControlName="email" autocomplete="email" id="email"
+                  >
+        
+                  <span class="help is-danger has-text-left" *ngIf="email.errors  && (email.dirty || email.touched)">
+                      <p *ngIf="email.errors.pattern">Please enter a valid email</p>
+                    </span>
+            </div>
+          </div>
+          
+          <div class="field">
+            <div class="control">
+              <input class="input is-medium" type="text" placeholder="Tag" formControlName="tag" name="tag" id="tag">
+            </div>
+          </div>
 
-          <span class="help is-danger has-text-left" *ngIf="email.errors  && (email.dirty || email.touched)">
-              <p *ngIf="email.errors.pattern">Please enter a valid email</p>
-            </span>
-    </div>
-  </div>
-  
-  <div class="field">
-    <label class="label">Tag</label>
-    <div class="control">
-      <input class="input is-medium" type="text" placeholder="eg. AA" formControlName="tag" name="tag">
-    </div>
-  </div>
+          <div *ngIf="error" class="help is-danger has-text-left error-text">{{error}}</div>
+          <div *ngIf="msg" class="help is-success has-text-left">{{msg}}</div>
+        
+        
+          <div class="field">
+            <div class="control has-text-right">
+              <button class="button is-primary is-medium" id="submit" [disabled]="!settingsForm.valid">Gem</button>
+            </div>
+          </div>
 
-  <div class="field">
-    <div class="control has-text-right">
-      <button class="button is-success is-medium" id="submit">Submit</button>
-    </div>
-  </div>
+          
 
-  <div *ngIf="error" class="help is-danger has-text-left error-text">{{error}}</div>
-  <div *ngIf="msg" class="help is-success has-text-left">{{msg}}</div>
+      
+        
 
-</form>
+        </form>
+      </div>
+    </article>
+
+ 
 </div>
   </div>
 
