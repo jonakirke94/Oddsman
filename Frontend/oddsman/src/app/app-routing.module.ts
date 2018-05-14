@@ -15,6 +15,7 @@ import { AdminTournamentsComponent } from './adminpanel/admincomponents/admin-to
 import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-invitations/admin-invitations.component';
 import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
+import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
 
 
 const routes: Routes = [
@@ -50,7 +51,11 @@ const routes: Routes = [
       {
         path : 'turneringer',
         component: UserTournamentsComponent
-       }
+       },
+       {
+         path : 'mine-tips',
+         component: MyBetsComponent
+        }
     ]
   },
   {
