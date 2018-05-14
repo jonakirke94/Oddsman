@@ -18,15 +18,10 @@ export class OddsService {
   getBets(tourid) {
     return this.http
       .get(`http://localhost:3000/user/bets/${tourid}`)
-      .map(res => {
-        return {
-          week: res['data'].Week,
-          matchId: res['data'].match.MatchId,
-          option: res['data'].Option,
-          matchName: res['data'].match.MatchName,
-          matchDate: res['data'].match.MatchDate
-        }
-      });
+      .map(res => res['data']).map(bets => {
+        console.log(bets)
+        return new Bet(bets.Week, bets.match.MatchId, bets.Option, bets.match.MatchName, bets.match.MatchDate)
+      })
   }
 }
 
@@ -34,6 +29,14 @@ export class OddsService {
 
 
 export class Bet {
+  constructor(week, matchId, option, matchName, matchDate) {
+    this.week = week;
+    this.matchId = matchId;
+    this.option = option;
+    this.matchName = matchName;
+    this.matchDate = matchDate;
+  }
+
   week;
   matchId;
   option;

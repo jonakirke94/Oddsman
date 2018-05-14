@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TournamentService } from '../../../services/tournament.service';
 import {DropdownModule} from 'primeng/dropdown';
-import { OddsService } from '../../../services/odds.service';
+import { OddsService, Bet } from '../../../services/odds.service';
 import { SelectItem } from 'primeng/components/common/api';
 
 
@@ -27,13 +27,14 @@ export class MyBetsComponent implements OnInit {
 
   ngOnInit() {
     //this._tour.getEnlistedTournaments().subscribe(tourneys => tourneys['data'] = this.tours);
-    this._odds.getBets(1).subscribe(res => this.bets);
+    this._odds.getBets(1).subscribe(res => {
+      res
+    });
       
 
     
       
-    
-    );
+
 
     console.log(this.bets)
 
@@ -56,13 +57,7 @@ refresh() {
 
 }
 
-export class Bet {
-    week;
-    matchId;
-    option;
-    matchName;
-    matchDate;
-}
+
 
 export interface City {
   name: string;
