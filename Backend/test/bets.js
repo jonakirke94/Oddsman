@@ -46,7 +46,7 @@ describe('BETS', () => {
                         End: moment().add(1, 'M')
                     }).then(() => {
                         Tournament.create({
-                            Name: "Season " + moment().isoWeek() - 5,
+                            Name: "Season 17",
                             Start: moment().subtract(5, 'M'),
                             End: moment().subtract(2, 'M')
                         }).then(() => {
@@ -99,8 +99,10 @@ describe('BETS', () => {
                 .get("/user/bets/1")
                 .set("authorization", "Bearer " + tokens.access_token)
                 .end((err, res) => {
-                    console.log(JSON.stringify(res));
-                    /* JSON.parse(res.text).msg.should.eql("Turneringen er inaktiv"); */
+                    let data = JSON.parse(res.text).data;
+                    /* console.log(data);   */
+                    data.should.be.a("array");
+                    data.should.have.length(1)
                     res.should.have.status(200);
                     done();
                 });
@@ -111,8 +113,10 @@ describe('BETS', () => {
                 .get("/user/bets/2")
                 .set("authorization", "Bearer " + tokens.access_token)
                 .end((err, res) => {
-                    console.log(JSON.stringify(res));
-                    /* JSON.parse(res.text).msg.should.eql("Turneringen er inaktiv"); */
+                    let data = JSON.parse(res.text).data;
+                    /* console.log(data); */
+                    data.should.be.a("array");
+                    data.should.have.length(3)
                     res.should.have.status(200);
                     done();
                 });
