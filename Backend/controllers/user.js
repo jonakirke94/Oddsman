@@ -206,7 +206,7 @@ exports.bets = (req, res, next) => {
       ],
       include: {
         model: Match,
-        attributes: ['matchId', 'matchDate', 'matchName'],
+        attributes: ['matchId', 'matchDate', 'matchName', 'Option1Odds', 'Option2Odds', 'Option3Odds'],
         include: {
           model: Result,
           attributes: ['endResult', 'correctBet']
@@ -214,7 +214,29 @@ exports.bets = (req, res, next) => {
       }
     })
     .then((bets) => {
-      return msg.show200(req, res, "Success", bets);
+      let results = [];
+      for (let i = 0; i < bets.length; i++) {
+        let b = JSON.parse(JSON.stringify(bets[i]));
+        switch (b.optionNo) {
+          case "1":
+            b.odds = b.match.Option1Odds;
+            break;
+          case "X":
+            b.odds = b.match.Option2Odds;
+            break;
+          case "2":
+            b.odds = b.match.Option3Odds;
+            break;
+          default:
+            b.odds = null;
+            break;
+        }
+        results.push(b);
+        console.log(b);
+        if (i === bets.length - 1) {
+          return msg.show200(req, res, "Success", results);
+        }
+      }
     })
     .catch(db.Sequelize.ValidationError, function (err) {
       return msg.show409(req, res, 'Validation Error', err.errors[0].message);
