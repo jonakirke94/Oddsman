@@ -7,9 +7,9 @@
         <div class="card-title">
           <h1 class="title">{{tournament.name}} | Runde {{currentWeek}}</h1>
         </div>
-        <div class="loader">
+
           <loading-spinner *ngIf="showSpinner"></loading-spinner>
-        </div>
+
           <form [formGroup]="sendbetsForm" novalidate (ngSubmit)="sendBets()" *ngIf="!showMessage && !showSpinner">
             <div class="field has-addons">
               <p class="control is-expanded">
