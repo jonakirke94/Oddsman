@@ -57,6 +57,7 @@ describe('BETS', () => {
                                 .send(user)
                                 .end((err, res) => {
                                     Match.create({
+                                            MatchId: 1,
                                             Missing: true
                                         })
                                         .then((match) => {
@@ -120,7 +121,7 @@ describe('BETS', () => {
                 .set("authorization", "Bearer " + tokens.access_token)
                 .end((err, res) => {
                     let data = JSON.parse(res.text).data;
-                    console.log(data);
+                    /* console.log(data); */
                     data.should.be.a("array");
                     data.should.have.length(1)
                     res.should.have.status(200);
@@ -134,7 +135,7 @@ describe('BETS', () => {
                 .set("authorization", "Bearer " + tokens.access_token)
                 .end((err, res) => {
                     let data = JSON.parse(res.text).data;
-                    console.log(data);
+                    /* console.log(data); */
                     data.should.be.a("array");
                     data.should.have.length(3)
                     res.should.have.status(200);
