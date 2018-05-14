@@ -1,87 +1,84 @@
-<!-- 
-    <div class="container has-text-centered">
-      <div class="column is-4 is-offset-2 is-primary" >
- -->
-          <div class="columns is-centered">
-              <div class="column is-three-quarters-mobile is-two-thirds-tablet is-three-quarters-desktop is-half-widescreen is-one-third-fullhd" style="min-height: 300px" [@flyInOut]>
-        
-        <loading-spinner *ngIf="showSpinner"></loading-spinner>
-        <span *ngIf="!showMessage && !showSpinner">
+<div class="columns is-centered">
+  <div class="column is-three-quarters-mobile is-three-quarters-tablet is-three-quarters-desktop is-half-widescreen" [@flyInOut]>
 
+    <div class="wrapper">
+      <div class="tournament-card">
 
-            <div class="wrapper">
-                <div class="tournament-card">
-              
-                  <div class="card-title">
-        <h1 class="title">{{tournament.name}} | Runde {{currentWeek}}</h1>
+        <div class="card-title">
+          <h1 class="title">{{tournament.name}} | Runde {{currentWeek}}</h1>
         </div>
+        <div class="loader">
+          <loading-spinner *ngIf="showSpinner"></loading-spinner>
+        </div>
+          <form [formGroup]="sendbetsForm" novalidate (ngSubmit)="sendBets()" *ngIf="!showMessage && !showSpinner">
+            <div class="field has-addons">
+              <p class="control is-expanded">
+                <input class="input" type="number" placeholder="111" formControlName="oddsNo1">
+              </p>
+              <p class="control">
+                <span class="select">
+                  <select required name="Option1" formControlName="oddsOption1">
+                    <option *ngFor="let opt of options" [value]="opt">{{opt}}</option>
+                  </select>
+                </span>
+              </p>
+            </div>
 
-        <form [formGroup]="sendbetsForm" novalidate (ngSubmit)="sendBets()" >
-          <div class="field has-addons">
-            <p class="control is-expanded">
-              <input class="input" type="number" placeholder="111" formControlName="oddsNo1">
-            </p>
-            <p class="control">
-              <span class="select">
-                <select required name="Option1" formControlName="oddsOption1">
-                  <option *ngFor="let opt of options" [value]="opt">{{opt}}</option>
-                </select>
-              </span>
-            </p>
-          </div>
+            <div class="field has-addons">
+              <p class="control is-expanded">
+                <input class="input" type="number" placeholder="222" formControlName="oddsNo2">
+              </p>
+              <p class="control">
+                <span class="select">
+                  <select required name="Option2" formControlName="oddsOption2">
+                    <option *ngFor="let opt of options" [value]="opt">{{opt}}</option>
+                  </select>
+                </span>
+              </p>
+            </div>
 
-          <div class="field has-addons">
-            <p class="control is-expanded">
-              <input class="input" type="number" placeholder="222" formControlName="oddsNo2">
-            </p>
-            <p class="control">
-              <span class="select">
-                <select required name="Option2" formControlName="oddsOption2">
-                  <option *ngFor="let opt of options" [value]="opt">{{opt}}</option>
-                </select>
-              </span>
-            </p>
-          </div>
+            <div class="field has-addons">
+              <p class="control is-expanded">
+                <input class="input" type="number" placeholder="333" formControlName="oddsNo3">
+              </p>
+              <p class="control">
+                <span class="select">
+                  <select required name="Option3" formControlName="oddsOption3">
+                    <option *ngFor="let opt of options" [value]="opt">{{opt}}</option>
+                  </select>
+                </span>
+              </p>
+            </div>
 
-          <div class="field has-addons">
-            <p class="control is-expanded">
-              <input class="input" type="number" placeholder="333" formControlName="oddsNo3">
-            </p>
-            <p class="control">
-              <span class="select">
-                <select required name="Option3" formControlName="oddsOption3">
-                  <option *ngFor="let opt of options" [value]="opt">{{opt}}</option>
-                </select>
-              </span>
-            </p>
-          </div>
-
-          <div class="field">
+            <div class="field">
               <div class="control has-text-right">
-                <button class="button is-primary is-medium" id="submit"  [disabled]="!sendbetsForm.valid">Afsend tips</button>
+                <button class="button is-primary is-medium" id="submit" [disabled]="!sendbetsForm.valid">Afsend tips</button>
               </div>
             </div>
 
-        </form>
+          </form>
 
-        </div>
-        </div>
+          <article class="message is-success" *ngIf="showMessage && !error">
+            <div class="message-body">
+              Dine tips til {{tournament.name}} for runde {{currentWeek}} blev afsendt successfuldt. Gå til 'Mine Tips' for at se alle
+              dine odds eller stillingen for turneringen
+            </div>
+          </article>
 
-        </span>
-
-        <article class="message is-success" *ngIf="showMessage && !error">
-          <div class="message-body">
-            Dine tips til {{tournament.name}} for runde {{currentWeek}} blev afsendt successfuldt. Gå til 'Mine Tips' for at se alle dine odds eller stillingen for turneringen
-          </div>
-        </article>
-
-        <article class="message is-danger" *ngIf="showMessage && error">
-          <div class="message-body">
-            <strong>Hov</strong> Noget gik galt! <br>
-            {{error}}
-          </div>
-        </article>
-
-
+          <article class="message is-danger" *ngIf="showMessage && error">
+            <div class="message-body">
+              <strong>Hov</strong> Noget gik galt!
+              <br> {{error}}
+            </div>
+          </article>
+   
       </div>
     </div>
+
+
+
+
+
+
+  </div>
+</div>

@@ -16,12 +16,15 @@ const {
 const scraper = require('../services/scraper');
 
 
-let today = moment();
+let today = moment().add(3,'d').add(12,'h');
 
 exports.sendOdds = (req, res, next) => {
     const tourId = req.params.tourid;
-    const odds = req.body.odds;
+    const odds = req.body;
     const userId = helper.getUserId(req);
+
+    console.log(odds)
+
 
     Tournament.findById(tourId, {
             include: {
@@ -34,45 +37,52 @@ exports.sendOdds = (req, res, next) => {
                 let validDay = isValidWeekDays();
 
                 if (!validDay) {
+                    console.log("invalid day")
                     return msg.show409(req, res, "Det er ikke muligt at oddse på turneringen idag");
                 }
 
                 let active = isActiveTournament(tourney.dataValues.Start, tourney.dataValues.End);
 
                 if (!active) {
+                    console.log("inactive tourney")
                     return msg.show409(req, res, "Turneringen er inaktiv");
                 }
 
                 let count = tourney.dataValues.bets.length;
 
                 if (count > 0) {
+                    console.log("bets already exists")
                     return msg.show409(req, res, `Mængden af odds for denne turnering er overskredet ${count}/3`);
                 }
 
                 let ctr = 0;
+                
                 odds.forEach((o, index, odds) => {
                     let matchId = o.matchId;
                     let option = o.option;
 
+                   //console.log(odds[index])
+
                     scraper.getMatch(matchId, null, (m) => {
                         if (m === null) {
                             m = {
-                                matchId: matchId,
-                                userId: userId,
-                                tournamentId: tourId,
-                                missing: true
+                                MatchId: matchId,
+                                Missing: true
                             }
                         }
                         Match.create(m)
                             .then(match => {
+        
                                 Bet.create({
-                                    matchId: match.id,
+                                    matchId: match.Id,
                                     userId: userId,
                                     tournamentId: tourId,
                                     Week: moment().isoWeek()
-                                }).then(() => {
+                                }).then((bet) => {
+                                    console.log("created bet: " + bet)
                                     ctr++;
                                     if (ctr === odds.length) {
+                                        console.log("added all bets and matches");
                                         return msg.show200(req, res, next);
                                     }
                                 });
@@ -102,14 +112,14 @@ function isActiveTournament(start, end) {
     return today.isBetween(start, end, null, '[]');
 }
 
-function saveOdds(userId, tourId, odds, callback) {
+/* function saveOdds(userId, tourId, odds, callback) {
     odds.forEach(odds => {
         let matchId = odds.matchId;
         let option = odds.option;
         scraper.getMatch(matchId, null, (m) => {
             if (!m) {
                 m = {
-                    matchId: m.id,
+                    matchId: m.Id,
                     userId: userId,
                     tournamentId: tourid,
                     missing: true
@@ -127,4 +137,4 @@ function saveOdds(userId, tourId, odds, callback) {
                 });
         });
     });
-}
+} */
