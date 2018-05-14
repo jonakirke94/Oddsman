@@ -25,9 +25,13 @@ exports.show401 = function(req, res, next) {
 
 //not found
 exports.show404 = function(req, res, next) {
-    const error = new Error("Not Found");
+  res.status(404).json({
+    msg: 'Not Found'
+  })
+  res.end();
+  /*   const error = new Error("Not Found");
     error.status = 404;
-    next(error);
+    next(error); */
 };
 
 //conflict

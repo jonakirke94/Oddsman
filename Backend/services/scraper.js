@@ -71,6 +71,7 @@ function get(url, callback) {
         });
     }).on('error', (e) => {
         console.error(`Got error: ${e.message}`);
+        callback(null);
     });
 }
 

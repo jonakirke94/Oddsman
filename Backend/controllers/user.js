@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router(); 
+const router = express.Router();
 
 const bcrypt = require("bcrypt");
 const jwtDecode = require('jwt-decode');
@@ -8,13 +8,15 @@ const tokenController = require('../controllers/token');
 
 const msg = require("../db/http");
 const db = require('../models');
+const helper = require('../controllers/helper');
 const User = db.users;
+const sequelize = require('sequelize');
 
 
 exports.update = (req, res, next) => {
-  const userId = getUserId(req);
+  const userId = helper.getUserId(req);
 
-  if(userId === -1) {
+  if (userId === -1) {
     return msg.show500(req, res, 'Couldnt fetch userid');
   }
 
@@ -25,7 +27,7 @@ exports.update = (req, res, next) => {
   //array to hold fields which will be updated
   let fields = [];
 
-  if(name) {
+  if (name) {
     fields.push('Name')
   }
 
@@ -39,26 +41,32 @@ exports.update = (req, res, next) => {
     fields.push("Email");
   }
 
-  if(tag) {
+  if (tag) {
     fields.push('Tag')
   }
 
-  if(fields.length === 0) {
+  if (fields.length === 0) {
     return msg.show400(req, res, "No inputs provided");
   }
 
 
   User.findById(userId).then(userToUpdate => {
     userToUpdate
-      .update({ Name: name, Tag: tag, Email: email }, { fields: fields }) //only update fields with a value
+      .update({
+        Name: name,
+        Tag: tag,
+        Email: email
+      }, {
+        fields: fields
+      }) //only update fields with a value
       .then(success => {
         return msg.show200(req, res, "Success");
       })
-      .catch(db.Sequelize.ValidationError, function(err) {
+      .catch(db.Sequelize.ValidationError, function (err) {
         return msg.show409(req, res, "Validation Error", err.errors[0].message);
       });
   });
-} 
+}
 
 exports.user_signup = (req, res, next) => {
   const name = req.body.name;
@@ -68,7 +76,9 @@ exports.user_signup = (req, res, next) => {
 
   //check if valid email
   req.check("email", "Email is not a valid email").isEmail();
-  req.check("password", "Password has to be 8 characters").isLength({ min: 8 });
+  req.check("password", "Password has to be 8 characters").isLength({
+    min: 8
+  });
 
   const errors = req.validationErrors();
 
@@ -79,7 +89,7 @@ exports.user_signup = (req, res, next) => {
   bcrypt.hash(password, 10, (err, hash) => {
     if (err) {
       return msg.show500(req, res, err);
-    } 
+    }
 
     const newUser = {
       Name: name,
@@ -94,49 +104,49 @@ exports.user_signup = (req, res, next) => {
         return msg.show200(req, res, "Success", user.dataValues);
       })
       .catch(db.Sequelize.ValidationError, function (err) {
-        return msg.show409(req, res,'Validation Error', err.errors[0].message);
+        return msg.show409(req, res, 'Validation Error', err.errors[0].message);
       })
   });
 };
 
- exports.user_login = (req, res, next) => {
-   const email = req.body.email;
+exports.user_login = (req, res, next) => {
+  const email = req.body.email;
 
-   module.exports.getByEmail(email).then(user => {
-     if (!user || !req.body.password) {
-       return msg.show401(req, res, next);
-     }
+  module.exports.getByEmail(email).then(user => {
+    if (!user || !req.body.password) {
+      return msg.show401(req, res, next);
+    }
 
-     //check if passwords match
-     bcrypt.compare(req.body.password, user.Password, (err, result) => {
-       if (err) {
-         return msg.show500(req, res, err);
-       }
-       if (result) {
-         //generate tokens
-         const tokens = tokenController.generateTokens(user);
+    //check if passwords match
+    bcrypt.compare(req.body.password, user.Password, (err, result) => {
+      if (err) {
+        return msg.show500(req, res, err);
+      }
+      if (result) {
+        //generate tokens
+        const tokens = tokenController.generateTokens(user);
 
-         //save refreshtoken to user
-         tokenController.saveRefreshToken(
-           user.Id,
-           tokens.refresh_token,
-           function(success) {
-             const client_data = {
-               access_token: tokens.access_token,
-               refresh_exp: tokens.refresh_exp,
-               isAdmin: user.IsAdmin
-             };
+        //save refreshtoken to user
+        tokenController.saveRefreshToken(
+          user.Id,
+          tokens.refresh_token,
+          function (success) {
+            const client_data = {
+              access_token: tokens.access_token,
+              refresh_exp: tokens.refresh_exp,
+              isAdmin: user.IsAdmin
+            };
 
-             return msg.show200(req, res, "Success", client_data);
-           }
-         );
-       } else {
-         //wrong password
-         return msg.show401(req, res, next);
-       }
-     });
-   });
- }; 
+            return msg.show200(req, res, "Success", client_data);
+          }
+        );
+      } else {
+        //wrong password
+        return msg.show401(req, res, next);
+      }
+    });
+  });
+};
 
 exports.user_all = (req, res, next) => {
 
@@ -150,42 +160,52 @@ exports.user_all = (req, res, next) => {
     }
   }).then(users => {
     return msg.show200(req, res, "Fetched Users", users);
-  }).catch(function(err) {
+  }).catch(function (err) {
     return msg.show500(req, res, err);
   });
-}
- 
-
-function getUserId(req) {
-  //decode the token and fetch id
-  const token = req.headers.authorization.split(' ');
-
-  try {
-    var decoded = jwtDecode(token[1])
-    return decoded.userId;
-  } catch (err) {
-    return -1;
-  }
 }
 
 exports.getById = (id) => {
   return User.findById(id).then(user => {
-    if(user == null) {
+    if (user == null) {
       return null;
     } else {
-     return user.dataValues;
+      return user.dataValues;
     }
   })
 }
 
 exports.getByEmail = (email) => {
   return User.findOne({
-    where: {'Email': email}
+    where: {
+      'Email': email
+    }
   }).then(user => {
-    if(user === null) {
+    if (user === null) {
       return null;
     } else {
-     return user.dataValues;
+      return user.dataValues;
     }
   })
+}
+
+
+exports.bets = (req, res, next) => {
+  const userId = helper.getUserId(req);
+  const tourId = req.params.tourid;
+  console.log(userId + " - " + tourId);
+  Bets.findAll({
+      where: {
+        userId: userId,
+        tournamentId: tourId
+      },
+      order: ['Week', 'DESC'],
+    })
+    .then((bets) => {
+      console.log(bets);
+      return msg.show200(req, res, "Success", bets);
+    })
+    .catch(db.Sequelize.ValidationError, function (err) {
+      return msg.show409(req, res, 'Validation Error', err.errors[0].message);
+    });
 }

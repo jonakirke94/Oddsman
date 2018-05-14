@@ -4,6 +4,7 @@ const db = require("../db/db");
 const msg = require("../db/http");
 const mysql = require("mysql");
 const jwtDecode = require('jwt-decode');
+const moment = require('moment');
 
 const seq = require('../models');
 const Tournament = seq.tournaments;
@@ -13,6 +14,9 @@ const User = seq.users;
 const {
   Op
 } = require('sequelize')
+
+const helper = require('../controllers/helper');
+
 
 
 exports.create = (req, res, next) => {
@@ -126,6 +130,43 @@ exports.request = (req, res, next) => {
   })
 }
 
+exports.get_current_tournament = (req, res, next) => {
+  const userId = helper.getUserId(req);
+  const today = moment();
+
+  Tournament.findOne({
+    attributes: ['id', 'name'],
+    where: {
+      [Op.and]: [{
+        start: {
+          [Op.lte]: today.toDate()
+        }
+      },
+      {
+        end: {
+          [Op.gte]: today.toDate()
+        }
+      }
+      ]
+    },
+    through: {
+      attributes: [''],
+      model: Tournament_User,
+      where: {userId: userId},   
+    }
+
+  }).then(tour => {
+    if(tour === null) {
+      return msg.show404(req, res, next);
+    }
+
+    return msg.show200(req, res, "Found current tournament", tour);
+
+  }).catch(function (err) {
+    return msg.show500(req, res, err);
+  })
+}
+
 exports.get_tournament_requests = (req, res, next) => {
   const tourId = req.params.tourid;
   Tournament.findById(tourId,{
@@ -141,9 +182,10 @@ exports.get_tournament_requests = (req, res, next) => {
     },
     
   }).then(requests => {
-    console.log(JSON.stringify(requests));
+    //console.log(JSON.stringify(requests));
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
+    console.log(err)
     return msg.show500(req, res, err);
   })
 }
