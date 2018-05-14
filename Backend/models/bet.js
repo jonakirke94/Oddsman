@@ -16,11 +16,9 @@ module.exports = function (sequelize, DataTypes) {
         }
     })
 
-    /*   Bet.associate = (models) => {
+    Bet.associate = (models) => {
 
-          //Bet.hasOne(models.matches);
-          /* Bet.hasOne(models.tournaments)
-          Bet.hasOne(models.users);
-      }*/
+        Bet.belongsTo(models.matches);
+    }
     return Bet;
 }
