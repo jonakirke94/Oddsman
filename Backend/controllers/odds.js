@@ -52,8 +52,7 @@ exports.sendOdds = (req, res, next) => {
 
                 let count = tourney.dataValues.bets.length;
 
-                if (count > 0) {
-                    /* console.log("bets already exists") */
+                 if (count > 0) {
                     return msg.show409(req, res, `Mængden af odds for denne turnering er overskredet ${count}/3`);
                 }
 

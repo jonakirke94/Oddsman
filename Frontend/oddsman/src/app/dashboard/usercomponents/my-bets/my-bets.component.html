@@ -1,22 +1,26 @@
+
+<div class="header">
+<h1 class="title inline-title">Vælg turnering</h1>
+
 <p-dropdown [options]="tournaments" [(ngModel)]="selectedTour" placeholder="Select a tournament" (ngModelChange)="refresh()"
     optionLabel="name">
 </p-dropdown>
+</div>
 
 
 <p-dataTable [value]="bets" sortField="week" rowGroupMode="subheader" groupField="week" expandableRowGroups="true" [sortableRowGroup]="false"
     [loading]="loading" loadingIcon="fa-spinner">
     <p-header>Mine tips for: {{ selectedTour ? selectedTour.name : 'Ingen turnering valgt'}}</p-header>
-    <ng-template pTemplate="rowgroupheader" let-rowData>{{rowData['week']}}</ng-template>
-    <p-column field="points" header=""></p-column>
-    <p-column field="matchId" header="Nr."></p-column>
-    <p-column field="match.matchName" header="Tegn"></p-column>
-    <p-column field="option" header="Odds"></p-column>
-    <p-column field="option" header="Score"></p-column>
-    <p-column field="option" header="Kamp"></p-column>
-    <p-column field="option" header="Dato"></p-column>
+    <ng-template pTemplate="rowgroupheader" let-rowData>Runde {{rowData['week']}}</ng-template>
+    <p-column field="match.matchId" header="Kamp Nr."></p-column>
+    <p-column field="option" header="Tegn"></p-column>
+    <p-column field="odds" header="Odds"></p-column>
+    <p-column field="match.result.EndResult" header="Score"></p-column>
+    <p-column field="match.matchName" header="Kamp"></p-column>
+    <p-column field="match.matchDate" header="Dato"></p-column>
 
-    <!-- <ng-template pTemplate="rowgroupfooter" let-car>
- <td colspan="3" style="text-align:right">Total Price</td>
- <td>{{calculateGroupTotal(car['brand']) | currency:'USD':'symbol':'.0-0' }}</td>
-</ng-template> -->
+    <ng-template pTemplate="rowgroupfooter" let-bet>
+ <td colspan="5" style="text-align:right">Total points: </td>
+ <td style="text-align:center">{{calculateOddsTotal(bet['week'])}}</td>
+</ng-template>
 </p-dataTable>

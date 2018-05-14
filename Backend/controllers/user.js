@@ -214,6 +214,10 @@ exports.bets = (req, res, next) => {
       }
     })
     .then((bets) => {
+      if(bets.length === 0) {
+        return msg.show200(req, res, "No bets found", []);
+      }
+
       let results = [];
       for (let i = 0; i < bets.length; i++) {
         let b = JSON.parse(JSON.stringify(bets[i]));

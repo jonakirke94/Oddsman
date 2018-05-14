@@ -3,6 +3,7 @@ import { TournamentService } from '../../../services/tournament.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { OddsService } from '../../../services/odds.service';
 import { SelectItem } from 'primeng/components/common/api';
+import { Subscription } from 'rxjs/Subscription';
 
 
 @Component({
@@ -20,6 +21,9 @@ export class MyBetsComponent implements OnInit {
 
   bets: any[];
 
+  tournaments$ : Subscription;
+  bets$: Subscription;
+
 
   constructor(private _tour: TournamentService, private _odds: OddsService) { }
 
@@ -27,12 +31,17 @@ export class MyBetsComponent implements OnInit {
     this.populateDropdown();
   }
 
+  ngOnDestroy() {
+    if (this.tournaments$ && this.tournaments$ !== null) this.tournaments$.unsubscribe();
+    if (this.bets$ && this.bets$ !== null) this.bets$.unsubscribe();
+  }
+
   displayBets(tourId) {
     this.loading = true;
-    this._odds.getBets(tourId).subscribe(res => {
+    this.bets$ = this._odds.getBets(tourId).subscribe(res => {
       this.bets = res
       this.loading = false;
-      console.log(res)
+      
     });
   }
 
@@ -42,7 +51,7 @@ export class MyBetsComponent implements OnInit {
   }
 
   populateDropdown() {
-    this._tour.getEnlistedTournaments().subscribe(res => {
+    this.tournaments$ = this._tour.getEnlistedTournaments().subscribe(res => {
       const tourneys = res['data']['tournaments'];
       this.tournaments = tourneys.map(tour => {
         return {
@@ -52,6 +61,22 @@ export class MyBetsComponent implements OnInit {
       })
     })
   }
+
+  calculateOddsTotal(week: string) {
+    let total = 0;
+
+    if(this.bets) {
+        for(let bet of this.bets) {
+            if(bet.week === week && bet.match.result) {
+                if(bet.match.result.CorrectBet) {
+                  total += bet.odds
+                }
+            }
+        }
+    }
+
+    return total;
+}
 }
 
 

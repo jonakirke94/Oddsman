@@ -18,7 +18,14 @@ export class OddsService {
   getBets(tourid) {
     return this.http
       .get(`http://localhost:3000/user/bets/${tourid}`)
-      .map(res => res['data'])
+      .map(res => {
+        if(res['data']) {
+          return res['data']
+        } else {
+          return res
+        }
+         
+      })
   }
 
 }
