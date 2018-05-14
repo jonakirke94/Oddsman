@@ -31,7 +31,10 @@ exports.sendOdds = (req, res, next) => {
     Tournament.findById(tourId, {
             include: {
                 model: Bet,
-                attributes: ['userId', 'tournamentId', 'week']
+                attributes: ['userId', 'tournamentId', 'week'],
+                where: {
+                    Week: today.isoWeek()
+                }
             }
         })
         .then(tourney => {
@@ -52,7 +55,7 @@ exports.sendOdds = (req, res, next) => {
 
                 let count = tourney.dataValues.bets.length;
 
-                 if (count > 0) {
+                if (count > 0) {
                     return msg.show409(req, res, `Mængden af odds for denne turnering er overskredet ${count}/3`);
                 }
 
