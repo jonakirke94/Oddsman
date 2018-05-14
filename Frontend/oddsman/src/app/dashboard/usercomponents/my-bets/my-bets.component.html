@@ -3,20 +3,20 @@
 <p>Selected City: {{selectedCity ? selectedCity.name : 'none'}}</p>
 
 
-<!-- <p-dataTable [value]="cars1" sortField="brand" rowGroupMode="subheader" groupField="brand" expandableRowGroups="true"
-        [sortableRowGroup]="false">
-    <p-header>Toggleable Row Groups with Footers</p-header>
-    <ng-template pTemplate="rowgroupheader" let-rowData>{{rowData['brand']}}</ng-template>
-    <p-column field="color" header="Color"></p-column>
-    <p-column field="year" header="Year"></p-column>
-    <p-column field="vin" header="Vin"></p-column>
-    <p-column field="price" header="Price">
-        <ng-template let-col let-car="rowData" pTemplate="body">
-            <span>{{car[col.field] | currency:'USD':'symbol':'.0-0'}}</span>
-        </ng-template>
-    </p-column>
-    <ng-template pTemplate="rowgroupfooter" let-car>
-        <td colspan="3" style="text-align:right">Total Price</td>
-        <td>{{calculateGroupTotal(car['brand']) | currency:'USD':'symbol':'.0-0' }}</td>
-    </ng-template>
-</p-dataTable> -->
+ <p-dataTable [value]="bets" sortField="week" rowGroupMode="subheader" groupField="week" expandableRowGroups="true"
+ [sortableRowGroup]="false">
+<p-header>Toggleable Row Groups with Footers</p-header>
+<ng-template pTemplate="rowgroupheader" let-rowData>{{rowData['week']}}</ng-template>
+<p-column field="matchId" header="matchId"></p-column>
+<p-column field="option" header="Option"></p-column>
+<p-column field="matchName" header="matchName"></p-column>
+<p-column field="matchDate" header="matchDate">
+ <ng-template let-col let-tour="rowData" pTemplate="body">
+     <span>{{tour[col.field]}}</span>
+ </ng-template>
+</p-column>
+<!-- <ng-template pTemplate="rowgroupfooter" let-car>
+ <td colspan="3" style="text-align:right">Total Price</td>
+ <td>{{calculateGroupTotal(car['brand']) | currency:'USD':'symbol':'.0-0' }}</td>
+</ng-template> -->
+</p-dataTable>

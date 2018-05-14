@@ -16,6 +16,8 @@ export class MyBetsComponent implements OnInit {
 
   selectedCity: City;
 
+  bets: Bet[] ;
+
   
 
   constructor(private _tour: TournamentService, private _odds: OddsService) {
@@ -25,9 +27,17 @@ export class MyBetsComponent implements OnInit {
 
   ngOnInit() {
     //this._tour.getEnlistedTournaments().subscribe(tourneys => tourneys['data'] = this.tours);
-/*     this._odds.getBets(4).subscribe(res => {
-        console.log(res)
-    }); */
+    this._odds.getBets(1).subscribe(res => this.bets);
+      
+
+    
+      
+    
+    );
+
+    console.log(this.bets)
+
+   
     
     this.cities = [
       {name: 'New York', code: 'NY'},
@@ -46,11 +56,12 @@ refresh() {
 
 }
 
-export class Tour {
-    Id;
-    Name;
-    Start;
-    End;
+export class Bet {
+    week;
+    matchId;
+    option;
+    matchName;
+    matchDate;
 }
 
 export interface City {
