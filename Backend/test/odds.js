@@ -92,19 +92,16 @@ describe('ODDS', () => {
                 .send([{
                         matchId: 1,
                         option: "1",
-                        OptionNo: 1,
                         Week: moment().isoWeek()
                     },
                     {
                         matchId: 4,
                         option: "X",
-                        OptionNo: 2,
                         Week: moment().isoWeek()
                     },
                     {
                         matchId: 9,
                         option: "2",
-                        OptionNo: 3,
                         Week: moment().isoWeek()
                     },
                 ])
@@ -122,19 +119,16 @@ describe('ODDS', () => {
                 .send([{
                         matchId: 1,
                         option: "1",
-                        OptionNo: 1,
                         Week: moment().isoWeek()
                     },
                     {
                         matchId: 4,
                         option: "X",
-                        OptionNo: 2,
                         Week: moment().isoWeek()
                     },
                     {
                         matchId: 9,
                         option: "2",
-                        OptionNo: 3,
                         Week: moment().isoWeek()
                     },
                 ])
@@ -155,19 +149,16 @@ describe('ODDS', () => {
                 .send([{
                         matchId: 1,
                         option: "1",
-                        OptionNo: 1,
                         Week: moment().isoWeek()
                     },
                     {
                         matchId: 4,
                         option: "X",
-                        OptionNo: 2,
                         Week: moment().isoWeek()
                     },
                     {
                         matchId: 9,
                         option: "2",
-                        OptionNo: 3,
                         Week: moment().isoWeek()
                     },
                 ])

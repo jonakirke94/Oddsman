@@ -16,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
         },
         OptionNo: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true
         }
     })
 
