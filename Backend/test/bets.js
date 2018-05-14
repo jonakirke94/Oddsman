@@ -24,7 +24,7 @@ const tokens = tokenController.generateTokens({
     IsAdmin: false
 });
 
-seq.sequelize.sync();
+/* seq.sequelize.sync(); */
 
 describe('BETS', () => {
     beforeEach(done => {
