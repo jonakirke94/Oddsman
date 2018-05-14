@@ -109,15 +109,14 @@ export class SendBetsComponent implements OnInit {
       option: this.sendbetsForm.value.oddsOption1
     },
     {
-      matchId: this.sendbetsForm.value.oddsNo1,
-      option: this.sendbetsForm.value.oddsOption1
+      matchId: this.sendbetsForm.value.oddsNo2,
+      option: this.sendbetsForm.value.oddsOption2
     },
     {
-      matchId: this.sendbetsForm.value.oddsNo1,
-      option: this.sendbetsForm.value.oddsOption1
+      matchId: this.sendbetsForm.value.oddsNo3,
+      option: this.sendbetsForm.value.oddsOption3
     },
   ]
-    console.log(odds);
 
     this._odds.sendOdds(this.tournament.id, odds).subscribe(res => {
       this.showMessage = true;
@@ -125,7 +124,12 @@ export class SendBetsComponent implements OnInit {
     },
     err => {
       this.showMessage = true;
+
+      if(err.status === 409) {
+        this.error = err.error.msg
+      } else {
       this.error = 'Dine odds kunne ikke afsendes - Prøv igen senere eller send dine tegn til webmaster + 2 andre deltager pr mail.'     
+      }
       this.showSpinner = false;
     })
   }
