@@ -24,7 +24,7 @@ const tokens = tokenController.generateTokens({
     IsAdmin: false
 });
 
-seq.sequelize.sync();
+/* seq.sequelize.sync(); */
 
 describe('BETS', () => {
     beforeEach(done => {
@@ -66,6 +66,7 @@ describe('BETS', () => {
                                                 userId: 1,
                                                 Week: moment().isoWeek(),
                                                 Option: "1",
+                                                OptionNo: 1,
                                                 matchId: matchId
                                             }).then(() => {
                                                 Bet.create({
@@ -73,6 +74,7 @@ describe('BETS', () => {
                                                     userId: 1,
                                                     Week: moment().isoWeek(),
                                                     Option: "X",
+                                                    OptionNo: 2,
                                                     matchId: matchId
                                                 }).then(() => {
                                                     Bet.create({
@@ -80,6 +82,7 @@ describe('BETS', () => {
                                                         userId: 1,
                                                         Week: moment().isoWeek(),
                                                         Option: "X",
+                                                        OptionNo: 2,
                                                         matchId: matchId
                                                     }).then(() => {
                                                         Bet.create({
@@ -87,6 +90,7 @@ describe('BETS', () => {
                                                             userId: 1,
                                                             Week: moment().isoWeek(),
                                                             Option: "3",
+                                                            OptionNo: 3,
                                                             matchId: matchId
                                                         }).then(() => {
                                                             done();
