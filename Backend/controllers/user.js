@@ -196,6 +196,7 @@ exports.bets = (req, res, next) => {
   const userId = helper.getUserId(req);
   const tourId = req.params.tourid;
   Bet.findAll({
+      attributes: ['id', 'option', 'optionNo', 'week'],
       where: {
         userId: userId,
         tournamentId: tourId
@@ -205,8 +206,10 @@ exports.bets = (req, res, next) => {
       ],
       include: {
         model: Match,
+        attributes: ['matchId', 'matchDate', 'matchName'],
         include: {
-          model: Result
+          model: Result,
+          attributes: ['endResult', 'correctBet']
         }
       }
     })
