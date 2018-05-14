@@ -13,6 +13,10 @@ module.exports = function (sequelize, DataTypes) {
         Option: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        OptionNo: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
         }
     })
 

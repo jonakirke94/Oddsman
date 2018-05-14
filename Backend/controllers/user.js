@@ -13,6 +13,7 @@ const User = db.users;
 const Bet = db.bets;
 const sequelize = require('sequelize');
 const Match = db.matches;
+const Result = db.results;
 
 exports.update = (req, res, next) => {
   const userId = helper.getUserId(req);
@@ -203,7 +204,10 @@ exports.bets = (req, res, next) => {
         ["Week", "DESC"]
       ],
       include: {
-        model: Match
+        model: Match,
+        include: {
+          model: Result
+        }
       }
     })
     .then((bets) => {

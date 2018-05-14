@@ -78,7 +78,8 @@ exports.sendOdds = (req, res, next) => {
                                     userId: userId,
                                     tournamentId: tourId,
                                     Week: moment().isoWeek(),
-                                    Option: option
+                                    Option: option,
+                                    OptionNo: getOptionNumber(option)
                                 }).then(() => {
                                     ctr++;
                                     if (ctr === odds.length) {
@@ -109,6 +110,19 @@ function isValidWeekDays() {
 
 function isActiveTournament(start, end) {
     return today.isBetween(start, end, null, '[]');
+}
+
+function getOptionNumber(op) {
+    switch (op) {
+        case "1":
+            return 1;
+        case "X":
+            return 2;
+        case "2":
+            return 3;
+        default:
+            return -1;
+    }
 }
 
 /* function saveOdds(userId, tourId, odds, callback) {
