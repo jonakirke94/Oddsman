@@ -16,15 +16,17 @@ const {
 const scraper = require('../services/scraper');
 
 
-let today = moment().add(3,'d').add(12,'h');
+let today = moment().add(3, 'd').add(12, 'h');
 
 exports.sendOdds = (req, res, next) => {
     const tourId = req.params.tourid;
     const odds = req.body;
     const userId = helper.getUserId(req);
 
-    console.log(odds)
-
+    /* console.log(odds) */
+    if (!odds.length) {
+        return msg.show409(req, res, `Der blev ikke modtaget nogen odds`);
+    }
 
     Tournament.findById(tourId, {
             include: {
@@ -37,31 +39,29 @@ exports.sendOdds = (req, res, next) => {
                 let validDay = isValidWeekDays();
 
                 if (!validDay) {
-                    console.log("invalid day")
+                    /* console.log("invalid day") */
                     return msg.show409(req, res, "Det er ikke muligt at oddse på turneringen idag");
                 }
 
                 let active = isActiveTournament(tourney.dataValues.Start, tourney.dataValues.End);
 
                 if (!active) {
-                    console.log("inactive tourney")
+                    /* console.log("inactive tourney") */
                     return msg.show409(req, res, "Turneringen er inaktiv");
                 }
 
                 let count = tourney.dataValues.bets.length;
 
                 if (count > 0) {
-                    console.log("bets already exists")
+                    /* console.log("bets already exists") */
                     return msg.show409(req, res, `Mængden af odds for denne turnering er overskredet ${count}/3`);
                 }
 
                 let ctr = 0;
-                
+
                 odds.forEach((o, index, odds) => {
                     let matchId = o.matchId;
                     let option = o.option;
-
-                   //console.log(odds[index])
 
                     scraper.getMatch(matchId, null, (m) => {
                         if (m === null) {
@@ -72,17 +72,15 @@ exports.sendOdds = (req, res, next) => {
                         }
                         Match.create(m)
                             .then(match => {
-        
+
                                 Bet.create({
                                     matchId: match.Id,
                                     userId: userId,
                                     tournamentId: tourId,
                                     Week: moment().isoWeek()
-                                }).then((bet) => {
-                                    console.log("created bet: " + bet)
+                                }).then(() => {
                                     ctr++;
                                     if (ctr === odds.length) {
-                                        console.log("added all bets and matches");
                                         return msg.show200(req, res, next);
                                     }
                                 });

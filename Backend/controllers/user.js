@@ -10,6 +10,7 @@ const msg = require("../db/http");
 const db = require('../models');
 const helper = require('../controllers/helper');
 const User = db.users;
+const Bet = db.bets;
 const sequelize = require('sequelize');
 
 
@@ -193,16 +194,16 @@ exports.getByEmail = (email) => {
 exports.bets = (req, res, next) => {
   const userId = helper.getUserId(req);
   const tourId = req.params.tourid;
-  console.log(userId + " - " + tourId);
-  Bets.findAll({
+  Bet.findAll({
       where: {
         userId: userId,
         tournamentId: tourId
       },
-      order: ['Week', 'DESC'],
+      order: [
+        ["Week", "DESC"]
+      ]
     })
     .then((bets) => {
-      console.log(bets);
       return msg.show200(req, res, "Success", bets);
     })
     .catch(db.Sequelize.ValidationError, function (err) {
