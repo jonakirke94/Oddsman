@@ -25,7 +25,7 @@ const tokens = tokenController.generateTokens({
 
 //seq.sequelize.sync();
 
-describe('ODDS', () => {
+describe('BETS', () => {
     beforeEach(done => {
         helper.clean(function (result) {
             const tour = helper.getTour();
@@ -46,9 +46,9 @@ describe('ODDS', () => {
                         End: moment().add(1, 'M')
                     }).then(() => {
                         Tournament.create({
-                            Name: "Season " + moment().isoWeek() + 1,
-                            Start: moment().subtract(1, 'M'),
-                            End: moment().add(1, 'M')
+                            Name: "Season " + moment().isoWeek() - 5,
+                            Start: moment().subtract(5, 'M'),
+                            End: moment().subtract(2, 'M')
                         }).then(() => {
                             chai.request(server)
                                 .post("/user/signup") //ENDPOINT[2]
@@ -64,8 +64,21 @@ describe('ODDS', () => {
                                             userId: 1,
                                             Week: moment().isoWeek(),
                                         }).then(() => {
-                                            done();
+                                            Bet.create({
+                                                tournamentId: 2,
+                                                userId: 1,
+                                                Week: moment().isoWeek(),
+                                            }).then(() => {
+                                                Bet.create({
+                                                    tournamentId: 2,
+                                                    userId: 1,
+                                                    Week: moment().isoWeek(),
+                                                }).then(() => {
+                                                    done();
+                                                });
+                                            });
                                         });
+
                                     });
                                 });
                         });
@@ -79,85 +92,27 @@ describe('ODDS', () => {
         })
     });
 
-    describe("/POST Odds", () => {
-        it("it should send Odds and fail on inactive tournament", done => {
+    describe("/GET Bets", () => {
+        it("it should get a users bets for a specific tournament 1", done => {
             chai
                 .request(server)
-                .post("/odds/1")
+                .get("/user/bets/1")
                 .set("authorization", "Bearer " + tokens.access_token)
-                .send({
-                    'odds': [{
-                            matchId: 1,
-                            option: "1"
-                        },
-                        {
-                            matchId: 4,
-                            option: "X"
-                        },
-                        {
-                            matchId: 9,
-                            option: "2"
-                        },
-                    ]
-                })
                 .end((err, res) => {
-                    JSON.parse(res.text).msg.should.eql("Turneringen er inaktiv");
-                    res.should.have.status(409);
+                    console.log(JSON.stringify(res));
+                    /* JSON.parse(res.text).msg.should.eql("Turneringen er inaktiv"); */
+                    res.should.have.status(200);
                     done();
                 });
         });
-        it("it should send Odds and fail on having bets already", done => {
+        it("it should get a users bets for a specific tournament 2", done => {
             chai
                 .request(server)
-                .post("/odds/2")
+                .get("/user/bets/2")
                 .set("authorization", "Bearer " + tokens.access_token)
-                .send({
-                    'odds': [{
-                            matchId: 1,
-                            option: "1"
-                        },
-                        {
-                            matchId: 4,
-                            option: "X"
-                        },
-                        {
-                            matchId: 9,
-                            option: "2"
-                        },
-                    ]
-                })
                 .end((err, res) => {
-                    let msg = JSON.parse(res.text).msg;
-                    // msg contains a dynamic 'x/3' bets message, so using a substring for equality check.
-                    msg.substring(0, msg.length - 4).should.eql("Mængden af odds for denne turnering er overskredet");
-                    res.should.have.status(409);
-                    done();
-                });
-        });
-
-        it("it should send Odds and save them", done => {
-            chai
-                .request(server)
-                .post("/odds/3")
-                .set("authorization", "Bearer " + tokens.access_token)
-                .send({
-                    'odds': [{
-                            matchId: 1,
-                            option: "1"
-                        },
-                        {
-                            matchId: 4,
-                            option: "X"
-                        },
-                        {
-                            matchId: 9,
-                            option: "2"
-                        },
-                    ]
-                })
-                .end((err, res) => {
-                    /*  let msg = JSON.parse(res.text).msg;
-                     console.log(msg); */
+                    console.log(JSON.stringify(res));
+                    /* JSON.parse(res.text).msg.should.eql("Turneringen er inaktiv"); */
                     res.should.have.status(200);
                     done();
                 });

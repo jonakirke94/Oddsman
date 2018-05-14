@@ -91,8 +91,6 @@ exports.sendOdds = (req, res, next) => {
 }
 
 
-
-
 function isValidWeekDays() {
     // torsdag kl 12 - lørdag kl 12
     let start = moment().startOf('isoWeek').add(3, 'd').add(12, 'h');
