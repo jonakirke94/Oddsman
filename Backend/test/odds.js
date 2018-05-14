@@ -58,13 +58,15 @@ describe('ODDS', () => {
                                         tournamentId: 1,
                                         userId: 1,
                                         Week: moment().isoWeek(),
-                                        Option: "X"
+                                        Option: "X",
+                                        OptionNo: 2
                                     }).then(() => {
                                         Bet.create({
                                             tournamentId: 2,
                                             userId: 1,
                                             Week: moment().isoWeek(),
-                                            Option: "X"
+                                            Option: "X",
+                                            OptionNo: 2
                                         }).then(() => {
                                             done();
                                         });
@@ -89,15 +91,21 @@ describe('ODDS', () => {
                 .set("authorization", "Bearer " + tokens.access_token)
                 .send([{
                         matchId: 1,
-                        option: "1"
+                        option: "1",
+                        OptionNo: 1,
+                        Week: moment().isoWeek()
                     },
                     {
                         matchId: 4,
-                        option: "X"
+                        option: "X",
+                        OptionNo: 2,
+                        Week: moment().isoWeek()
                     },
                     {
                         matchId: 9,
-                        option: "2"
+                        option: "2",
+                        OptionNo: 3,
+                        Week: moment().isoWeek()
                     },
                 ])
                 .end((err, res) => {
@@ -113,15 +121,21 @@ describe('ODDS', () => {
                 .set("authorization", "Bearer " + tokens.access_token)
                 .send([{
                         matchId: 1,
-                        option: "1"
+                        option: "1",
+                        OptionNo: 1,
+                        Week: moment().isoWeek()
                     },
                     {
                         matchId: 4,
-                        option: "X"
+                        option: "X",
+                        OptionNo: 2,
+                        Week: moment().isoWeek()
                     },
                     {
                         matchId: 9,
-                        option: "2"
+                        option: "2",
+                        OptionNo: 3,
+                        Week: moment().isoWeek()
                     },
                 ])
                 .end((err, res) => {
@@ -140,15 +154,21 @@ describe('ODDS', () => {
                 .set("authorization", "Bearer " + tokens.access_token)
                 .send([{
                         matchId: 1,
-                        option: "1"
+                        option: "1",
+                        OptionNo: 1,
+                        Week: moment().isoWeek()
                     },
                     {
                         matchId: 4,
-                        option: "X"
+                        option: "X",
+                        OptionNo: 2,
+                        Week: moment().isoWeek()
                     },
                     {
                         matchId: 9,
-                        option: "2"
+                        option: "2",
+                        OptionNo: 3,
+                        Week: moment().isoWeek()
                     },
                 ])
                 .end((err, res) => {

@@ -34,7 +34,8 @@ exports.sendOdds = (req, res, next) => {
                 attributes: ['userId', 'tournamentId', 'week'],
                 where: {
                     Week: today.isoWeek()
-                }
+                },
+                required: false
             }
         })
         .then(tourney => {
