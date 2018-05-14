@@ -12,6 +12,7 @@ const userController = require("../controllers/user");
 const seq = require('../models');
 const Bet = seq.bets;
 const Tournament = seq.tournaments;
+const Match = seq.matches;
 
 const helper = require('../test/helper');
 
@@ -23,11 +24,12 @@ const tokens = tokenController.generateTokens({
     IsAdmin: false
 });
 
-//seq.sequelize.sync();
+seq.sequelize.sync();
 
 describe('BETS', () => {
     beforeEach(done => {
         helper.clean(function (result) {
+            let matchId = null;
             const tour = helper.getTour();
             const user = helper.getUser();
             const user2 = helper.getUser({
@@ -54,36 +56,46 @@ describe('BETS', () => {
                                 .post("/user/signup") //ENDPOINT[2]
                                 .send(user)
                                 .end((err, res) => {
-                                    Bet.create({
-                                        tournamentId: 1,
-                                        userId: 1,
-                                        Week: moment().isoWeek(),
-                                        Option: "1"
-                                    }).then(() => {
-                                        Bet.create({
-                                            tournamentId: 2,
-                                            userId: 1,
-                                            Week: moment().isoWeek(),
-                                            Option: "X"
-                                        }).then(() => {
+                                    Match.create({
+                                            Missing: true
+                                        })
+                                        .then((match) => {
+                                            matchId = match.Id;
                                             Bet.create({
-                                                tournamentId: 2,
+                                                tournamentId: 1,
                                                 userId: 1,
                                                 Week: moment().isoWeek(),
-                                                Option: "X"
+                                                Option: "1",
+                                                matchId: matchId
                                             }).then(() => {
                                                 Bet.create({
                                                     tournamentId: 2,
                                                     userId: 1,
                                                     Week: moment().isoWeek(),
-                                                    Option: "3"
+                                                    Option: "X",
+                                                    matchId: matchId
                                                 }).then(() => {
-                                                    done();
+                                                    Bet.create({
+                                                        tournamentId: 2,
+                                                        userId: 1,
+                                                        Week: moment().isoWeek(),
+                                                        Option: "X",
+                                                        matchId: matchId
+                                                    }).then(() => {
+                                                        Bet.create({
+                                                            tournamentId: 2,
+                                                            userId: 1,
+                                                            Week: moment().isoWeek(),
+                                                            Option: "3",
+                                                            matchId: matchId
+                                                        }).then(() => {
+                                                            done();
+                                                        });
+                                                    });
                                                 });
+
                                             });
                                         });
-
-                                    });
                                 });
                         });
                     });
@@ -104,7 +116,7 @@ describe('BETS', () => {
                 .set("authorization", "Bearer " + tokens.access_token)
                 .end((err, res) => {
                     let data = JSON.parse(res.text).data;
-                    /* console.log(data);   */
+                    console.log(data);
                     data.should.be.a("array");
                     data.should.have.length(1)
                     res.should.have.status(200);

@@ -202,7 +202,7 @@ exports.bets = (req, res, next) => {
       order: [
         ["Week", "DESC"]
       ],
-      through: {
+      include: {
         model: Match
       }
     })
