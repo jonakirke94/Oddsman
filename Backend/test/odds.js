@@ -57,12 +57,14 @@ describe('ODDS', () => {
                                     Bet.create({
                                         tournamentId: 1,
                                         userId: 1,
-                                        Week: moment().isoWeek()
+                                        Week: moment().isoWeek(),
+                                        Option: "X"
                                     }).then(() => {
                                         Bet.create({
                                             tournamentId: 2,
                                             userId: 1,
                                             Week: moment().isoWeek(),
+                                            Option: "X"
                                         }).then(() => {
                                             done();
                                         });

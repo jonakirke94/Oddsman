@@ -9,14 +9,18 @@ module.exports = function (sequelize, DataTypes) {
         Week: {
             type: DataTypes.INTEGER,
             allowNull: false,
+        },
+        Option: {
+            type: DataTypes.STRING,
+            allowNull: false,
         }
     })
 
-  /*   Bet.associate = (models) => {
+    /*   Bet.associate = (models) => {
 
-        //Bet.hasOne(models.matches);
-        /* Bet.hasOne(models.tournaments)
-        Bet.hasOne(models.users);
-    }*/
+          //Bet.hasOne(models.matches);
+          /* Bet.hasOne(models.tournaments)
+          Bet.hasOne(models.users);
+      }*/
     return Bet;
 }

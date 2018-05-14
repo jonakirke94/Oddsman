@@ -12,7 +12,7 @@ const helper = require('../controllers/helper');
 const User = db.users;
 const Bet = db.bets;
 const sequelize = require('sequelize');
-
+const Match = db.matches;
 
 exports.update = (req, res, next) => {
   const userId = helper.getUserId(req);
@@ -201,7 +201,10 @@ exports.bets = (req, res, next) => {
       },
       order: [
         ["Week", "DESC"]
-      ]
+      ],
+      through: {
+        model: Match
+      }
     })
     .then((bets) => {
       return msg.show200(req, res, "Success", bets);

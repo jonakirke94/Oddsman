@@ -57,22 +57,26 @@ describe('BETS', () => {
                                     Bet.create({
                                         tournamentId: 1,
                                         userId: 1,
-                                        Week: moment().isoWeek()
+                                        Week: moment().isoWeek(),
+                                        Option: "1"
                                     }).then(() => {
                                         Bet.create({
                                             tournamentId: 2,
                                             userId: 1,
                                             Week: moment().isoWeek(),
+                                            Option: "X"
                                         }).then(() => {
                                             Bet.create({
                                                 tournamentId: 2,
                                                 userId: 1,
                                                 Week: moment().isoWeek(),
+                                                Option: "X"
                                             }).then(() => {
                                                 Bet.create({
                                                     tournamentId: 2,
                                                     userId: 1,
                                                     Week: moment().isoWeek(),
+                                                    Option: "3"
                                                 }).then(() => {
                                                     done();
                                                 });
@@ -114,7 +118,7 @@ describe('BETS', () => {
                 .set("authorization", "Bearer " + tokens.access_token)
                 .end((err, res) => {
                     let data = JSON.parse(res.text).data;
-                    /* console.log(data); */
+                    console.log(data);
                     data.should.be.a("array");
                     data.should.have.length(3)
                     res.should.have.status(200);
