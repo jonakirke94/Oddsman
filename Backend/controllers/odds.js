@@ -77,7 +77,8 @@ exports.sendOdds = (req, res, next) => {
                                     matchId: match.Id,
                                     userId: userId,
                                     tournamentId: tourId,
-                                    Week: moment().isoWeek()
+                                    Week: moment().isoWeek(),
+                                    Option: option
                                 }).then(() => {
                                     ctr++;
                                     if (ctr === odds.length) {
