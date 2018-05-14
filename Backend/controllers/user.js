@@ -232,7 +232,6 @@ exports.bets = (req, res, next) => {
             break;
         }
         results.push(b);
-        console.log(b);
         if (i === bets.length - 1) {
           return msg.show200(req, res, "Success", results);
         }
