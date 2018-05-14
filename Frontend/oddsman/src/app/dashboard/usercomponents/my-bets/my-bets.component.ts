@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TournamentService } from '../../../services/tournament.service';
-import {DropdownModule} from 'primeng/dropdown';
-import { OddsService, Bet } from '../../../services/odds.service';
+import { DropdownModule } from 'primeng/dropdown';
+import { OddsService } from '../../../services/odds.service';
 import { SelectItem } from 'primeng/components/common/api';
 
 
@@ -12,54 +12,50 @@ import { SelectItem } from 'primeng/components/common/api';
 })
 export class MyBetsComponent implements OnInit {
 
-  cities: City[];
+  loading: boolean;
 
-  selectedCity: City;
+  tournaments: Tour[];
 
-  bets: Bet[] ;
+  selectedTour: Tour;
 
-  
+  bets: any[];
 
-  constructor(private _tour: TournamentService, private _odds: OddsService) {
-   
-    
-   }
+
+  constructor(private _tour: TournamentService, private _odds: OddsService) { }
 
   ngOnInit() {
-    //this._tour.getEnlistedTournaments().subscribe(tourneys => tourneys['data'] = this.tours);
-    this._odds.getBets(1).subscribe(res => {
-      res
+    this.populateDropdown();
+  }
+
+  displayBets(tourId) {
+    this.loading = true;
+    this._odds.getBets(tourId).subscribe(res => {
+      this.bets = res
+      this.loading = false;
+      console.log(res)
     });
-      
+  }
 
-    
-      
+  refresh() {
+    const tourId = this.selectedTour.code;
+    this.displayBets(tourId)
+  }
 
-
-    console.log(this.bets)
-
-   
-    
-    this.cities = [
-      {name: 'New York', code: 'NY'},
-      {name: 'Rome', code: 'RM'},
-      {name: 'London', code: 'LDN'},
-      {name: 'Istanbul', code: 'IST'},
-      {name: 'Paris', code: 'PRS'}
-  ];
-   
-}
-
-refresh() {
-  console.log('Refreshed!')
+  populateDropdown() {
+    this._tour.getEnlistedTournaments().subscribe(res => {
+      const tourneys = res['data']['tournaments'];
+      this.tournaments = tourneys.map(tour => {
+        return {
+          name: tour.Name,
+          code: tour.Id
+        }
+      })
+    })
+  }
 }
 
 
-}
-
-
-
-export interface City {
+export interface Tour {
   name: string;
   code: string;
 }
