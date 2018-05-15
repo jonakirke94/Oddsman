@@ -548,10 +548,18 @@ function generateStandings(tourney, callback) {
     if (a.points > b.points) return -1;
     return 0;
   });
-  // Set positions AFTER sorting
-  tournament.standings.forEach((s, i) =>{
+  // Set positions and remaining points till #1 AFTER sorting
+  let topPoints = 0;
+  for (let i = 0; i < tournament.standings.length; i++) {
+    const s = tournament.standings[i];
     s['position'] = i + 1;
-  })
+    if(i === 0){
+      topPoints = s.points;
+      s['deficit'] = 0;
+    }else{
+      s['deficit'] = topPoints - s.points;
+    }    
+  }
 
   console.log(tournament.standings);
   callback(tournament);
