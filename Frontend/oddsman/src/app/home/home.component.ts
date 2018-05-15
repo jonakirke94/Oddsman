@@ -6,10 +6,10 @@ import * as moment from 'moment';
 
 @Component({
   selector: 'app-standing',
-  templateUrl: './standing.component.html',
-  styleUrls: ['./standing.component.sass']
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.sass']
 })
-export class StandingComponent implements OnInit {
+export class HomeComponent implements OnInit {
 
   standings: any[];
 
