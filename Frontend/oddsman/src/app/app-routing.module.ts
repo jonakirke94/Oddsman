@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
-import { StandingComponent } from './standing/standing.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminpanelComponent } from './adminpanel/adminpanel.component';
 import { AuthGuard } from './guards/auth.guard';
@@ -17,10 +16,11 @@ import { UserTournamentsComponent } from './dashboard/usercomponents/user-tourna
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
 import { HistoryComponent } from './dashboard/usercomponents/history/history.component';
+import { HomeComponent } from './home/home.component';
 
 
 const routes: Routes = [
-  {path: '', component: StandingComponent}, //index
+  {path: '', component: HomeComponent}, //index
   {path: 'login', component: LoginComponent},
   {path: 'signup', component: SignupComponent},
   {path: 'dashboard', canActivate: [AuthGuard],component: DashboardComponent,
