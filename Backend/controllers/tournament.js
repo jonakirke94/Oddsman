@@ -500,11 +500,8 @@ function generateStandings(tourney, callback) {
 
   const users = tourney.dataValues.users;
 
-  console.log(users.length)
-
   for (let i = 0; i < users.length; i++) {
     const u = users[i].dataValues || {};
-    console.log(u)
     const bets = u.bets || [];
     const standing = {
       tag: u.tag,
@@ -533,7 +530,6 @@ function generateStandings(tourney, callback) {
           standing.wins++;
         }
       } catch (error) {
-        console.log("Oops, no match or result");
         continue;
       }
     }
@@ -541,7 +537,7 @@ function generateStandings(tourney, callback) {
 
   }
 
-  console.log(tournament.standings);
+  /* console.log(tournament.standings); */
   // Sort by most points
   tournament.standings.sort(function (a, b) {
     if (a.points < b.points) return 1;
@@ -561,7 +557,7 @@ function generateStandings(tourney, callback) {
     }    
   }
 
-  console.log(tournament.standings);
+  /* console.log(tournament.standings); */
   callback(tournament);
 }
 
