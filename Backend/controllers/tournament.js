@@ -141,7 +141,7 @@ exports.get_current_tournament = (req, res, next) => {
     where: {
       Active: true
     }
-    }).then(tour => {
+  }).then(tour => {
 
     if (tour === null) {
       return msg.show404(req, res, next);
@@ -473,7 +473,7 @@ exports.get_overview = (req, res, next) => {
               Missing: false,
               Invalid: false
             },
-            attributes: ['id', 'Option1Odds', 'Option2Odds', 'Option3Odds' ],
+            attributes: ['id', 'Option1Odds', 'Option2Odds', 'Option3Odds'],
             include: {
               model: Result,
               required: false,
@@ -488,7 +488,7 @@ exports.get_overview = (req, res, next) => {
       generateStandings(tourney, (standings) => {
         console.log(standings)
         return msg.show200(req, res, "Success", standings);
-      });      
+      });
     })
     .catch(err => {
       return msg.show500(req, res, err);
@@ -518,26 +518,30 @@ function generateStandings(tourney, callback) {
       wins: 0,
       points: 0.0,
       pointsWeek: 0.0
-    }    
+    }
 
     for (let j = 0; j < bets.length; j++) {
-      const b = bets[j].dataValues || {};
-      const m = b.match.dataValues || {};
-      const r = m.result.dataValues || {};
-      const odds = {
-        "1": m.Option1Odds || 0.0,
-        "X": m.Option2Odds || 0.0,
-        "2": m.Option3Odds || 0.0
-      }            
-      if(b && m && r){
-        if(b.option === r.correctBet){
-          if(b.week === moment().isoWeek()){
-            standing.pointsWeek += odds[b.option] || 0;
-          }
-          standing.points += odds[b.option] || 0;
-          standing.wins++;
+      try {
+        const b = bets[j].dataValues;
+        const m = b.match.dataValues;
+        const r = m.result.dataValues;
+        const odds = {
+          "1": m.Option1Odds || 0.0,
+          "X": m.Option2Odds || 0.0,
+          "2": m.Option3Odds || 0.0
         }
-      }      
+        if (b && m && r) {
+          if (b.option === r.correctBet) {
+            if (b.week === moment().isoWeek()) {
+              standing.pointsWeek += odds[b.option] || 0;
+            }
+            standing.points += odds[b.option] || 0;
+            standing.wins++;
+          }
+        }
+      } catch (error) {
+        console.log("Oops, no match or result")
+      }
     }
     tournament.standings.push(standing);
   }
