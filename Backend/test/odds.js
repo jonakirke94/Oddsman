@@ -57,12 +57,16 @@ describe('ODDS', () => {
                                     Bet.create({
                                         tournamentId: 1,
                                         userId: 1,
-                                        Week: moment().isoWeek()
+                                        Week: moment().isoWeek(),
+                                        Option: "X",
+                                        OptionNo: 2
                                     }).then(() => {
                                         Bet.create({
                                             tournamentId: 2,
                                             userId: 1,
                                             Week: moment().isoWeek(),
+                                            Option: "X",
+                                            OptionNo: 2
                                         }).then(() => {
                                             done();
                                         });
@@ -85,21 +89,22 @@ describe('ODDS', () => {
                 .request(server)
                 .post("/odds/1")
                 .set("authorization", "Bearer " + tokens.access_token)
-                .send({
-                    'odds': [{
-                            matchId: 1,
-                            option: "1"
-                        },
-                        {
-                            matchId: 4,
-                            option: "X"
-                        },
-                        {
-                            matchId: 9,
-                            option: "2"
-                        },
-                    ]
-                })
+                .send([{
+                        matchId: 1,
+                        option: "1",
+                        Week: moment().isoWeek()
+                    },
+                    {
+                        matchId: 4,
+                        option: "X",
+                        Week: moment().isoWeek()
+                    },
+                    {
+                        matchId: 9,
+                        option: "2",
+                        Week: moment().isoWeek()
+                    },
+                ])
                 .end((err, res) => {
                     JSON.parse(res.text).msg.should.eql("Turneringen er inaktiv");
                     res.should.have.status(409);
@@ -111,21 +116,22 @@ describe('ODDS', () => {
                 .request(server)
                 .post("/odds/2")
                 .set("authorization", "Bearer " + tokens.access_token)
-                .send({
-                    'odds': [{
-                            matchId: 1,
-                            option: "1"
-                        },
-                        {
-                            matchId: 4,
-                            option: "X"
-                        },
-                        {
-                            matchId: 9,
-                            option: "2"
-                        },
-                    ]
-                })
+                .send([{
+                        matchId: 1,
+                        option: "1",
+                        Week: moment().isoWeek()
+                    },
+                    {
+                        matchId: 4,
+                        option: "X",
+                        Week: moment().isoWeek()
+                    },
+                    {
+                        matchId: 9,
+                        option: "2",
+                        Week: moment().isoWeek()
+                    },
+                ])
                 .end((err, res) => {
                     let msg = JSON.parse(res.text).msg;
                     // msg contains a dynamic 'x/3' bets message, so using a substring for equality check.
@@ -140,21 +146,22 @@ describe('ODDS', () => {
                 .request(server)
                 .post("/odds/3")
                 .set("authorization", "Bearer " + tokens.access_token)
-                .send({
-                    'odds': [{
-                            matchId: 1,
-                            option: "1"
-                        },
-                        {
-                            matchId: 4,
-                            option: "X"
-                        },
-                        {
-                            matchId: 9,
-                            option: "2"
-                        },
-                    ]
-                })
+                .send([{
+                        matchId: 1,
+                        option: "1",
+                        Week: moment().isoWeek()
+                    },
+                    {
+                        matchId: 4,
+                        option: "X",
+                        Week: moment().isoWeek()
+                    },
+                    {
+                        matchId: 9,
+                        option: "2",
+                        Week: moment().isoWeek()
+                    },
+                ])
                 .end((err, res) => {
                     /*  let msg = JSON.parse(res.text).msg;
                      console.log(msg); */

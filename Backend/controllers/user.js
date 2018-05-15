@@ -10,8 +10,10 @@ const msg = require("../db/http");
 const db = require('../models');
 const helper = require('../controllers/helper');
 const User = db.users;
+const Bet = db.bets;
 const sequelize = require('sequelize');
-
+const Match = db.matches;
+const Result = db.results;
 
 exports.update = (req, res, next) => {
   const userId = helper.getUserId(req);
@@ -193,17 +195,51 @@ exports.getByEmail = (email) => {
 exports.bets = (req, res, next) => {
   const userId = helper.getUserId(req);
   const tourId = req.params.tourid;
-  console.log(userId + " - " + tourId);
-  Bets.findAll({
+  Bet.findAll({
+      attributes: ['id', 'option', 'optionNo', 'week'],
       where: {
         userId: userId,
         tournamentId: tourId
       },
-      order: ['Week', 'DESC'],
+      order: [
+        ["Week", "DESC"]
+      ],
+      include: {
+        model: Match,
+        attributes: ['matchId', 'matchDate', 'matchName', 'Option1Odds', 'Option2Odds', 'Option3Odds'],
+        include: {
+          model: Result,
+          attributes: ['endResult', 'correctBet']
+        }
+      }
     })
     .then((bets) => {
-      console.log(bets);
-      return msg.show200(req, res, "Success", bets);
+      if(bets.length === 0) {
+        return msg.show200(req, res, "No bets found", []);
+      }
+
+      let results = [];
+      for (let i = 0; i < bets.length; i++) {
+        let b = JSON.parse(JSON.stringify(bets[i]));
+        switch (b.optionNo) {
+          case "1":
+            b.odds = b.match.Option1Odds;
+            break;
+          case "X":
+            b.odds = b.match.Option2Odds;
+            break;
+          case "2":
+            b.odds = b.match.Option3Odds;
+            break;
+          default:
+            b.odds = null;
+            break;
+        }
+        results.push(b);
+        if (i === bets.length - 1) {
+          return msg.show200(req, res, "Success", results);
+        }
+      }
     })
     .catch(db.Sequelize.ValidationError, function (err) {
       return msg.show409(req, res, 'Validation Error', err.errors[0].message);

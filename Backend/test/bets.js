@@ -12,6 +12,7 @@ const userController = require("../controllers/user");
 const seq = require('../models');
 const Bet = seq.bets;
 const Tournament = seq.tournaments;
+const Match = seq.matches;
 
 const helper = require('../test/helper');
 
@@ -23,11 +24,12 @@ const tokens = tokenController.generateTokens({
     IsAdmin: false
 });
 
-//seq.sequelize.sync();
+/* seq.sequelize.sync(); */
 
 describe('BETS', () => {
     beforeEach(done => {
         helper.clean(function (result) {
+            let matchId = null;
             const tour = helper.getTour();
             const user = helper.getUser();
             const user2 = helper.getUser({
@@ -46,7 +48,7 @@ describe('BETS', () => {
                         End: moment().add(1, 'M')
                     }).then(() => {
                         Tournament.create({
-                            Name: "Season " + moment().isoWeek() - 5,
+                            Name: "Season 17",
                             Start: moment().subtract(5, 'M'),
                             End: moment().subtract(2, 'M')
                         }).then(() => {
@@ -54,32 +56,51 @@ describe('BETS', () => {
                                 .post("/user/signup") //ENDPOINT[2]
                                 .send(user)
                                 .end((err, res) => {
-                                    Bet.create({
-                                        tournamentId: 1,
-                                        userId: 1,
-                                        Week: moment().isoWeek()
-                                    }).then(() => {
-                                        Bet.create({
-                                            tournamentId: 2,
-                                            userId: 1,
-                                            Week: moment().isoWeek(),
-                                        }).then(() => {
+                                    Match.create({
+                                            MatchId: 1,
+                                            Missing: true
+                                        })
+                                        .then((match) => {
+                                            matchId = match.Id;
                                             Bet.create({
-                                                tournamentId: 2,
+                                                tournamentId: 1,
                                                 userId: 1,
                                                 Week: moment().isoWeek(),
+                                                Option: "1",
+                                                OptionNo: 1,
+                                                matchId: matchId
                                             }).then(() => {
                                                 Bet.create({
                                                     tournamentId: 2,
                                                     userId: 1,
                                                     Week: moment().isoWeek(),
+                                                    Option: "X",
+                                                    OptionNo: 2,
+                                                    matchId: matchId
                                                 }).then(() => {
-                                                    done();
+                                                    Bet.create({
+                                                        tournamentId: 2,
+                                                        userId: 1,
+                                                        Week: moment().isoWeek(),
+                                                        Option: "X",
+                                                        OptionNo: 2,
+                                                        matchId: matchId
+                                                    }).then(() => {
+                                                        Bet.create({
+                                                            tournamentId: 2,
+                                                            userId: 1,
+                                                            Week: moment().isoWeek(),
+                                                            Option: "3",
+                                                            OptionNo: 3,
+                                                            matchId: matchId
+                                                        }).then(() => {
+                                                            done();
+                                                        });
+                                                    });
                                                 });
+
                                             });
                                         });
-
-                                    });
                                 });
                         });
                     });
@@ -99,8 +120,10 @@ describe('BETS', () => {
                 .get("/user/bets/1")
                 .set("authorization", "Bearer " + tokens.access_token)
                 .end((err, res) => {
-                    console.log(JSON.stringify(res));
-                    /* JSON.parse(res.text).msg.should.eql("Turneringen er inaktiv"); */
+                    let data = JSON.parse(res.text).data;
+                    /* console.log(data); */
+                    data.should.be.a("array");
+                    data.should.have.length(1)
                     res.should.have.status(200);
                     done();
                 });
@@ -111,8 +134,10 @@ describe('BETS', () => {
                 .get("/user/bets/2")
                 .set("authorization", "Bearer " + tokens.access_token)
                 .end((err, res) => {
-                    console.log(JSON.stringify(res));
-                    /* JSON.parse(res.text).msg.should.eql("Turneringen er inaktiv"); */
+                    let data = JSON.parse(res.text).data;
+                    /* console.log(data); */
+                    data.should.be.a("array");
+                    data.should.have.length(3)
                     res.should.have.status(200);
                     done();
                 });

@@ -34,6 +34,8 @@ import { DataTableModule } from 'primeng/primeng'; // Here
 import {GrowlModule} from 'primeng/primeng';
 import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
+import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
+import {DropdownModule} from 'primeng/primeng';
 
 
 @NgModule({
@@ -51,7 +53,7 @@ import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bet
     AdminusersComponent,
     AdminTournamentsComponent,
     AdminInvitationsComponent, 
-    UserTournamentsComponent, SendBetsComponent
+    UserTournamentsComponent, SendBetsComponent, MyBetsComponent
    
   ],
   imports: [
@@ -67,7 +69,8 @@ import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bet
     FormsModule,
     InputTextModule,
     DataTableModule,
-    GrowlModule
+    GrowlModule,
+    DropdownModule
 
     
   ],
