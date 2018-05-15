@@ -28,12 +28,13 @@ exports.edit_match = (req, res, next) => {
         .then((m) => {
             if (!m) return msg.show404(req, res, "The match could not be found");
             // foreach key in the database match
-            Object.keys(m.dataValues).forEach((key) => {
-                // Convert the key to lowercase and use it to access the new match's values
-                // After that set the database match's original keys to the new values
+            Object.keys(m.dataValues).forEach((key) => {               
                 try {
+                    // Convert the key to lowercase
                     const k = key.toLowerCase();
-                    const val = match[k];
+                    // Access the new match's values
+                    const val = match[k];                    
+                    // Set the original match keys to the new values if the new value isn't null/undefined etc.
                     if (val) {
                         m[key] = val;
                     }
