@@ -134,6 +134,27 @@ exports.request = (req, res, next) => {
 }
 
 exports.get_current_tournament = (req, res, next) => {
+  const today = moment();
+
+  Tournament.findOne({
+    attributes: ['id', 'name'],
+    where: {
+      Active: true
+    }
+    }).then(tour => {
+
+    if (tour === null) {
+      return msg.show404(req, res, next);
+    }
+
+    return msg.show200(req, res, "Found active tournament", tour);
+
+  }).catch(function (err) {
+    return msg.show500(req, res, err);
+  })
+}
+
+exports.get_current_tournament_user = (req, res, next) => {
   const userId = helper.getUserId(req);
   const today = moment();
 
@@ -462,6 +483,7 @@ exports.get_overview = (req, res, next) => {
     })
     .then((tourney) => {
       generateStandings(tourney, (standings) => {
+        console.log(standings)
         return msg.show200(req, res, "Success", standings);
       });      
     })
@@ -472,16 +494,19 @@ exports.get_overview = (req, res, next) => {
 
 function generateStandings(tourney, callback) {
   const tournament = {
-    id: tourney.id,
-    start: tourney.start,
-    end: tourney.end,
+    id: tourney.dataValues.id,
+    start: tourney.dataValues.start,
+    end: tourney.dataValues.end,
     standings: []
   }
 
   const users = tourney.dataValues.users;
 
+  console.log(users.length)
+
   for (let i = 0; i < users.length; i++) {
     const u = users[i].dataValues;
+    console.log(u)
     const bets = u.bets;
     const standing = {
       tag: u.tag,

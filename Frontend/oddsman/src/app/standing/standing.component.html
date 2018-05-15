@@ -4,11 +4,11 @@
 
     <div class="column hero__left">
      <!-- TABLE -->
-      <p-table [value]="users"  autoLayout="true">
+      <p-table [value]="standings"  autoLayout="true" *ngIf="tournament">
         <ng-template pTemplate="header">
             <tr>
                
-                <th colspan="8">Stilling</th>
+                <th colspan="8">Stilling {{tournament.name}}</th>
             </tr>
             <tr>
                 <th colspan="6"></th>
@@ -21,21 +21,21 @@
                 <th>Tips</th>
                 <th>Points</th>
                 <th>Afstand til #1</th>
-                <th>19</th>
-                <th>17-19</th>
+                <th>{{currentWeek}}</th>
+                <th>{{threeWeekStart}} - {{currentWeek}}</th>
 
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-user>
+        <ng-template pTemplate="body" let-standing>
             <tr>
-                <td>{{user.position}}</td>
-                <td>{{user.tag}}</td>
-                <td>{{user.name}}</td>
-                <td>{{user.correctBets}} / {{user.totalBets}}</td>
-                <td>{{user.points}}</td>
-                <td>{{user.distanceToOne}}</td>
-                <td>{{user.pointsLastWeek}}</td>
-                <td>{{user.pointsLastThreeWeeks}}</td>
+                <td>{{standing.position}}</td>
+                <td>{{standing.tag}}</td>
+                <td>{{standing.name}}</td>
+                <td>{{standing.correctBets}} / {{standing.totalBets}}</td>
+                <td>{{standing.points}}</td>
+                <td>{{standing.distanceToOne}}</td>
+                <td>{{standing.pointsLastWeek}}</td>
+                <td>{{standing.pointsLastThreeWeeks}}</td>
             </tr>
         </ng-template>
         <ng-template pTemplate="footer">

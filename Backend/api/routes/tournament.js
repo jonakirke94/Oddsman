@@ -15,7 +15,8 @@ router.get("/requests/:tourid", adminguard, tournamentController.get_tournament_
 router.get("/enlisted", guard, tournamentController.get_enlisted_tournaments)
 router.get("/delisted/", guard, tournamentController.get_delisted_tournaments)
 router.get("/", tournamentController.get_all);
-router.get("/current/", guard, tournamentController.get_current_tournament)
+router.get("/current/user", guard, tournamentController.get_current_tournament_user) //get a user's current tournament if any
+router.get('/current', tournamentController.get_current_tournament) //get the tournament that is currently ongoing
 router.get("/:tourid/overview", tournamentController.get_overview)
 //router.get("/:tourid/participants/", tournamentController.get_participants)
 //router.get("/:id", tournamentController.);

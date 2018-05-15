@@ -84,7 +84,7 @@ export class SendBetsComponent implements OnInit {
   getCurrentTournament() {
     this.showSpinner = true;
 
-    this.tournament$ = this._tour.getCurrentTournament().subscribe(res => {
+    this.tournament$ = this._tour.getCurrentUserTournament().subscribe(res => {
         this.tournament = res['data'];
         this.showSpinner = false;
     }, err => {

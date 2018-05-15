@@ -246,7 +246,7 @@
              }).then(() => {
                chai
                  .request(server)
-                 .get("/tournament/current") //ENDPOINT[6]
+                 .get("/tournament/current/user") //ENDPOINT[6]
                  .set("authorization", "Bearer ")
                  .end((err, res) => {
                    const data = JSON.parse(res.text).data;
