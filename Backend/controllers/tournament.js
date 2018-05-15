@@ -538,7 +538,8 @@ function generateStandings(tourney, callback) {
           standing.wins++;
         }
       } catch (error) {
-        console.log("Oops, no match or result")
+        console.log("Oops, no match or result");
+        continue;
       }
     }
     tournament.standings.push(standing);
