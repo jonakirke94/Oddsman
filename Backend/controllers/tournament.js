@@ -439,13 +439,18 @@ exports.get_overview = (req, res, next) => {
         include: {
           model: Bet,
           attributes: ['id', 'week', 'option', 'optionNo', 'matchId'],
+          where: {
+            Week: {
+              [Op.gte]: moment().isoWeek() - 4 // get a months worth of bets (4 rounds).
+            }
+          },
           include: {
             model: Match,
             where: {
               Missing: false,
               Invalid: false
             },
-            attributes: ['id', ],
+            attributes: ['id', 'Option1Odds', 'Option2Odds', 'Option3Odds' ],
             include: {
               model: Result,
               attributes: ['id', 'correctBet']
@@ -456,73 +461,62 @@ exports.get_overview = (req, res, next) => {
       }
     })
     .then((tourney) => {
-      console.log(JSON.stringify(tourney));
-      let standings = [];
-      let ctr = 0;
-      const users = tourney.users;
-
-      users.forEach((u, i, users) => {
-        let wins = countWins(u.bets);
-        let points = countPoints(u.bets);
-        let thisWeeksPoints = countPoints(u.bets, true);
-
-        standings.push({
-          tag: u.tag,
-          name: u.name,
-          tips: u.bets.length,
-          wins: wins,
-          points: points,
-          pointsWeek: thisWeeksPoints
-        });
-
-        ctr++;
-        if (ctr === users.length) {
-          const tournament = {
-            id: tourney.id,
-            start: tourney.start,
-            end: tourney.end,
-            standings: standings
-          }
-          console.log(tournament);
-          return msg.show200(req, res, "Success", tournament);
-        }
-      })
+      generateStandings(tourney, (standings) => {
+        return msg.show200(req, res, "Success", standings);
+      });      
     })
     .catch(err => {
       return msg.show500(req, res, err);
     });
 }
 
-function countWins(bets) {
-  let wins = 0;
-  for (let i = 0; i < bets.length; i++) {
-    const b = bets[i];
-    if (b.match.result.correctBet === b.option) {
-      wins++;
-    }
+function generateStandings(tourney, callback) {
+  const tournament = {
+    id: tourney.id,
+    start: tourney.start,
+    end: tourney.end,
+    standings: []
   }
-  console.log("wins " + wins);
-  return wins;
+
+  const users = tourney.dataValues.users;
+
+  for (let i = 0; i < users.length; i++) {
+    const u = users[i].dataValues;
+    const bets = u.bets;
+    const standing = {
+      tag: u.tag,
+      name: u.name,
+      tips: u.bets.length,
+      wins: 0,
+      points: 0.0,
+      pointsWeek: 0.0
+    }    
+
+    for (let j = 0; j < bets.length; j++) {
+      const b = bets[j].dataValues;
+      const m = b.match.dataValues;
+      const r = m.result.dataValues;
+      const odds = {
+        "1": m.Option1Odds,
+        "X": m.Option2Odds,
+        "2": m.Option3Odds
+      }            
+      
+      if(b.option === r.correctBet){
+        if(b.week === moment().isoWeek()){
+          standing.pointsWeek += odds[b.option] || 0;
+        }
+        standing.points += odds[b.option] || 0;
+        standing.wins++;
+      }
+    }
+    tournament.standings.push(standing);
+  }
+  callback(tournament);
 }
 
-function countPoints(bets, thisWeekOnly = false) {
 
-  let points = 0.0;
-  for (let i = 0; i < bets.length; i++) {
-    const b = bets[i];
-    if (thisWeekOnly) {
-      if (b.week === moment().isoWeek() && b.match.result.correctBet === b.option) {
-        points += b.odds;
-      }
-    } else {
-      if (b.match.result.correctBet === b.option) {
-        points += b.odds;
-      }
-    }
-  }
-  console.log("points " + wins + " thisweekonly: " + thisWeekOnly);
-  return points;
-}
+
 
 /* HELPERS */
 

@@ -139,13 +139,16 @@ describe('TOURNAMENTS', () => {
     });
 
     describe("/GET tournament overview", () => {
-        it("it should get an overview of the tournament standings ", done => {
+        it("it should get an overview of the tournament standings within the last 4 weeks", done => {
             chai
                 .request(server)
                 .get("/tournament/1/overview")
                 .end((err, res) => {
                     console.log(JSON.stringify(res.body.data));
                     res.should.have.status(200);
+                    res.body.data.should.be.a('object');
+                    res.body.data.standings.should.be.a('array');
+                    res.body.data.standings.should.have.length(2);
                     res.body.msg.should.be.eql("Success");
                     done();
                 });
