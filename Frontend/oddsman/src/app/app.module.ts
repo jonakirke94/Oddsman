@@ -37,6 +37,7 @@ import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.comp
 import {DropdownModule} from 'primeng/primeng';
 import { HistoryComponent } from './dashboard/usercomponents/history/history.component';
 import { HomeComponent } from './home/home.component';
+import { StandingComponent } from './standing/standing.component';
 
 
 @NgModule({
@@ -54,7 +55,7 @@ import { HomeComponent } from './home/home.component';
     AdminusersComponent,
     AdminTournamentsComponent,
     AdminInvitationsComponent, 
-    UserTournamentsComponent, SendBetsComponent, MyBetsComponent, HistoryComponent
+    UserTournamentsComponent, SendBetsComponent, MyBetsComponent, HistoryComponent, StandingComponent
    
   ],
   imports: [
