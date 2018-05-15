@@ -16,7 +16,7 @@ const {
 const scraper = require('../services/scraper');
 
 
-let today = moment().add(3, 'd').add(12, 'h');
+let today = moment() //.add(3, 'd').add(12, 'h'); // used for faking a valid bet day
 
 exports.sendOdds = (req, res, next) => {
     const tourId = req.params.tourid;
