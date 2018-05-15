@@ -3,11 +3,58 @@
   <section class="columns hero__container">
 
     <div class="column hero__left">
-   
+     <!-- TABLE -->
+      <p-table [value]="users"  autoLayout="true">
+        <ng-template pTemplate="header">
+            <tr>
+               
+                <th colspan="8">Stilling</th>
+            </tr>
+            <tr>
+                <th colspan="6"></th>
+                <th colspan="2">Points i uge</th>
+            </tr>
+            <tr>
+                <th>#</th>
+                <th>Tag</th>
+                <th>Deltager</th>
+                <th>Tips</th>
+                <th>Points</th>
+                <th>Afstand til #1</th>
+                <th>19</th>
+                <th>17-19</th>
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+            <tr>
+                <td>{{user.position}}</td>
+                <td>{{user.tag}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.correctBets}} / {{user.totalBets}}</td>
+                <td>{{user.points}}</td>
+                <td>{{user.distanceToOne}}</td>
+                <td>{{user.pointsLastWeek}}</td>
+                <td>{{user.pointsLastThreeWeeks}}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <tr>
+                <td colspan="2">Næste deadline:</td>
+                <td colspan="6">Lørdag kl 12.</td>
+            </tr>
+            <tr>
+              <td colspan="2">Næste uge med spurt!</td>
+              <td colspan="6"></td>
+        
+          </tr>
+        </ng-template>
+    </p-table>
+
     </div>
 
     <div class="column is-3 hero__right">
-
+      <!-- FEED -->
 
     <div class="activity-box">
       <div class="act-con">

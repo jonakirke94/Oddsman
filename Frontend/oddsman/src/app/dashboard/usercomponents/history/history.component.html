@@ -1,0 +1,10 @@
+
+<div class="header">
+    <h1 class="title inline-title">Vælg turnering</h1>
+    
+    <p-dropdown [options]="tournaments" [(ngModel)]="selectedTour" placeholder="Select a tournament" (ngModelChange)="refreshStanding()"
+        optionLabel="name">
+    </p-dropdown>
+    </div>
+    
+    

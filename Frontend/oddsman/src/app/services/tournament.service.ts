@@ -84,3 +84,8 @@ export class Request {
   userEmail;
   userTag;
 }
+
+export interface Tour {
+  name: string;
+  code: string;
+}
