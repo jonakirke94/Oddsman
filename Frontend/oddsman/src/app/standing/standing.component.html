@@ -1,13 +1,8 @@
    <!-- TABLE -->
    <p-table [value]="standings"  autoLayout="true" *ngIf="tournament">
     <ng-template pTemplate="header">
-        <tr>
-           
+        <tr>        
             <th colspan="8">Stilling {{tournament.name}}</th>
-        </tr>
-        <tr>
-            <th colspan="6"></th>
-            <th colspan="2">Points i uge</th>
         </tr>
         <tr>
             <th>#</th>
@@ -16,8 +11,7 @@
             <th>Tips</th>
             <th>Points</th>
             <th>Afstand til #1</th>
-            <th>{{currentWeek}}</th>
-            <th>{{threeWeekStart}} - {{currentWeek}}</th>
+            <th>Points i uge {{currentWeek}}</th>
 
         </tr>
     </ng-template>
@@ -26,20 +20,19 @@
             <td>{{standing.position}}</td>
             <td>{{standing.tag}}</td>
             <td>{{standing.name}}</td>
-            <td>{{standing.correctBets}} / {{standing.totalBets}}</td>
+            <td>{{standing.wins}} / {{standing.tips}}</td>
             <td>{{standing.points}}</td>
-            <td>{{standing.distanceToOne}}</td>
-            <td>{{standing.pointsLastWeek}}</td>
-            <td>{{standing.pointsLastThreeWeeks}}</td>
+            <td>{{standing.deficit}}</td>
+            <td>{{standing.pointsWeek}}</td>
         </tr>
     </ng-template>
     <ng-template pTemplate="footer">
         <tr>
-            <td colspan="2">Næste deadline:</td>
+            <td colspan="1">Næste deadline:</td>
             <td colspan="6">Lørdag kl 12.</td>
         </tr>
         <tr>
-          <td colspan="2">Næste uge med spurt!</td>
+          <td colspan="1">Næste uge med spurt!</td>
           <td colspan="6"></td>
     
       </tr>

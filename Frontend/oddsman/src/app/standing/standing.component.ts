@@ -18,19 +18,17 @@ export class StandingComponent implements OnInit {
 
   private tournament;
   private currentWeek;
-  private threeWeekStart;
 
   constructor(private _tour: TournamentService) { }
 
   ngOnInit() {
-    this.getWeeks();
+    this.getWeek();
     this.loadStanding();
   }
 
 
-  getWeeks() {
+  getWeek() {
     this.currentWeek = moment().isoWeek();
-    this.threeWeekStart = moment().add(-14, 'd').isoWeek();
   }
 
   loadStanding() {

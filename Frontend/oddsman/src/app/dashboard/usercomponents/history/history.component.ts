@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { TournamentService, Tour } from '../../../services/tournament.service';
+import { StandingComponent} from '../../../standing/standing.component';
 
 @Component({
   selector: 'app-history',
@@ -12,7 +13,7 @@ export class HistoryComponent implements OnInit {
 
   tournaments: Tour[];
   selectedTour: Tour;
-  private tourId;
+  private tournamentId;
 
   params$ : Subscription
   tournaments$: Subscription
@@ -23,10 +24,7 @@ export class HistoryComponent implements OnInit {
   ngOnInit() {
 
     this.params$ = this.route.params.subscribe(params => {
-      this.tourId = params["id"];
-      
-      if(this.tourId && this.tourId !== 'undefined') {
-        this.loadStanding(this.tourId);      }
+      this.tournamentId = params["id"];
     })
 
     this.popoulateDropdown();
@@ -38,13 +36,8 @@ export class HistoryComponent implements OnInit {
 
   }
 
-  loadStanding(tourId) {
-    console.log('Loaded tournament for' + tourId)
-  }
-
   refreshStanding() {
-    const tourId = this.selectedTour.code;
-    this.loadStanding(tourId);
+    this.tournamentId = this.selectedTour.code;
   }
 
   popoulateDropdown() {
