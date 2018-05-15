@@ -128,8 +128,8 @@ describe('MATCHES', () => {
                 })
                 .end((err, res) => {
                     let data = JSON.parse(res.text).data;
-                    console.log(data);
                     res.should.have.status(200);
+                    data.Option2Odds.should.be.eql(8.34);
                     done();
                 });
         });
