@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
 import * as moment from 'moment';
 import { TournamentService } from '../services/tournament.service';
 import { Subscription } from 'rxjs/Subscription';
@@ -11,53 +11,53 @@ import { Subscription } from 'rxjs/Subscription';
 })
 export class StandingComponent implements OnInit {
 
-  @Input() tournamentId
+  @Input() tournamentId : string
 
   standings: any[];
   tournament$ : Subscription
 
   private tournament;
-  private currentWeek;
+  //private currentWeek;
 
   constructor(private _tour: TournamentService) { }
 
   ngOnInit() {
-    this.getWeek();
-    this.loadStanding();
+   // this.getWeek();
+    this.getActiveTournament();
   }
 
-
+  //whenever input changes update standing to new tournament
+  ngOnChanges(change : SimpleChanges) {
+    const newTourId = change['tournamentId'].currentValue
+    if(newTourId) {
+      this.loadData(newTourId);
+    }
+  }
+/* 
   getWeek() {
     this.currentWeek = moment().isoWeek();
   }
-
-  loadStanding() {
-    if(this.tournamentId) {
-      console.log('Id was passed')
-      this.loadData(this.tournamentId);
-    } else {
-      console.log('Id was not passed')
-
-      this.getActiveTournament()
-    }
-  }
-
+ */
   loadData(id) {
-    console.log('Id: ' + id)
     this._tour.getStanding(id).subscribe(res => {
-      console.log(res);
-      this.standings = res['data']['standings'] 
+      this.standings = res['data']['standings']
+      this.tournament.id =  res['data']['id'];
+      this.tournament.name = res['data']['name'];
+      this.tournament.ongoing = res['data']['ongoing'];
+      this.tournament.week = res['data']['week'];
     })
   }
 
   getActiveTournament() {
-    this.tournament$ = this._tour.getCurrentTournament().subscribe(res => {
-      this.tournament = res['data'];
+    if (!this.tournamentId) {
+      this.tournament$ = this._tour.getCurrentTournament().subscribe(res => {
+        this.tournament = res['data'];
 
-      if(this.tournament) {
-        this.loadData(this.tournament.id);
-      }
-    });
+        if (this.tournament) {
+          this.loadData(this.tournament.id);
+        }
+      });
+    }
   }
 
   

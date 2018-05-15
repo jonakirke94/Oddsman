@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { TournamentService, Tour } from '../../../services/tournament.service';
@@ -13,7 +13,7 @@ export class HistoryComponent implements OnInit {
 
   tournaments: Tour[];
   selectedTour: Tour;
-  private tournamentId;
+  tournamentId: string;
 
   params$ : Subscription
   tournaments$: Subscription
@@ -36,7 +36,8 @@ export class HistoryComponent implements OnInit {
 
   }
 
-  refreshStanding() {
+  refreshStanding(id) {
+    console.log('id:' + id)
     this.tournamentId = this.selectedTour.code;
   }
 

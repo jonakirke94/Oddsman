@@ -450,7 +450,7 @@ exports.get_delisted_tournaments = (req, res, next) => {
 exports.get_overview = (req, res, next) => {
   const tourId = req.params.tourid;
   Tournament.findById(tourId, {
-      attributes: ['id', 'start', 'end'],
+      attributes: ['id', 'name', 'start', 'end'],
       include: {
         through: {
           model: Tournament_User
@@ -481,7 +481,7 @@ exports.get_overview = (req, res, next) => {
     })
     .then((tourney) => {
       generateStandings(tourney, (standings) => {
-        console.log(standings)
+       // console.log(standings)
         return msg.show200(req, res, "Success", standings);
       });
     })
@@ -491,12 +491,20 @@ exports.get_overview = (req, res, next) => {
 }
 
 function generateStandings(tourney, callback) {
+  const end = tourney.dataValues.end;
+  
+  const ongoing = new Date(end) > new Date() ? true : false;
+  const week = moment().isoWeek();
+
   const tournament = {
     id: tourney.dataValues.id,
-    start: tourney.dataValues.start,
-    end: tourney.dataValues.end,
+    name: tourney.dataValues.name,
+    ongoing: ongoing,
+    week: week,
     standings: []
   }
+
+
 
   const users = tourney.dataValues.users;
 

@@ -11,7 +11,7 @@
             <th>Tips</th>
             <th>Points</th>
             <th>Afstand til #1</th>
-            <th>Points i uge {{currentWeek}}</th>
+            <th [hidden]="!tournament.ongoing">Points i uge {{tournament.week}}</th>
 
         </tr>
     </ng-template>
@@ -23,11 +23,11 @@
             <td>{{standing.wins}} / {{standing.tips}}</td>
             <td>{{standing.points}}</td>
             <td>{{standing.deficit}}</td>
-            <td>{{standing.pointsWeek}}</td>
+            <td [hidden]="!tournament.ongoing">{{standing.pointsWeek}}</td>
         </tr>
     </ng-template>
     <ng-template pTemplate="footer">
-        <tr>
+  <!--       <tr>
             <td colspan="1">Næste deadline:</td>
             <td colspan="6">Lørdag kl 12.</td>
         </tr>
@@ -35,6 +35,6 @@
           <td colspan="1">Næste uge med spurt!</td>
           <td colspan="6"></td>
     
-      </tr>
+      </tr> -->
     </ng-template>
 </p-table>

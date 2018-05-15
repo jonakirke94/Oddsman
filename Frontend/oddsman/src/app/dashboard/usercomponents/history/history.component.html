@@ -2,7 +2,7 @@
 <div class="header">
     <h1 class="title inline-title">Vælg turnering</h1>
     
-    <p-dropdown [options]="tournaments" [(ngModel)]="selectedTour" placeholder="Select a tournament" (ngModelChange)="refreshStanding()"
+    <p-dropdown [options]="tournaments" [(ngModel)]="selectedTour" placeholder="Select a tournament" (ngModelChange)="refreshStanding(selectedTour.code)"
         optionLabel="name">
     </p-dropdown>
     </div>
