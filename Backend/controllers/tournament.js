@@ -529,14 +529,15 @@ function generateStandings(tourney, callback) {
         "X": m.Option2Odds || 0.0,
         "2": m.Option3Odds || 0.0
       }            
-      
-      if(b.option === r.correctBet){
-        if(b.week === moment().isoWeek()){
-          standing.pointsWeek += odds[b.option] || 0;
+      if(b && m && r){
+        if(b.option === r.correctBet){
+          if(b.week === moment().isoWeek()){
+            standing.pointsWeek += odds[b.option] || 0;
+          }
+          standing.points += odds[b.option] || 0;
+          standing.wins++;
         }
-        standing.points += odds[b.option] || 0;
-        standing.wins++;
-      }
+      }      
     }
     tournament.standings.push(standing);
   }
