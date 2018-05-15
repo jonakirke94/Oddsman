@@ -28,12 +28,12 @@ exports.edit_match = (req, res, next) => {
         .then((m) => {
             if (!m) return msg.show404(req, res, "The match could not be found");
             // foreach key in the database match
-            Object.keys(m.dataValues).forEach((key) => {               
+            Object.keys(m.dataValues).forEach((key) => {
                 try {
                     // Convert the key to lowercase
                     const k = key.toLowerCase();
                     // Access the new match's values
-                    const val = match[k];                    
+                    const val = match[k];
                     // Set the original match keys to the new values if the new value isn't null/undefined etc.
                     if (val) {
                         m[key] = val;
@@ -50,6 +50,19 @@ exports.edit_match = (req, res, next) => {
         .catch(err => {
             return msg.show500(req, res, err);
         })
+}
+
+exports.get_missing_matches = (req, res, next) => {
+    Match.findAll({
+        where: {
+            Missing: true
+        }
+    }).then((matches) => {
+        return msg.show200(req, res, "Success", matches);
+
+    }).catch(err => {
+        return msg.show500(req, res, err);
+    })
 }
 
 

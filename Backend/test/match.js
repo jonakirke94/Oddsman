@@ -134,4 +134,17 @@ describe('MATCHES', () => {
                 });
         });
     });
+    describe("/GET Match", () => {
+        it("it should get all missing matches", done => {
+            chai
+                .request(server)
+                .get("/match/missing")
+                .end((err, res) => {
+                    let data = JSON.parse(res.text).data;
+                    res.should.have.status(200);
+                    data.should.be.a('array');
+                    done();
+                });
+        });
+    });
 });

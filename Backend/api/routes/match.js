@@ -7,6 +7,7 @@ const adminguard = require('../guards/adminguard');
 
 const matchController = require('../../controllers/match');
 
-router.patch("/:matchid", adminguard, matchController.edit_match); // ADD ADMIN GUARD
+router.patch("/:matchid", adminguard, matchController.edit_match);
+router.get("/missing", adminguard, matchController.get_missing_matches);
 
 module.exports = router;
