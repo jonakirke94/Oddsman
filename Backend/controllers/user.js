@@ -214,7 +214,7 @@ exports.bets = (req, res, next) => {
       }
     })
     .then((bets) => {
-      if(bets.length === 0) {
+      if (bets.length === 0) {
         return msg.show200(req, res, "No bets found", []);
       }
 

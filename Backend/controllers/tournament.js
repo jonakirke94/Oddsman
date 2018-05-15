@@ -8,6 +8,9 @@ const moment = require('moment');
 
 const seq = require('../models');
 const Tournament = seq.tournaments;
+const Match = seq.matches;
+const Bet = seq.bets;
+const Result = seq.results;
 const Request = seq.requests;
 const Tournament_User = seq.users_tournaments;
 const User = seq.users;
@@ -138,25 +141,27 @@ exports.get_current_tournament = (req, res, next) => {
     attributes: ['id', 'name'],
     where: {
       [Op.and]: [{
-        start: {
-          [Op.lte]: today.toDate()
+          start: {
+            [Op.lte]: today.toDate()
+          }
+        },
+        {
+          end: {
+            [Op.gte]: today.toDate()
+          }
         }
-      },
-      {
-        end: {
-          [Op.gte]: today.toDate()
-        }
-      }
       ]
     },
     through: {
       attributes: [''],
       model: Tournament_User,
-      where: {userId: userId},   
+      where: {
+        userId: userId
+      },
     }
 
   }).then(tour => {
-    if(tour === null) {
+    if (tour === null) {
       return msg.show404(req, res, next);
     }
 
@@ -169,18 +174,30 @@ exports.get_current_tournament = (req, res, next) => {
 
 exports.get_tournament_requests = (req, res, next) => {
   const tourId = req.params.tourid;
-  Tournament.findById(tourId,{
-    attributes: [['id', 'tourId'], ['name', 'tourName'], 'start'],
+  Tournament.findById(tourId, {
+    attributes: [
+      ['id', 'tourId'],
+      ['name', 'tourName'], 'start'
+    ],
     include: {
       model: User,
-      attributes: [['id', 'userId'], ['name', 'userName'], ['tag', 'userTag'], ['email', 'userEmail']],
+      attributes: [
+        ['id', 'userId'],
+        ['name', 'userName'],
+        ['tag', 'userTag'],
+        ['email', 'userEmail']
+      ],
       through: {
         attributes: [],
         model: Request,
-        where: {Status: {[Op.eq] : "pending"}}     
+        where: {
+          Status: {
+            [Op.eq]: "pending"
+          }
+        }
       }
     },
-    
+
   }).then(requests => {
     //console.log(JSON.stringify(requests));
     return msg.show200(req, res, "Success", requests);
@@ -202,7 +219,10 @@ exports.get_users_requests = (req, res, next) => { // TODO: Test with an accepte
       model: Tournament,
       attributes: ['Id', 'Name', 'Start', 'End'],
       through: {
-        where: {UserId: userId, status: 'pending'},
+        where: {
+          UserId: userId,
+          status: 'pending'
+        },
         attributes: ['Status'],
       }
     }
@@ -325,34 +345,36 @@ exports.get_enlisted_tournaments = (req, res, next) => {
       attributes: ['Id', 'Name', 'Start', 'End'],
       through: {
         model: Tournament_User,
-        where: {UserId: userId},
+        where: {
+          UserId: userId
+        },
         attributes: [],
       }
     }
   }).then(tourneys => {
-     //console.log(JSON.stringify(tourneys));
-     return msg.show200(req, res, "Success", tourneys);
-   }).catch(err => {
-     return msg.show500(req, res, err);
-   }).catch(err => {
-     return msg.show500(req, res, err);
-   })
-
- /*  Tournament.findAll({
-    through: {
-      model: Tournament_User,
-      where: {
-        userId: userId
-      }
-    }
-  }).then(tourneys => {
-   // console.log(JSON.stringify(tourneys));
+    //console.log(JSON.stringify(tourneys));
     return msg.show200(req, res, "Success", tourneys);
   }).catch(err => {
     return msg.show500(req, res, err);
   }).catch(err => {
     return msg.show500(req, res, err);
-  }) */
+  })
+
+  /*  Tournament.findAll({
+     through: {
+       model: Tournament_User,
+       where: {
+         userId: userId
+       }
+     }
+   }).then(tourneys => {
+    // console.log(JSON.stringify(tourneys));
+     return msg.show200(req, res, "Success", tourneys);
+   }).catch(err => {
+     return msg.show500(req, res, err);
+   }).catch(err => {
+     return msg.show500(req, res, err);
+   }) */
 }
 
 
@@ -366,7 +388,9 @@ exports.get_delisted_tournaments = (req, res, next) => {
     return msg.show500(req, res, err);
   }
   Request.findAll({
-    where: {userId: userId},
+    where: {
+      userId: userId
+    },
     through: {
       model: Tournament,
       where: {
@@ -393,12 +417,111 @@ exports.get_delisted_tournaments = (req, res, next) => {
         attributes: ['name', 'tag', 'email']
       }
     }).then(tourneys => {
-      //console.log(JSON.stringify(tourneys));
+      console.log(JSON.stringify(tourneys));
       return msg.show200(req, res, "Success", tourneys);
     }).catch(err => {
       return msg.show500(req, res, err);
     })
   })
+}
+
+
+exports.get_overview = (req, res, next) => {
+  const tourId = req.params.tourid;
+  Tournament.findById(tourId, {
+      attributes: ['id', 'start', 'end'],
+      include: {
+        through: {
+          model: Tournament_User
+        },
+        model: User,
+        attributes: ['id', 'tag', 'name'],
+        include: {
+          model: Bet,
+          attributes: ['id', 'week', 'option', 'optionNo', 'matchId'],
+          include: {
+            model: Match,
+            where: {
+              Missing: false,
+              Invalid: false
+            },
+            attributes: ['id', ],
+            include: {
+              model: Result,
+              attributes: ['id', 'correctBet']
+            }
+          }
+
+        }
+      }
+    })
+    .then((tourney) => {
+      console.log(JSON.stringify(tourney));
+      let standings = [];
+      let ctr = 0;
+      const users = tourney.users;
+
+      users.forEach((u, i, users) => {
+        let wins = countWins(u.bets);
+        let points = countPoints(u.bets);
+        let thisWeeksPoints = countPoints(u.bets, true);
+
+        standings.push({
+          tag: u.tag,
+          name: u.name,
+          tips: u.bets.length,
+          wins: wins,
+          points: points,
+          pointsWeek: thisWeeksPoints
+        });
+
+        ctr++;
+        if (ctr === users.length) {
+          const tournament = {
+            id: tourney.id,
+            start: tourney.start,
+            end: tourney.end,
+            standings: standings
+          }
+          console.log(tournament);
+          return msg.show200(req, res, "Success", tournament);
+        }
+      })
+    })
+    .catch(err => {
+      return msg.show500(req, res, err);
+    });
+}
+
+function countWins(bets) {
+  let wins = 0;
+  for (let i = 0; i < bets.length; i++) {
+    const b = bets[i];
+    if (b.match.result.correctBet === b.option) {
+      wins++;
+    }
+  }
+  console.log("wins " + wins);
+  return wins;
+}
+
+function countPoints(bets, thisWeekOnly = false) {
+
+  let points = 0.0;
+  for (let i = 0; i < bets.length; i++) {
+    const b = bets[i];
+    if (thisWeekOnly) {
+      if (b.week === moment().isoWeek() && b.match.result.correctBet === b.option) {
+        points += b.odds;
+      }
+    } else {
+      if (b.match.result.correctBet === b.option) {
+        points += b.odds;
+      }
+    }
+  }
+  console.log("points " + wins + " thisweekonly: " + thisWeekOnly);
+  return points;
 }
 
 /* HELPERS */
