@@ -508,9 +508,9 @@ function generateStandings(tourney, callback) {
   console.log(users.length)
 
   for (let i = 0; i < users.length; i++) {
-    const u = users[i].dataValues;
+    const u = users[i].dataValues || {};
     console.log(u)
-    const bets = u.bets;
+    const bets = u.bets || [];
     const standing = {
       tag: u.tag,
       name: u.name,
@@ -521,13 +521,13 @@ function generateStandings(tourney, callback) {
     }    
 
     for (let j = 0; j < bets.length; j++) {
-      const b = bets[j].dataValues;
-      const m = b.match.dataValues;
-      const r = m.result.dataValues;
+      const b = bets[j].dataValues || {};
+      const m = b.match.dataValues || {};
+      const r = m.result.dataValues || {};
       const odds = {
-        "1": m.Option1Odds,
-        "X": m.Option2Odds,
-        "2": m.Option3Odds
+        "1": m.Option1Odds || 0.0,
+        "X": m.Option2Odds || 0.0,
+        "2": m.Option3Odds || 0.0
       }            
       
       if(b.option === r.correctBet){
