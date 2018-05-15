@@ -459,6 +459,7 @@ exports.get_overview = (req, res, next) => {
         attributes: ['id', 'tag', 'name'],
         include: {
           model: Bet,
+          required: false,
           attributes: ['id', 'week', 'option', 'optionNo', 'matchId'],
           where: {
             Week: {
@@ -467,6 +468,7 @@ exports.get_overview = (req, res, next) => {
           },
           include: {
             model: Match,
+            required: false,
             where: {
               Missing: false,
               Invalid: false
@@ -474,6 +476,7 @@ exports.get_overview = (req, res, next) => {
             attributes: ['id', 'Option1Odds', 'Option2Odds', 'Option3Odds' ],
             include: {
               model: Result,
+              required: false,
               attributes: ['id', 'correctBet']
             }
           }
