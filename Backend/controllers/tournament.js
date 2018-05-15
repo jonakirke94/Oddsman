@@ -461,11 +461,6 @@ exports.get_overview = (req, res, next) => {
           model: Bet,
           required: false,
           attributes: ['id', 'week', 'option', 'optionNo', 'matchId'],
-          where: {
-            Week: {
-              [Op.gte]: moment().isoWeek() - 4 // get a months worth of bets (4 rounds).
-            }
-          },
           include: {
             model: Match,
             required: false,
@@ -519,7 +514,7 @@ function generateStandings(tourney, callback) {
       points: 0.0,
       pointsWeek: 0.0
     }
-
+    // Try settings standings based on each users existing bets/match/result.
     for (let j = 0; j < bets.length; j++) {
       try {
         const b = bets[j].dataValues;
@@ -543,7 +538,22 @@ function generateStandings(tourney, callback) {
       }
     }
     tournament.standings.push(standing);
+
   }
+
+  console.log(tournament.standings);
+  // Sort by most points
+  tournament.standings.sort(function (a, b) {
+    if (a.points < b.points) return 1;
+    if (a.points > b.points) return -1;
+    return 0;
+  });
+  // Set positions AFTER sorting
+  tournament.standings.forEach((s, i) =>{
+    s['position'] = i + 1;
+  })
+
+  console.log(tournament.standings);
   callback(tournament);
 }
 
