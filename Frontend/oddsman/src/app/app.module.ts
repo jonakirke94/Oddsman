@@ -36,6 +36,7 @@ import { UserTournamentsComponent } from './dashboard/usercomponents/user-tourna
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
 import {DropdownModule} from 'primeng/primeng';
+import { HistoryComponent } from './dashboard/usercomponents/history/history.component';
 
 
 @NgModule({
@@ -53,7 +54,7 @@ import {DropdownModule} from 'primeng/primeng';
     AdminusersComponent,
     AdminTournamentsComponent,
     AdminInvitationsComponent, 
-    UserTournamentsComponent, SendBetsComponent, MyBetsComponent
+    UserTournamentsComponent, SendBetsComponent, MyBetsComponent, HistoryComponent
    
   ],
   imports: [

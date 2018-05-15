@@ -64,8 +64,6 @@ export class UserTournamentsComponent implements OnInit {
   getEnlistedTournaments() {
     this.enlisted$ = this._tournament.getEnlistedTournaments().subscribe(res => {
       this.enlisted = res["data"]['tournaments'];
-   console.log('enlisted')
-    console.log(this.enlisted)
       this.enlistedAny = this.enlisted.length > 0;
     });
   }
@@ -75,6 +73,9 @@ export class UserTournamentsComponent implements OnInit {
       this.refreshLists();
     });
   }
+
+  details(id) {
+    this.router.navigateByUrl(`/dashboard/historik/${id}`);  }
 
   refreshLists() {
     this.getRequestedTournaments();
