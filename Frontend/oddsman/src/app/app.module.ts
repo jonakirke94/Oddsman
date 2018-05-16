@@ -45,6 +45,7 @@ import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-reque
 import { ResultsComponent } from './adminpanel/admincomponents/results/results.component';
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -86,7 +87,7 @@ import { ResultsComponent } from './adminpanel/admincomponents/results/results.c
     DataTableModule,
     GrowlModule,
     DropdownModule,
-    DialogModule
+    DialogModule,
 
 
 
