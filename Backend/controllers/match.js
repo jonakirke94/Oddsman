@@ -74,7 +74,7 @@ exports.edit_result = (req, res, next) => {
         .then((r) => {
             if (!r) return msg.show404(req, res, "The result could not be found");
             patchObject(result, r.dataValues, (patch) => {
-                if (false) {
+                if (patch.CorrectBet && patch.EndResult) {
                     patch['Missing'] = false;
                 }
                 r.update(patch).then(() => {
