@@ -43,6 +43,7 @@ import { HistoryComponent } from './history/history.component';
 import { UserHistoryComponentComponent } from './dashboard/usercomponents/user-history-component/user-history-component.component';
 import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-requests/admin-requests.component';
 import * as io from 'socket.io-client';
+import { SocketService } from './services/socket.service';
 
 
 @NgModule({
@@ -97,6 +98,7 @@ import * as io from 'socket.io-client';
     UserService,
     AuthGuard,
     MatchService,
+    SocketService,
     AdminguardGuard,
     {
       provide: HTTP_INTERCEPTORS,

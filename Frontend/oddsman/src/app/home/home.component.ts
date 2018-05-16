@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { StandingComponent } from "../standing/standing.component";
-import * as io from 'socket.io-client';
+import { SocketService, Message, Event } from '../services/socket.service';
 
 @Component({
   selector: 'app-standing',
@@ -13,45 +13,60 @@ import * as io from 'socket.io-client';
 
 export class HomeComponent implements OnInit {
 
-  messageText: string;
+ /*  messageText: string;
   messages: Array<any>;
-  socket: SocketIOClient.Socket;
+  socket: SocketIOClient.Socket; */
+  messages = [];
+  ioConnection: any;
 
 
-  constructor() {
-    this.socket = io.connect('http://localhost:3000');
+  constructor(private _socket : SocketService) {
+    this.initIoConnection();
+
   }
 
   ngOnInit() {
-    this.messages = new Array();
+    this.ioConnection = this._socket.onMessage()
+    .subscribe((message) => {
+      this.messages.push(message);
+      console.log(this.messages)
+    });
+  }
 
-    this.socket.on('message-received', (msg: any) => {
-      this.messages.push(msg);
-      console.log(msg);
-      console.log(this.messages);
-    });
-    this.socket.emit('event1', {
-      msg: 'Client to server, can you hear me server?'
-    });
-    this.socket.on('event2', (data: any) => {
-      console.log(data.msg);
-      this.socket.emit('event3', {
-        msg: 'Yes, its working for me!!'
+  ngOnDestroy() {
+    this._socket.disconnectSocket();
+  }
+
+  private initIoConnection(): void {
+    this._socket.initSocket();
+
+
+
+
+    this._socket.onEvent(Event.CONNECT)
+      .subscribe(() => {
+        console.log('connected');
       });
-    });
-    this.socket.on('event4', (data: any) => {
-      console.log(data.msg);
-    });
+
+    this._socket.onEvent(Event.DISCONNECT)
+      .subscribe(() => {
+        console.log('disconnected');
+      });
+
   }
 
-  sendMessage() {
-    const message = {
-      text: this.messageText
-    };
-    this.socket.emit('send-message', message);
-    // console.log(message.text);
-    this.messageText = '';
+  sendTestMessage() {
+    const message = 'TESTTESTEST';
+    this._socket.send(message);
+
   }
+
+  sendSocket() {
+  const message = 'TEST_ACTION_METHOD';
+
+   this._socket.send(message);
+  }
+
 
 
 

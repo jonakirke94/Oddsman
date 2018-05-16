@@ -8,23 +8,12 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 io.on('connection', (socket) => {
-  console.log('new connection made');
+  console.log('connected');
   
-  socket.on('event1', (data) => {
-    console.log(data.msg);
+  socket.on('message', (data) => {
+    socket.emit('response', 'Thank you for the message');
   });
-  
-  socket.emit('event2', {
-    msg: 'Server to client, do you read me? Over.'
-  });
-  
-  socket.on('event3', (data) => {
-    console.log(data.msg);
-    socket.emit('event4', {
-      msg: 'Loud and clear :)'
-    });
-  });
-  });
+});
 
 
 server.listen(port, function() {
