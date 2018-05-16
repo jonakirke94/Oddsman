@@ -42,6 +42,7 @@ import { AdminHistoryComponent } from './adminpanel/admincomponents/history/hist
 import { HistoryComponent } from './history/history.component';
 import { UserHistoryComponentComponent } from './dashboard/usercomponents/user-history-component/user-history-component.component';
 import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-requests/admin-requests.component';
+import { ResultsComponent } from './adminpanel/admincomponents/results/results.component';
 
 
 @NgModule({
@@ -66,7 +67,8 @@ import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-reque
     StandingComponent,
     AdminHistoryComponent,
     UserHistoryComponentComponent,
-    EditMatchComponent
+    EditMatchComponent,
+    ResultsComponent
 
   ],
   imports: [
