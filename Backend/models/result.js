@@ -14,6 +14,11 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.TEXT,
             allowNull: false
         },
+        Missing: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: false
+        }
     })
 
     /* Result.associate = (models) => {

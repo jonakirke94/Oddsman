@@ -19,31 +19,19 @@ const scraper = require('../services/scraper');
 let today = moment();
 
 exports.edit_match = (req, res, next) => {
-    const tourId = req.params.tourid;
     const matchId = req.params.matchid;
     // Convert match values to all lowercase
-    const match = keysToLower(req.body);
-
+    const match = req.body;
     Match.findById(matchId)
         .then((m) => {
             if (!m) return msg.show404(req, res, "The match could not be found");
-            // foreach key in the database match
-            Object.keys(m.dataValues).forEach((key) => {
-                try {
-                    // Convert the key to lowercase
-                    const k = key.toLowerCase();
-                    // Access the new match's values
-                    const val = match[k];
-                    // Set the original match keys to the new values if the new value isn't null/undefined etc.
-                    if (val) {
-                        m[key] = val;
-                    }
-                } catch (error) {
-                    console.log("failed patching match: " + error);
+            patchObject(match, m.dataValues, (patch) => {
+                if (patch.Option1Odds && patch.Option1Odds && patch.Option1Odds && patch.MatchName && patch.MatchDate) {
+                    patch['Missing'] = false;
                 }
-            });
-            m.save().then(() => {
-                return msg.show200(req, res, "Success", m);
+                m.update(patch).then(() => {
+                    return msg.show200(req, res, "Success", m);
+                });
             });
         })
         .catch(err => {
@@ -64,6 +52,41 @@ exports.get_missing_matches = (req, res, next) => {
     })
 }
 
+exports.get_missing_results = (req, res, next) => {
+    Result.findAll({
+        where: {
+            Missing: true
+        }
+    }).then((results) => {
+        return msg.show200(req, res, "Success", results);
+
+    }).catch(err => {
+        return msg.show500(req, res, err);
+    })
+}
+
+exports.edit_result = (req, res, next) => {
+    const resultId = req.params.resultid;
+    const result = req.body;
+
+    Result.findById(resultId)
+        .then((r) => {
+            if (!r) return msg.show404(req, res, "The result could not be found");
+            patchObject(result, r.dataValues, (patch) => {
+                if (false) {
+                    patch['Missing'] = false;
+                }
+                r.update(patch).then(() => {
+                    return msg.show200(req, res, "Success", r);
+                });
+            });
+        })
+        .catch(err => {
+            return msg.show500(req, res, err);
+        })
+
+}
+
 
 /* HELPERS */
 
@@ -76,4 +99,22 @@ function keysToLower(obj) {
         newObj[key.toLowerCase()] = obj[key];
     }
     return newObj;
+}
+
+function patchObject(newObj, obj, callback) {
+    const loweredObj = keysToLower(newObj);
+    const patchedObj = {};
+    Object.keys(obj).forEach((key) => {
+        try {
+            const k = key.toLowerCase();
+            const val = loweredObj[k];
+            if (val) {
+                patchedObj[key] = val;
+            }
+        } catch (error) {
+            console.log(`Failed patching Obj: ${obj}\nWith newObj: ${newObj}\nError: ${error}`);
+        }
+    });
+
+    callback(patchedObj);
 }

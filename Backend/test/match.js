@@ -26,7 +26,7 @@ const tokens = tokenController.generateTokens({
 
 /* seq.sequelize.sync(); */
 
-describe('MATCHES', () => {
+describe('MATCHES/RESULTS', () => {
     beforeEach(done => {
         helper.clean(function (result) {
             let matchId = null;
@@ -94,7 +94,25 @@ describe('MATCHES', () => {
                                                             OptionNo: 3,
                                                             matchId: matchId
                                                         }).then(() => {
-                                                            done();
+                                                            Result.bulkCreate([{
+                                                                        id: 1,
+                                                                        endResult: "2 - 0",
+                                                                        correctBet: "1"
+                                                                    },
+                                                                    {
+                                                                        id: 2,
+                                                                        endResult: "2 - 3",
+                                                                        correctBet: "2"
+                                                                    },
+                                                                    {
+                                                                        id: 3,
+                                                                        endResult: "0 - 0",
+                                                                        correctBet: "1"
+                                                                    },
+                                                                ])
+                                                                .then(() => {
+                                                                    done();
+                                                                });
                                                         });
                                                     });
                                                 });
@@ -139,6 +157,38 @@ describe('MATCHES', () => {
             chai
                 .request(server)
                 .get("/match/missing")
+                .end((err, res) => {
+                    let data = JSON.parse(res.text).data;
+                    res.should.have.status(200);
+                    data.should.be.a('array');
+                    done();
+                });
+        });
+    });
+
+    describe("/PATCH Result", () => {
+        it("it should update a Result", done => {
+            chai
+                .request(server)
+                .patch("/match/result/1")
+                .send({
+                    correctBet: "1",
+                    endResult: "2 - 0"
+                })
+                .end((err, res) => {
+                    let data = JSON.parse(res.text).data;
+                    res.should.have.status(200);
+                    data.correctBet.should.be.eql("1");
+                    data.endResult.should.be.eql("2 - 0");
+                    done();
+                });
+        });
+    });
+    describe("/GET Results", () => {
+        it("it should get all missing Results", done => {
+            chai
+                .request(server)
+                .get("/match/result/missing")
                 .end((err, res) => {
                     let data = JSON.parse(res.text).data;
                     res.should.have.status(200);
