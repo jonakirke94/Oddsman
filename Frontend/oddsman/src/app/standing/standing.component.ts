@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
-import * as moment from 'moment';
 import { TournamentService } from '../services/tournament.service';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -17,12 +16,10 @@ export class StandingComponent implements OnInit {
   tournament$ : Subscription
 
   private tournament;
-  //private currentWeek;
 
   constructor(private _tour: TournamentService) { }
 
   ngOnInit() {
-   // this.getWeek();
     this.getActiveTournament();
   }
 
@@ -33,11 +30,7 @@ export class StandingComponent implements OnInit {
       this.loadData(newTourId);
     }
   }
-/* 
-  getWeek() {
-    this.currentWeek = moment().isoWeek();
-  }
- */
+
   loadData(id) {
     this._tour.getStanding(id).subscribe(res => {
       this.standings = res['data']['standings']
