@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatchService, Match } from '../../../services/match.service';
 import { Subscription } from 'rxjs/Subscription';
+import { Message } from "primeng/components/common/api";
 
 @Component({
     selector: 'app-edit-match',
@@ -15,6 +16,8 @@ export class EditMatchComponent implements OnInit {
     selectedMatch: Match;
     newMatch: boolean;
     cols: any[];
+
+    msgs: Message[] = [];
 
     private loadSubscription$: Subscription;
 
@@ -53,6 +56,11 @@ export class EditMatchComponent implements OnInit {
 
     save() {
         this.loadSubscription$ = this._match.updateMatch(this.selectedMatch.Id, this.match).subscribe(res => {
+            this.msgs = [];
+            this.msgs.push({
+              severity: "info",
+              summary: "Indsatte kamp",
+            });
             this.loadMatches();
         });
         this.displayDialog = false;
@@ -71,7 +79,11 @@ export class EditMatchComponent implements OnInit {
     cloneMatch(m: Match): Match {
         let match = {};
         for (let prop in m) {
+            if(prop === 'MatchDate') {
+                match[prop] = new Date(m[prop]);
+            } else {
             match[prop] = m[prop];
+            }
         }
         return match;
     }

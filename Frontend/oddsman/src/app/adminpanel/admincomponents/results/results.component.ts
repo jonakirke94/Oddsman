@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatchService, Result } from '../../../services/match.service';
 import { Subscription } from 'rxjs/Subscription';
+import { Message } from "primeng/components/common/api";
+
 
 @Component({
   selector: 'app-results',
@@ -16,6 +18,8 @@ export class ResultsComponent implements OnInit {
   newResult: boolean;
   cols: any[];
 
+  msgs: Message[] = [];
+
   private loadSubscription$: Subscription;
 
   constructor(private _match: MatchService) { }
@@ -24,7 +28,7 @@ export class ResultsComponent implements OnInit {
     this.loadResults();
 
     this.cols = [
-      { field: 'Id', header: 'Id' },
+      { field: 'matchId', header: 'Kamp nr.' },
       { field: 'CorrectBet', header: 'Resultat' },
       { field: 'EndResult', header: 'Score' },
 
@@ -48,7 +52,14 @@ export class ResultsComponent implements OnInit {
   }
 
   save() {
+    console.log('Result:')
+    console.log(this.result)
     this.loadSubscription$ = this._match.updateResult(this.selectedResult.Id, this.result).subscribe(res => {
+      this.msgs = [];
+      this.msgs.push({
+        severity: "info",
+        summary: "Indsatte resultat",
+      });
       this.loadResults();
     });
     this.displayDialog = false;

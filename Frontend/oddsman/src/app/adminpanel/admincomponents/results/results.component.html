@@ -19,8 +19,8 @@
 
 </p-table>
 
-<p-dialog header="Match Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="300">
-<div class="ui-g ui-fluid" *ngIf="match">
+<p-dialog header="Result Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="300">
+<div class="ui-g ui-fluid" *ngIf="result">
   <div class="ui-g-12">
     <div class="ui-g-4">
       <label>Kamp nr.</label>
@@ -56,3 +56,6 @@
   </div>
 </p-footer>
 </p-dialog>
+
+
+<p-growl [value]="msgs"></p-growl>

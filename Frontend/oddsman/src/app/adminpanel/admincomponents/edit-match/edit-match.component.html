@@ -13,6 +13,7 @@
       <td *ngFor="let col of columns">
         <span *ngIf="isMatchDate(col)">{{rowData[col.field] | date: "kl hh:mm - dd/MM" }}</span>
         <span *ngIf="!isMatchDate(col)">{{rowData[col.field]}}</span>
+
       </td>
     </tr>
   </ng-template>
@@ -70,22 +71,7 @@
         <input pInputText type="number" id="option3Odds" [(ngModel)]="match.Option3Odds" />
       </div>
     </div>
-    <!--       <div class="ui-g-12">
-          <div class="ui-g-4">
-              <label for="brand">Brand</label>
-          </div>
-          <div class="ui-g-8">
-              <input pInputText id="brand" [(ngModel)]="car.brand" />
-          </div>
-      </div>
-      <div class="ui-g-12">
-          <div class="ui-g-4">
-              <label for="color">Color</label>
-          </div>
-          <div class="ui-g-8">
-              <input pInputText id="color" [(ngModel)]="car.color" />
-          </div>
-      </div> -->
+
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-helper-clearfix">
@@ -93,3 +79,5 @@
     </div>
   </p-footer>
 </p-dialog>
+
+<p-growl [value]="msgs"></p-growl>
