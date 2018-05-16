@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { StandingComponent } from "../standing/standing.component";
+import { BetFeedComponent} from '../bet-feed/bet-feed.component';
 import { SocketService, Action, Event } from '../services/socket.service';
 
 @Component({

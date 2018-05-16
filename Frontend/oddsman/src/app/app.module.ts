@@ -44,6 +44,7 @@ import { UserHistoryComponentComponent } from './dashboard/usercomponents/user-h
 import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-requests/admin-requests.component';
 import * as io from 'socket.io-client';
 import { SocketService } from './services/socket.service';
+import { BetFeedComponent } from './bet-feed/bet-feed.component';
 
 
 @NgModule({
@@ -68,7 +69,8 @@ import { SocketService } from './services/socket.service';
     StandingComponent,
     AdminHistoryComponent,
     UserHistoryComponentComponent,
-    EditMatchComponent
+    EditMatchComponent,
+    BetFeedComponent
 
   ],
   imports: [
