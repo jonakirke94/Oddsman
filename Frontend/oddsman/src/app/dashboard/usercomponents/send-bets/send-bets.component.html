@@ -5,7 +5,7 @@
       <div class="tournament-card">
 
         <div class="card-title">
-          <h1 class="title">{{tournament.name}} | Runde {{currentWeek}}</h1>
+          <h1 class="title" *ngIf="tournament">{{tournament.name}} | Runde {{currentWeek}}</h1>
         </div>
 
           <loading-spinner *ngIf="showSpinner"></loading-spinner>

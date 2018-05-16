@@ -9,7 +9,6 @@ import { LoginComponent } from './login/login.component';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import { SignupComponent } from './signup/signup.component';
 import { AuthService } from './services/auth.service';
-import { StandingComponent } from './standing/standing.component';
 import { AuthInterceptor } from './auth.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { OddsService } from './services/odds.service';
@@ -30,13 +29,20 @@ import { TournamentService } from './services/tournament.service';
 import {CalendarModule} from 'primeng/calendar';
 import {InputTextModule} from 'primeng/inputtext';
 import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-invitations/admin-invitations.component';
-import { DataTableModule, Dialog, GrowlModule, DialogModule } from 'primeng/primeng'; // Here
+import { DataTableModule } from 'primeng/primeng'; // Here
+import {GrowlModule} from 'primeng/primeng';
 import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
 import {DropdownModule} from 'primeng/primeng';
 import { EditMatchComponent } from './adminpanel/admincomponents/edit-match/edit-match.component';
 import { MatchService } from './services/match.service';
+import { HomeComponent } from './home/home.component';
+import { StandingComponent } from './standing/standing.component';
+import { AdminHistoryComponent } from './adminpanel/admincomponents/history/history.component';
+import { HistoryComponent } from './history/history.component';
+import { UserHistoryComponentComponent } from './dashboard/usercomponents/user-history-component/user-history-component.component';
+import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-requests/admin-requests.component';
 
 
 @NgModule({
@@ -45,7 +51,7 @@ import { MatchService } from './services/match.service';
     LoginComponent,
     LoadingSpinnerComponent,
     SignupComponent,
-    StandingComponent,
+    HomeComponent,
     DashboardComponent,
     AdminpanelComponent,
     UsersettingsComponent,
@@ -53,8 +59,8 @@ import { MatchService } from './services/match.service';
     AdminStatsComponent,
     AdminusersComponent,
     AdminTournamentsComponent,
-    AdminInvitationsComponent, 
-    UserTournamentsComponent, SendBetsComponent, MyBetsComponent, EditMatchComponent
+    AdminRequestsComponent, 
+    UserTournamentsComponent, SendBetsComponent, MyBetsComponent, HistoryComponent, StandingComponent, AdminHistoryComponent, UserHistoryComponentComponent
    
   ],
   imports: [
