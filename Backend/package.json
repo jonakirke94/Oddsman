@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/socket.io-client": "^1.4.32",
+    "@types/socket.io": "~1.4.29",
     "bcrypt": "^1.0.3",
     "chai-factories": "^0.1.0",
     "config": "^1.30.0",

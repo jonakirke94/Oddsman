@@ -13,35 +13,17 @@ import { SocketService, Action } from '../services/socket.service';
 
 export class HomeComponent implements OnInit {
 
-
-
-
+  //temporary
   constructor(private _socket: SocketService) {
   }
 
   ngOnInit() {
-
+    this._socket.initSocket();
   }
 
-
-
-  testSocket() {
-    console.log('Test Socket Clicked')
-
-
- /*    this._socket.initSocket(); */
+  sendMessage() {
+    let message = "TEST MESSAGE FROM HOME COMPONENT"
     this._socket.send(Action.ODDS);
-
-
-
-  
-      this._socket.onOddsMessage()
-        .subscribe((data: string) => {
-         
-          //this.loadBetFeed();
-        });
-  
-    
-    }
+  }
 
 }

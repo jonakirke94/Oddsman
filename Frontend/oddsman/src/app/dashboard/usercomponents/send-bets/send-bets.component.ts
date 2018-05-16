@@ -40,6 +40,10 @@ export class SendBetsComponent implements OnInit {
     this.getCurrentTournament();
     this.createFormControls();
     this.createForm();
+
+    setTimeout(() => {
+      this._socket.initSocket();
+    }, 0);
   }
 
   ngOnDestroy() {
@@ -121,7 +125,7 @@ export class SendBetsComponent implements OnInit {
 
     this._odds.sendOdds(this.tournament.id, odds).subscribe(res => {
       //emit NEWODDS action to server
-     /*  this._socket.initSocket(); */
+      this._socket.initSocket(); 
       this._socket.send(Action.ODDS);
 
       this.showMessage = true;
@@ -139,22 +143,11 @@ export class SendBetsComponent implements OnInit {
     })
   }
 
-  testSocket() {
-    console.log('Test Socket Clicked')
+    sendMessage() {
+      this._socket.initSocket(); 
 
-
- /*    this._socket.initSocket(); */
-    this._socket.send(Action.ODDS);
-
-
-
-  /* 
-      this._socket.onOddsMessage()
-        .subscribe((data: string) => {
-          //this.loadBetFeed();
-        });
-   */
-    
+      let message = "TEST MESSAGE FROM SEND BETS COMPONENT"
+      this._socket.send(Action.ODDS);
     }
   
 

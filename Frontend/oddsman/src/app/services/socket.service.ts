@@ -10,17 +10,15 @@ const SERVER_URL = 'http://localhost:3000';
 @Injectable()
 export class SocketService {
 
-  constructor() {
-    this.socket = socketIo(SERVER_URL);
-   }
+  constructor() {}
 
 
   private socket;
-  
+  messages = [];  
 
-/*     public initSocket(): void {
-        this.socket = socketIo(SERVER_URL);
-    } */
+    public initSocket(): void {
+      this.socket = socketIo(SERVER_URL);
+    }
 
     public disconnectSocket(): void {
       this.socket.disconnect();
@@ -38,6 +36,19 @@ export class SocketService {
             });
         }).shareReplay();
     }
+
+/*     public sendX(message: string): void {
+        this.socket.emit('message', message)
+        //this.onMessage().subscribe(res => console.log(res));
+    }
+
+    public onMessage(): Observable<string> {
+        return new Observable<string>(observer => {
+            this.socket.on('message', (data: string) => observer.next(data));
+        });
+    } */
+
+
 
     public onEvent(event: Event): Observable<any> {
         return new Observable<Event>(observer => {

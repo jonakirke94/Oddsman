@@ -33,14 +33,14 @@ export class BetFeedComponent implements OnInit {
   }
  
   private initIoConnection(): void {
-    //this._socket.initSocket();
+    this._socket.initSocket();
 
 
     this.ioConnection = this._socket.onOddsMessage()
       .subscribe((data: string) => {
-        console.log('Recieved data from oddsMessage')
-        //this.loadBetFeed();
+        this.loadBetFeed();
       });
+
   }
 
   seedFakeBets() {
