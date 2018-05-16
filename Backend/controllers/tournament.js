@@ -461,6 +461,9 @@ exports.get_overview = (req, res, next) => {
           model: Bet,
           required: false,
           attributes: ['id', 'week', 'option', 'optionNo', 'matchId'],
+          where: {
+            tournamentId: tourId
+          },
           include: {
             model: Match,
             required: false,
@@ -481,7 +484,7 @@ exports.get_overview = (req, res, next) => {
     })
     .then((tourney) => {
       generateStandings(tourney, (standings) => {
-       // console.log(standings)
+        // console.log(standings)
         return msg.show200(req, res, "Success", standings);
       });
     })
@@ -492,7 +495,7 @@ exports.get_overview = (req, res, next) => {
 
 function generateStandings(tourney, callback) {
   const end = tourney.dataValues.end;
-  
+
   const ongoing = new Date(end) > new Date() ? true : false;
   const week = moment().isoWeek();
 
@@ -557,12 +560,12 @@ function generateStandings(tourney, callback) {
   for (let i = 0; i < tournament.standings.length; i++) {
     const s = tournament.standings[i];
     s['position'] = i + 1;
-    if(i === 0){
+    if (i === 0) {
       topPoints = s.points;
       s['deficit'] = 0;
-    }else{
+    } else {
       s['deficit'] = topPoints - s.points;
-    }    
+    }
   }
 
   /* console.log(tournament.standings); */
