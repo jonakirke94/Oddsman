@@ -16,6 +16,7 @@ import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-in
 import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
+import { EditMatchComponent } from './adminpanel/admincomponents/edit-match/edit-match.component';
 
 
 const routes: Routes = [
@@ -78,6 +79,10 @@ const routes: Routes = [
        {
         path : 'requests/:id', 
         component: AdminInvitationsComponent
+        },
+        {
+          path : 'kampe', 
+          component: EditMatchComponent
         },
     ]
   },
