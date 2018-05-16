@@ -49,12 +49,10 @@ export class AdminRequestsComponent implements OnInit {
 
   ngOnDestroy() {
     this.params$.unsubscribe();
-    this.requests$.unsubscribe();
-
+    if (this.requests$ && this.requests$ !== null) this.requests$.unsubscribe();
     if (this.declined$ && this.declined$ !== null) this.declined$.unsubscribe();
     if (this.accepted$ && this.accepted$ !== null) this.accepted$.unsubscribe();
-    if (this.tournaments$ && this.tournaments$ !== null)
-      this.tournaments$.unsubscribe();
+    if (this.tournaments$ && this.tournaments$ !== null) this.tournaments$.unsubscribe();
   }
 
   getRequests(id) {

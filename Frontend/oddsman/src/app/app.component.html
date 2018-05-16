@@ -23,7 +23,7 @@
 
     <div class="navbar-end" *ngIf="(isLoggedin$ | async)">
     
-      <a class="navbar-item" routerLink="/dashboard/sendtips" [class.active]="router.url==='/dashboard/sendtips'">
+      <a class="navbar-item" *ngIf="(isAdmin$ | async) === false" routerLink="/dashboard/sendtips" [class.active]="router.url==='/dashboard/sendtips'">
          Send tips
       </a>
 
