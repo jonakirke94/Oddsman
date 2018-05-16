@@ -42,6 +42,7 @@ import { AdminHistoryComponent } from './adminpanel/admincomponents/history/hist
 import { HistoryComponent } from './history/history.component';
 import { UserHistoryComponentComponent } from './dashboard/usercomponents/user-history-component/user-history-component.component';
 import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-requests/admin-requests.component';
+import * as io from 'socket.io-client';
 
 
 @NgModule({

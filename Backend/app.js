@@ -14,6 +14,9 @@ const tournamentRoutes = require('./api/routes/tournament');
 const matchRoutes = require('./api/routes/match');
 const db = require('./models');
 
+
+  
+
 /* db.sequelize.sync(); */
 
 
