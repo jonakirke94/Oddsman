@@ -65,15 +65,27 @@ export class TournamentService {
   }
 
   //fetches the users current active tournament
+  getCurrentUserTournament() {
+    return this.http
+    .get(`${this.baseUrl}/current/user`)
+    .map(res => res);
+  }
+
   getCurrentTournament() {
     return this.http
-    .get(`${this.baseUrl}/current/`)
+    .get(`${this.baseUrl}/current`)
     .map(res => res);
   }
   
   handleRequest(status, tourId, userId) {
     return this.http
     .post(`${this.baseUrl}/${tourId}/requests/${userId}`, {status: status})
+    .map(res => res);
+  }
+
+  getStanding(tourId) {
+    return this.http
+    .get(`${this.baseUrl}/${tourId}/overview`)
     .map(res => res);
   }
 }
@@ -83,4 +95,9 @@ export class Request {
   userName;
   userEmail;
   userTag;
+}
+
+export interface Tour {
+  name: string;
+  code: string;
 }

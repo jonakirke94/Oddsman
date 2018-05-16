@@ -8,6 +8,9 @@ const moment = require('moment');
 
 const seq = require('../models');
 const Tournament = seq.tournaments;
+const Match = seq.matches;
+const Bet = seq.bets;
+const Result = seq.results;
 const Request = seq.requests;
 const Tournament_User = seq.users_tournaments;
 const User = seq.users;
@@ -131,6 +134,27 @@ exports.request = (req, res, next) => {
 }
 
 exports.get_current_tournament = (req, res, next) => {
+  const today = moment();
+
+  Tournament.findOne({
+    attributes: ['id', 'name'],
+    where: {
+      Active: true
+    }
+  }).then(tour => {
+
+    if (tour === null) {
+      return msg.show404(req, res, next);
+    }
+
+    return msg.show200(req, res, "Found active tournament", tour);
+
+  }).catch(function (err) {
+    return msg.show500(req, res, err);
+  })
+}
+
+exports.get_current_tournament_user = (req, res, next) => {
   const userId = helper.getUserId(req);
   const today = moment();
 
@@ -138,25 +162,27 @@ exports.get_current_tournament = (req, res, next) => {
     attributes: ['id', 'name'],
     where: {
       [Op.and]: [{
-        start: {
-          [Op.lte]: today.toDate()
+          start: {
+            [Op.lte]: today.toDate()
+          }
+        },
+        {
+          end: {
+            [Op.gte]: today.toDate()
+          }
         }
-      },
-      {
-        end: {
-          [Op.gte]: today.toDate()
-        }
-      }
       ]
     },
     through: {
       attributes: [''],
       model: Tournament_User,
-      where: {userId: userId},   
+      where: {
+        userId: userId
+      },
     }
 
   }).then(tour => {
-    if(tour === null) {
+    if (tour === null) {
       return msg.show404(req, res, next);
     }
 
@@ -169,18 +195,30 @@ exports.get_current_tournament = (req, res, next) => {
 
 exports.get_tournament_requests = (req, res, next) => {
   const tourId = req.params.tourid;
-  Tournament.findById(tourId,{
-    attributes: [['id', 'tourId'], ['name', 'tourName'], 'start'],
+  Tournament.findById(tourId, {
+    attributes: [
+      ['id', 'tourId'],
+      ['name', 'tourName'], 'start'
+    ],
     include: {
       model: User,
-      attributes: [['id', 'userId'], ['name', 'userName'], ['tag', 'userTag'], ['email', 'userEmail']],
+      attributes: [
+        ['id', 'userId'],
+        ['name', 'userName'],
+        ['tag', 'userTag'],
+        ['email', 'userEmail']
+      ],
       through: {
         attributes: [],
         model: Request,
-        where: {Status: {[Op.eq] : "pending"}}     
+        where: {
+          Status: {
+            [Op.eq]: "pending"
+          }
+        }
       }
     },
-    
+
   }).then(requests => {
     //console.log(JSON.stringify(requests));
     return msg.show200(req, res, "Success", requests);
@@ -202,7 +240,10 @@ exports.get_users_requests = (req, res, next) => { // TODO: Test with an accepte
       model: Tournament,
       attributes: ['Id', 'Name', 'Start', 'End'],
       through: {
-        where: {UserId: userId, status: 'pending'},
+        where: {
+          UserId: userId,
+          status: 'pending'
+        },
         attributes: ['Status'],
       }
     }
@@ -325,34 +366,36 @@ exports.get_enlisted_tournaments = (req, res, next) => {
       attributes: ['Id', 'Name', 'Start', 'End'],
       through: {
         model: Tournament_User,
-        where: {UserId: userId},
+        where: {
+          UserId: userId
+        },
         attributes: [],
       }
     }
   }).then(tourneys => {
-     //console.log(JSON.stringify(tourneys));
-     return msg.show200(req, res, "Success", tourneys);
-   }).catch(err => {
-     return msg.show500(req, res, err);
-   }).catch(err => {
-     return msg.show500(req, res, err);
-   })
-
- /*  Tournament.findAll({
-    through: {
-      model: Tournament_User,
-      where: {
-        userId: userId
-      }
-    }
-  }).then(tourneys => {
-   // console.log(JSON.stringify(tourneys));
+    //console.log(JSON.stringify(tourneys));
     return msg.show200(req, res, "Success", tourneys);
   }).catch(err => {
     return msg.show500(req, res, err);
   }).catch(err => {
     return msg.show500(req, res, err);
-  }) */
+  })
+
+  /*  Tournament.findAll({
+     through: {
+       model: Tournament_User,
+       where: {
+         userId: userId
+       }
+     }
+   }).then(tourneys => {
+    // console.log(JSON.stringify(tourneys));
+     return msg.show200(req, res, "Success", tourneys);
+   }).catch(err => {
+     return msg.show500(req, res, err);
+   }).catch(err => {
+     return msg.show500(req, res, err);
+   }) */
 }
 
 
@@ -366,7 +409,9 @@ exports.get_delisted_tournaments = (req, res, next) => {
     return msg.show500(req, res, err);
   }
   Request.findAll({
-    where: {userId: userId},
+    where: {
+      userId: userId
+    },
     through: {
       model: Tournament,
       where: {
@@ -393,13 +438,142 @@ exports.get_delisted_tournaments = (req, res, next) => {
         attributes: ['name', 'tag', 'email']
       }
     }).then(tourneys => {
-      //console.log(JSON.stringify(tourneys));
+      console.log(JSON.stringify(tourneys));
       return msg.show200(req, res, "Success", tourneys);
     }).catch(err => {
       return msg.show500(req, res, err);
     })
   })
 }
+
+
+exports.get_overview = (req, res, next) => {
+  const tourId = req.params.tourid;
+  Tournament.findById(tourId, {
+      attributes: ['id', 'name', 'start', 'end'],
+      include: {
+        through: {
+          model: Tournament_User
+        },
+        model: User,
+        attributes: ['id', 'tag', 'name'],
+        include: {
+          model: Bet,
+          required: false,
+          attributes: ['id', 'week', 'option', 'optionNo', 'matchId'],
+          where: {
+            tournamentId: tourId
+          },
+          include: {
+            model: Match,
+            required: false,
+            where: {
+              Missing: false,
+              Invalid: false
+            },
+            attributes: ['id', 'Option1Odds', 'Option2Odds', 'Option3Odds'],
+            include: {
+              model: Result,
+              required: false,
+              attributes: ['id', 'correctBet']
+            }
+          }
+
+        }
+      }
+    })
+    .then((tourney) => {
+      generateStandings(tourney, (standings) => {
+        // console.log(standings)
+        return msg.show200(req, res, "Success", standings);
+      });
+    })
+    .catch(err => {
+      return msg.show500(req, res, err);
+    });
+}
+
+function generateStandings(tourney, callback) {
+  const end = tourney.dataValues.end;
+
+  const ongoing = new Date(end) > new Date() ? true : false;
+  const week = moment().isoWeek();
+
+  const tournament = {
+    id: tourney.dataValues.id,
+    name: tourney.dataValues.name,
+    ongoing: ongoing,
+    week: week,
+    standings: []
+  }
+
+
+
+  const users = tourney.dataValues.users;
+
+  for (let i = 0; i < users.length; i++) {
+    const u = users[i].dataValues || {};
+    const bets = u.bets || [];
+    const standing = {
+      tag: u.tag,
+      name: u.name,
+      tips: u.bets.length,
+      wins: 0,
+      points: 0.0,
+      pointsWeek: 0.0
+    }
+    // Try settings standings based on each users existing bets/match/result.
+    for (let j = 0; j < bets.length; j++) {
+      try {
+        const b = bets[j].dataValues;
+        const m = b.match.dataValues;
+        const r = m.result.dataValues;
+        const odds = {
+          "1": m.Option1Odds || 0.0,
+          "X": m.Option2Odds || 0.0,
+          "2": m.Option3Odds || 0.0
+        }
+        if (b.option === r.correctBet) {
+          if (b.week === moment().isoWeek()) {
+            standing.pointsWeek += odds[b.option] || 0;
+          }
+          standing.points += odds[b.option] || 0;
+          standing.wins++;
+        }
+      } catch (error) {
+        continue;
+      }
+    }
+    tournament.standings.push(standing);
+
+  }
+
+  /* console.log(tournament.standings); */
+  // Sort by most points
+  tournament.standings.sort(function (a, b) {
+    if (a.points < b.points) return 1;
+    if (a.points > b.points) return -1;
+    return 0;
+  });
+  // Set positions and remaining points till #1 AFTER sorting
+  let topPoints = 0;
+  for (let i = 0; i < tournament.standings.length; i++) {
+    const s = tournament.standings[i];
+    s['position'] = i + 1;
+    if (i === 0) {
+      topPoints = s.points;
+      s['deficit'] = 0;
+    } else {
+      s['deficit'] = topPoints - s.points;
+    }
+  }
+
+  /* console.log(tournament.standings); */
+  callback(tournament);
+}
+
+
+
 
 /* HELPERS */
 

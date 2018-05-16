@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
-import { StandingComponent } from './standing/standing.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminpanelComponent } from './adminpanel/adminpanel.component';
 import { AuthGuard } from './guards/auth.guard';
@@ -16,74 +15,33 @@ import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-in
 import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
+import { HistoryComponent } from './dashboard/usercomponents/history/history.component';
+import { HomeComponent } from './home/home.component';
 
 
 const routes: Routes = [
-  {
-    path: '', //index
-    component: StandingComponent
-  },
-  {
-  path: 'login',
-  component: LoginComponent
-  },
-  {
-    path: 'signup',
-    component: SignupComponent
-  },
-  {
-    path: 'dashboard',
-    canActivate: [AuthGuard],
-    component: DashboardComponent,
+  {path: '', component: HomeComponent}, //index
+  {path: 'login', component: LoginComponent},
+  {path: 'signup', component: SignupComponent},
+  {path: 'dashboard', canActivate: [AuthGuard],component: DashboardComponent,
     children:[
-      {
-        path : '',
-        component: UserstatsComponent
-       },
-      {
-       path : 'indstillinger',
-       component: UsersettingsComponent
-      },
-      {
-        path : 'sendtips',
-        component: SendBetsComponent
-       },
-      {
-        path : 'turneringer',
-        component: UserTournamentsComponent
-       },
-       {
-         path : 'mine-tips',
-         component: MyBetsComponent
-        }
+      {path : '', component: UserstatsComponent},
+      {path : 'indstillinger', component: UsersettingsComponent},
+      {path : 'sendtips', component: SendBetsComponent},
+      {path : 'turneringer', component: UserTournamentsComponent},
+      {path : 'historik', component: HistoryComponent},
+      {path : 'historik/:id', component: HistoryComponent},
+      {path : 'mine-tips', component: MyBetsComponent}
     ]
   },
-  {
-    path: 'admin',
-    canActivate: [AdminguardGuard],
-    component: AdminpanelComponent,
+  {path: 'admin', canActivate: [AdminguardGuard], component: AdminpanelComponent,
      children:[
-      {
-        path : '',
-        component: AdminStatsComponent
-       },
-       {
-       path : 'users',
-        component: AdminusersComponent
-       },
-       {
-        path : 'tournaments',
-         component: AdminTournamentsComponent
-        },
-       {
-        path : 'requests/:id', 
-        component: AdminInvitationsComponent
-        },
+      {path : '', component: AdminStatsComponent},
+      {path : 'users', component: AdminusersComponent},
+      {path : 'tournaments', component: AdminTournamentsComponent},
+      {path : 'requests/:id', component: AdminInvitationsComponent},
     ]
   },
-  
-
-
 ];
 
 @NgModule({

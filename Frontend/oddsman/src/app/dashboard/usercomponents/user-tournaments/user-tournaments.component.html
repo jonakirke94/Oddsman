@@ -28,7 +28,7 @@
           </div>
           <footer class="card-footer">
             <a class="card-footer-item w75" (click)="join(tour.id)">Deltag</a>
-            <a class="card-footer-item w25"><i class="fas fa-arrow-right"></i></a>
+            <a class="card-footer-item w25" (click)="details(tour.id)"><i class="fas fa-arrow-right"></i></a>
           </footer>
         </div>
       </div>
@@ -71,50 +71,15 @@
           </div>
           <footer class="card-footer">
             <i class="card-footer-item w75"></i>
-            <a class="card-footer-item w25"><i class="fas fa-arrow-right"></i></a>
+            <a class="card-footer-item w25" (click)="details(tour.Id)"><i class="fas fa-arrow-right"></i></a>
 
           </footer>
         </div>
       </div>
     </div>  
-  <!--   <div class="has-text-centered">
-      <i class="fa fa-times empty-icon" *ngIf="!requestedAny"></i>  
-      </div> -->
     </div>
   </div>
 </div>
-
-
-<!-- <h1 class="title" *ngIf="requestedAny">Dine turneringsforspørgsler</h1>
-<h1 class="title" *ngIf="!requestedAny">Du har ingen turneringsforspørgsler</h1>
-<div class="columns is-multiline" [@listAnimation]="requested.length">
-  <div class="column is-one-third" *ngFor="let tour of requested">
-    <div class="card">
-      <header class="card-header">
-        <p class="card-header-title">
-          {{tour.name}}
-        </p>
-      </header>
-      <div class="card-content">
-        <div class="content">
-          <div class="level">
-            <div class="level-left">Start</div>
-            <div class="level-right">{{tour.start | date:'MM/dd/yyyy'}}</div>
-          </div>
-          <div class="level">
-            <div class="level-left">Slut</div>
-            <div class="level-right">{{tour.end | date:'MM/dd/yyyy'}}</div>
-          </div>
-        </div>
-      </div>
-      <footer class="card-footer">
-        <a class="card-footer-item is-pending" *ngIf="(tour.Status === 'pending')">Afventer</a>
-        <a class="card-footer-item is-declined" *ngIf="(tour.Status === 'declined')">Afvist</a>
-      </footer>
-    </div>
-  </div>
-</div> -->
-
 
   <div class="wrapper">
     <div class="tournament-card">
@@ -146,7 +111,7 @@
             </div>
             <footer class="card-footer">
               <i class="card-footer-item w75"></i>
-              <a class="card-footer-item w25"><i class="fas fa-arrow-right"></i></a>
+              <a class="card-footer-item w25" (click)="details(tour.Id)"><i class="fas fa-arrow-right"></i></a>
             </footer>
           </div>
         </div>

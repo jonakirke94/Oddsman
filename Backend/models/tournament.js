@@ -24,6 +24,11 @@ module.exports = function (sequelize, DataTypes) {
                 isDate: true
             },
             allowNull: false
+        },
+        Active: {
+            type: DataTypes.TINYINT(1),
+            defaultValue: 0,
+            allowNull: false,
         }
     })
 

@@ -9,7 +9,6 @@ import { LoginComponent } from './login/login.component';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import { SignupComponent } from './signup/signup.component';
 import { AuthService } from './services/auth.service';
-import { StandingComponent } from './standing/standing.component';
 import { AuthInterceptor } from './auth.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { OddsService } from './services/odds.service';
@@ -36,6 +35,9 @@ import { UserTournamentsComponent } from './dashboard/usercomponents/user-tourna
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
 import {DropdownModule} from 'primeng/primeng';
+import { HistoryComponent } from './dashboard/usercomponents/history/history.component';
+import { HomeComponent } from './home/home.component';
+import { StandingComponent } from './standing/standing.component';
 
 
 @NgModule({
@@ -44,7 +46,7 @@ import {DropdownModule} from 'primeng/primeng';
     LoginComponent,
     LoadingSpinnerComponent,
     SignupComponent,
-    StandingComponent,
+    HomeComponent,
     DashboardComponent,
     AdminpanelComponent,
     UsersettingsComponent,
@@ -53,7 +55,7 @@ import {DropdownModule} from 'primeng/primeng';
     AdminusersComponent,
     AdminTournamentsComponent,
     AdminInvitationsComponent, 
-    UserTournamentsComponent, SendBetsComponent, MyBetsComponent
+    UserTournamentsComponent, SendBetsComponent, MyBetsComponent, HistoryComponent, StandingComponent
    
   ],
   imports: [
