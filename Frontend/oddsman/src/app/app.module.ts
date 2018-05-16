@@ -20,21 +20,20 @@ import { UsersettingsComponent } from './dashboard/usercomponents/usersettings/u
 import { UserstatsComponent } from './dashboard/usercomponents/userstats/userstats.component';
 import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/admin-stats.component';
 import { AdminusersComponent } from './adminpanel/admincomponents/adminusers/adminusers.component';
-import {AccordionModule} from 'primeng/accordion';    
-import {MenuItem} from 'primeng/api';    
-import {TableModule} from 'primeng/table';
+import { AccordionModule } from 'primeng/accordion';
+import { MenuItem } from 'primeng/api';
+import { TableModule } from 'primeng/table';
 import { UserService } from './services/user.service';
 import { AdminTournamentsComponent } from './adminpanel/admincomponents/admin-tournaments/admin-tournaments.component';
 import { TournamentService } from './services/tournament.service';
-import {CalendarModule} from 'primeng/calendar';
-import {InputTextModule} from 'primeng/inputtext';
-import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-invitations/admin-invitations.component';
-import { DataTableModule } from 'primeng/primeng'; // Here
-import {GrowlModule} from 'primeng/primeng';
+import { CalendarModule } from 'primeng/calendar';
+import { InputTextModule } from 'primeng/inputtext';
+import { DataTableModule, DialogModule } from 'primeng/primeng'; // Here
+import { GrowlModule } from 'primeng/primeng';
 import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
-import {DropdownModule} from 'primeng/primeng';
+import { DropdownModule } from 'primeng/primeng';
 import { EditMatchComponent } from './adminpanel/admincomponents/edit-match/edit-match.component';
 import { MatchService } from './services/match.service';
 import { HomeComponent } from './home/home.component';
@@ -59,9 +58,16 @@ import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-reque
     AdminStatsComponent,
     AdminusersComponent,
     AdminTournamentsComponent,
-    AdminRequestsComponent, 
-    UserTournamentsComponent, SendBetsComponent, MyBetsComponent, HistoryComponent, StandingComponent, AdminHistoryComponent, UserHistoryComponentComponent
-   
+    AdminRequestsComponent,
+    UserTournamentsComponent,
+    SendBetsComponent,
+    MyBetsComponent,
+    HistoryComponent,
+    StandingComponent,
+    AdminHistoryComponent,
+    UserHistoryComponentComponent,
+    EditMatchComponent
+
   ],
   imports: [
     BrowserModule,
@@ -79,9 +85,9 @@ import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-reque
     GrowlModule,
     DropdownModule,
     DialogModule
-    
 
-    
+
+
   ],
   providers: [
     AuthService,
