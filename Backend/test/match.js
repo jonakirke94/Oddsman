@@ -70,54 +70,43 @@ describe('MATCHES/RESULTS', () => {
                                                 OptionNo: 1,
                                                 matchId: matchId
                                             }).then(() => {
-                                                Bet.create({
+                                                Bet.bulkCreate([{
                                                     tournamentId: 2,
                                                     userId: 1,
                                                     Week: moment().isoWeek(),
                                                     Option: "X",
                                                     OptionNo: 2,
                                                     matchId: matchId
-                                                }).then(() => {
-                                                    Bet.create({
-                                                        tournamentId: 2,
-                                                        userId: 1,
-                                                        Week: moment().isoWeek(),
-                                                        Option: "X",
-                                                        OptionNo: 2,
-                                                        matchId: matchId
-                                                    }).then(() => {
-                                                        Bet.create({
-                                                            tournamentId: 2,
-                                                            userId: 1,
-                                                            Week: moment().isoWeek(),
-                                                            Option: "3",
-                                                            OptionNo: 3,
-                                                            matchId: matchId
-                                                        }).then(() => {
-                                                            Result.bulkCreate([{
-                                                                        id: 1,
-                                                                        endResult: "2 - 0",
-                                                                        correctBet: "1"
-                                                                    },
-                                                                    {
-                                                                        id: 2,
-                                                                        endResult: "2 - 3",
-                                                                        correctBet: "2"
-                                                                    },
-                                                                    {
-                                                                        id: 3,
-                                                                        endResult: "0 - 0",
-                                                                        correctBet: "1"
-                                                                    },
-                                                                ])
-                                                                .then(() => {
-                                                                    done();
-                                                                });
+                                                }, {
+                                                    tournamentId: 2,
+                                                    userId: 1,
+                                                    Week: moment().isoWeek(),
+                                                    Option: "X",
+                                                    OptionNo: 2,
+                                                    matchId: matchId
+                                                }, {
+                                                    tournamentId: 2,
+                                                    userId: 1,
+                                                    Week: moment().isoWeek(),
+                                                    Option: "3",
+                                                    OptionNo: 3,
+                                                    matchId: matchId
+                                                }]).then(() => {
+
+                                                    Result.bulkCreate([{
+                                                            id: 1,
+                                                            endResult: "2 - 0",
+                                                            correctBet: "1",
+                                                            matchId: 1,
+                                                            missing: true
+                                                        }])
+                                                        .then(() => {
+                                                            done();
                                                         });
-                                                    });
                                                 });
 
                                             });
+
                                         });
                                 });
                         });

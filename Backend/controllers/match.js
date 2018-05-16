@@ -45,7 +45,7 @@ exports.get_missing_matches = (req, res, next) => {
             Missing: true
         }
     }).then((matches) => {
-        return msg.show200(req, res, "Success", matches);
+        return msg.show200(req, res, "Success", matches || []);
 
     }).catch(err => {
         return msg.show500(req, res, err);
@@ -58,7 +58,7 @@ exports.get_missing_results = (req, res, next) => {
             Missing: true
         }
     }).then((results) => {
-        return msg.show200(req, res, "Success", results);
+        return msg.show200(req, res, "Success", results || []);
 
     }).catch(err => {
         return msg.show500(req, res, err);
