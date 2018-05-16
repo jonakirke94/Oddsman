@@ -11,6 +11,7 @@ const userRoutes = require('./api/routes/user');
 const tokenRoutes = require('./api/routes/token');
 const oddsRoutes = require('./api/routes/odds');
 const tournamentRoutes = require('./api/routes/tournament');
+const matchRoutes = require('./api/routes/match');
 const db = require('./models');
 
 /* db.sequelize.sync(); */
@@ -64,6 +65,7 @@ app.use('/user', userRoutes);
 app.use('/token', tokenRoutes);
 app.use('/odds', oddsRoutes);
 app.use('/tournament', tournamentRoutes);
+app.use('/match', matchRoutes);
 
 //error handling if no routing was hit
 app.use((req, res, next) => {
