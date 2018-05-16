@@ -42,6 +42,11 @@ exports.edit_match = (req, res, next) => {
                     console.log("failed patching match: " + error);
                 }
             });
+
+            if (m.Option1Odds && m.Option2Odds && m.Option3Odds && m.MatchName && m.MatchDate) {
+                m.Missing = false;
+            }
+
             m.save().then(() => {
                 return msg.show200(req, res, "Success", m);
             });

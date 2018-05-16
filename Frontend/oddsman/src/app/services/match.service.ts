@@ -15,7 +15,6 @@ export class MatchService {
   }
 
   updateMatch(id, match) {
-    console.log("service - " + JSON.stringify(match));
     return this.http.patch(`http://localhost:3000/match/${id}`, match).map(res => res);
   }
 
