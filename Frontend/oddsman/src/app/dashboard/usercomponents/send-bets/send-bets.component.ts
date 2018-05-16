@@ -5,6 +5,7 @@ import { OddsService } from '../../../services/odds.service';
 import { TournamentService } from '../../../services/tournament.service';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs/Subscription';
+import { SocketService, Action } from '../../../services/socket.service';
 
 @Component({
   selector: 'app-send-bets',
@@ -32,7 +33,7 @@ export class SendBetsComponent implements OnInit {
 
   tournament$ : Subscription
 
-  constructor(private _odds: OddsService, private _tour: TournamentService) { }
+  constructor(private _odds: OddsService, private _tour: TournamentService, private _socket: SocketService) { }
 
   ngOnInit() {
     this.currentWeek = moment().isoWeek();
@@ -119,6 +120,10 @@ export class SendBetsComponent implements OnInit {
   ]
 
     this._odds.sendOdds(this.tournament.id, odds).subscribe(res => {
+      //emit NEWODDS action to server
+      this._socket.initSocket();
+      this._socket.send(Action.ODDS);
+
       this.showMessage = true;
       this.showSpinner = false;
     },

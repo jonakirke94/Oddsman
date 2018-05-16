@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { StandingComponent } from "../standing/standing.component";
-import { SocketService, Message, Event } from '../services/socket.service';
+import { SocketService, Action, Event } from '../services/socket.service';
 
 @Component({
   selector: 'app-standing',
@@ -21,16 +21,12 @@ export class HomeComponent implements OnInit {
 
 
   constructor(private _socket : SocketService) {
-    this.initIoConnection();
-
   }
 
   ngOnInit() {
-    this.ioConnection = this._socket.onMessage()
-    .subscribe((message) => {
-      this.messages.push(message);
-      console.log(this.messages)
-    });
+    this.initIoConnection();
+    this._socket.send(Action.ODDS);
+
   }
 
   ngOnDestroy() {
@@ -40,7 +36,11 @@ export class HomeComponent implements OnInit {
   private initIoConnection(): void {
     this._socket.initSocket();
 
-
+    this.ioConnection = this._socket.onMessage()
+    .subscribe((message) => {
+      this.messages.push(message);
+      console.log(this.messages)
+    });
 
 
     this._socket.onEvent(Event.CONNECT)
@@ -55,12 +55,12 @@ export class HomeComponent implements OnInit {
 
   }
 
-  sendTestMessage() {
+/*   sendTestMessage() {
     const message = 'TESTTESTEST';
     this._socket.send(message);
 
-  }
-
+  } */
+/* 
   sendSocket() {
   const message = 'TEST_ACTION_METHOD';
 
@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit {
   }
 
 
-
+ */
 
 
 }

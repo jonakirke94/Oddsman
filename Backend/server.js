@@ -13,6 +13,19 @@ io.on('connection', (socket) => {
   socket.on('message', (data) => {
     socket.emit('response', 'Thank you for the message');
   });
+
+  socket.on('action', (data) => {
+    console.log(data)
+
+    switch(data) {
+      case 'refresh_odds':
+      console.log('TELL CLIENTS ODDS SHOULD BE REFRESHED!!')
+      break;
+      case refresh_results:
+      console.log('TELL CLIENTS RESULTS SHOULD BE REFRESHED!')
+      break; 
+    }
+  });
 });
 
 

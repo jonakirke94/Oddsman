@@ -22,8 +22,8 @@ export class SocketService {
       this.socket.disconnect();
     }
 
-    public send(message: string): void {
-        this.socket.emit('message', message);
+    public send(action: Action): void {
+        this.socket.emit('action', action);
     }
 
     public onMessage(): Observable<string> {
@@ -41,8 +41,10 @@ export class SocketService {
     }
 }
 
-export class Message {
-  action: string;
+export enum Action {
+  ODDS = 'refresh_odds',
+  RESULTS = 'refresh_results'
+
 }
  
 export enum Event {
