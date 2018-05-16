@@ -15,8 +15,18 @@ export class MatchService {
   }
 
   updateMatch(id, match) {
-    console.log("service - " + JSON.stringify(match));
     return this.http.patch(`http://localhost:3000/match/${id}`, match).map(res => res);
+  }
+
+  getMissingResults() {
+    return this.http
+    .get("http://localhost:3000/match/result/missing")
+    .map(res => <Result[]>res['data'])
+    .shareReplay();
+  }
+
+  updateResult(id, result) {
+    return this.http.patch(`http://localhost:3000/match/result/${id}`, result).map(res => res);
   }
 
 }
@@ -32,4 +42,10 @@ export class Match {
   Option1Odds?;
   Option2Odds?;
   Option3Odds?;
+}
+
+export class Result {
+  Id?;
+  EndResult?;
+  CorrectBet?;
 }

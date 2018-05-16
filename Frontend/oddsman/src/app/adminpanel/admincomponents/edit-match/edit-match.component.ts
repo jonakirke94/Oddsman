@@ -61,14 +61,7 @@ export class EditMatchComponent implements OnInit {
     isMatchDate(col) {
         return col.field === "MatchDate";
     }
-
-    /* delete() {
-        let index = this.cars.indexOf(this.selectedCar);
-        this.cars = this.cars.filter((val, i) => i != index);
-        this.car = null;
-        this.displayDialog = false;
-    } */
-
+    
     onRowSelect(event) {
         this.newMatch = false;
         this.match = this.cloneMatch(event.data);
