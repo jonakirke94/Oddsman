@@ -13,6 +13,7 @@ const seq = require('../models');
 const Bet = seq.bets;
 const Tournament = seq.tournaments;
 const Match = seq.matches;
+const Result = seq.results;
 
 const helper = require('../test/helper');
 
