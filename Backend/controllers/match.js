@@ -10,6 +10,7 @@ const Match = seq.matches;
 const Tournament_User = seq.users_tournaments;
 const helper = require('../controllers/helper');
 const User = seq.users;
+const Result = seq.results;
 const {
     Op
 } = require('sequelize')
