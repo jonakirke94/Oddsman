@@ -20,13 +20,13 @@ export class MatchService {
 
   getMissingResults() {
     return this.http
-    .get("http://localhost:3000/result/missing")
+    .get("http://localhost:3000/match/result/missing")
     .map(res => <Result[]>res['data'])
     .shareReplay();
   }
 
   updateResult(id, result) {
-    return this.http.patch(`http://localhost:3000/result/${id}`, result).map(res => res);
+    return this.http.patch(`http://localhost:3000/match/result/${id}`, result).map(res => res);
   }
 
 }
