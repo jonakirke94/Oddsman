@@ -121,7 +121,7 @@ export class SendBetsComponent implements OnInit {
 
     this._odds.sendOdds(this.tournament.id, odds).subscribe(res => {
       //emit NEWODDS action to server
-      this._socket.initSocket();
+     /*  this._socket.initSocket(); */
       this._socket.send(Action.ODDS);
 
       this.showMessage = true;
@@ -138,6 +138,27 @@ export class SendBetsComponent implements OnInit {
       this.showSpinner = false;
     })
   }
+
+  testSocket() {
+    console.log('Test Socket Clicked')
+
+
+ /*    this._socket.initSocket(); */
+    this._socket.send(Action.ODDS);
+
+
+
+  /* 
+      this._socket.onOddsMessage()
+        .subscribe((data: string) => {
+          //this.loadBetFeed();
+        });
+   */
+    
+    }
+  
+
+
 
 }
 

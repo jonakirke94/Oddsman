@@ -4,6 +4,8 @@
     <div class="wrapper">
       <div class="tournament-card">
 
+        <button class="button" (click)="testSocket()">TEST SOCKET!</button>
+
         <div class="card-title">
           <h1 class="title" *ngIf="tournament">{{tournament.name}} | Runde {{currentWeek}}</h1>
         </div>

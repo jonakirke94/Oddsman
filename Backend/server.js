@@ -8,25 +8,23 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 io.on('connection', (socket) => {
-  console.log('connected');
-  
-  socket.on('message', (data) => {
-    socket.emit('response', 'Thank you for the message');
-  });
-
+  console.log('New Connection..')
   socket.on('action', (data) => {
-    console.log(data)
+    console.log('DATA:' + data)
+
+    socket.emit('refresh_odds', 'UPDATE FEED! (FROM SERVER)')
 
     switch(data) {
-      case 'refresh_odds':
-      console.log('TELL CLIENTS ODDS SHOULD BE REFRESHED!!')
+      case 'new_odds':
+      socket.emit('refresh_odds', 'UPDATE FEED! (FROM SERVER)')
+      console.log('UPDATE FEED! (FROM SERVER)')
       break;
-      case refresh_results:
+      case 'new_results':
       console.log('TELL CLIENTS RESULTS SHOULD BE REFRESHED!')
       break; 
     }
   });
-});
+}); 
 
 
 server.listen(port, function() {

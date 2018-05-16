@@ -10,13 +10,17 @@ const SERVER_URL = 'http://localhost:3000';
 @Injectable()
 export class SocketService {
 
-  constructor() { }
+  constructor() {
+    this.socket = socketIo(SERVER_URL);
+   }
+
 
   private socket;
+  
 
-    public initSocket(): void {
+/*     public initSocket(): void {
         this.socket = socketIo(SERVER_URL);
-    }
+    } */
 
     public disconnectSocket(): void {
       this.socket.disconnect();
@@ -26,12 +30,13 @@ export class SocketService {
         this.socket.emit('action', action);
     }
 
-    public onMessage(): Observable<string> {
+    public onOddsMessage(): Observable<string> {
         return new Observable<string>(observer => {
-            this.socket.on('response', (data:string) => {
+            this.socket.on('refresh_odds', (data:string) => {
+              console.log(data)
               observer.next(data)
             });
-        });
+        }).shareReplay();
     }
 
     public onEvent(event: Event): Observable<any> {
@@ -42,8 +47,8 @@ export class SocketService {
 }
 
 export enum Action {
-  ODDS = 'refresh_odds',
-  RESULTS = 'refresh_results'
+  ODDS = 'new_odds',
+  RESULTS = 'new_results'
 
 }
  

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SocketService, Event, Action } from '../services/socket.service';
 
 @Component({
   selector: 'bet-feed',
@@ -8,10 +9,41 @@ import { Component, OnInit } from '@angular/core';
 export class BetFeedComponent implements OnInit {
 
   bets = []
+  ioConnection: any;
 
-  constructor() { }
+
+  constructor(private _socket : SocketService) {
+  }
 
   ngOnInit() {
+    this.seedFakeBets();
+    this.loadBetFeed();
+
+
+  this.initIoConnection();
+  }
+
+  ngOnDestroy() {
+    this._socket.disconnectSocket();
+  }
+
+  private loadBetFeed() {
+    console.log('Loaded bet feed..');
+    //this.bets = ..
+  }
+ 
+  private initIoConnection(): void {
+    //this._socket.initSocket();
+
+
+    this.ioConnection = this._socket.onOddsMessage()
+      .subscribe((data: string) => {
+        console.log('Recieved data from oddsMessage')
+        //this.loadBetFeed();
+      });
+  }
+
+  seedFakeBets() {
     this.bets.push({
       time: '18:17', tag: 'AA',
        matches: [
