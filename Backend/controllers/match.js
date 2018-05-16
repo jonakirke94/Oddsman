@@ -42,7 +42,6 @@ exports.edit_match = (req, res, next) => {
                     console.log("failed patching match: " + error);
                 }
             });
-            console.log("updated match: " + JSON.stringify(m));
             m.save().then(() => {
                 return msg.show200(req, res, "Success", m);
             });
