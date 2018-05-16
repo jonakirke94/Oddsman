@@ -43,74 +43,73 @@ describe('MATCHES/RESULTS', () => {
                 .post("/tournament") //ENDPOINT[1]
                 .send(tour)
                 .end((err, res) => {
-                    Tournament.create({
+                    Tournament.bulkCreate([{
                         Name: "Season " + moment().isoWeek(),
                         Start: moment().subtract(1, 'M'),
                         End: moment().add(1, 'M')
-                    }).then(() => {
-                        Tournament.create({
-                            Name: "Season 17",
-                            Start: moment().subtract(5, 'M'),
-                            End: moment().subtract(2, 'M')
-                        }).then(() => {
-                            chai.request(server)
-                                .post("/user/signup") //ENDPOINT[2]
-                                .send(user)
-                                .end((err, res) => {
-                                    Match.create({
-                                            MatchId: 1,
-                                            Missing: true
-                                        })
-                                        .then((match) => {
-                                            matchId = match.Id;
-                                            Bet.create({
-                                                tournamentId: 1,
+                    }, {
+                        Name: "Season 17",
+                        Start: moment().subtract(5, 'M'),
+                        End: moment().subtract(2, 'M')
+                    }]).then(() => {
+                        chai.request(server)
+                            .post("/user/signup") //ENDPOINT[2]
+                            .send(user)
+                            .end((err, res) => {
+                                Match.create({
+                                        MatchId: 1,
+                                        Missing: true
+                                    })
+                                    .then((match) => {
+                                        matchId = match.Id;
+                                        Bet.create({
+                                            tournamentId: 1,
+                                            userId: 1,
+                                            Week: moment().isoWeek(),
+                                            Option: "1",
+                                            OptionNo: 1,
+                                            matchId: matchId
+                                        }).then(() => {
+                                            Bet.bulkCreate([{
+                                                tournamentId: 2,
                                                 userId: 1,
                                                 Week: moment().isoWeek(),
-                                                Option: "1",
-                                                OptionNo: 1,
+                                                Option: "X",
+                                                OptionNo: 2,
                                                 matchId: matchId
-                                            }).then(() => {
-                                                Bet.bulkCreate([{
-                                                    tournamentId: 2,
-                                                    userId: 1,
-                                                    Week: moment().isoWeek(),
-                                                    Option: "X",
-                                                    OptionNo: 2,
-                                                    matchId: matchId
-                                                }, {
-                                                    tournamentId: 2,
-                                                    userId: 1,
-                                                    Week: moment().isoWeek(),
-                                                    Option: "X",
-                                                    OptionNo: 2,
-                                                    matchId: matchId
-                                                }, {
-                                                    tournamentId: 2,
-                                                    userId: 1,
-                                                    Week: moment().isoWeek(),
-                                                    Option: "3",
-                                                    OptionNo: 3,
-                                                    matchId: matchId
-                                                }]).then(() => {
+                                            }, {
+                                                tournamentId: 2,
+                                                userId: 1,
+                                                Week: moment().isoWeek(),
+                                                Option: "X",
+                                                OptionNo: 2,
+                                                matchId: matchId
+                                            }, {
+                                                tournamentId: 2,
+                                                userId: 1,
+                                                Week: moment().isoWeek(),
+                                                Option: "3",
+                                                OptionNo: 3,
+                                                matchId: matchId
+                                            }]).then(() => {
 
-                                                    Result.bulkCreate([{
-                                                            id: 1,
-                                                            endResult: "2 - 0",
-                                                            correctBet: "1",
-                                                            matchId: 1,
-                                                            missing: true
-                                                        }])
-                                                        .then(() => {
-                                                            done();
-                                                        });
-                                                });
-
+                                                Result.bulkCreate([{
+                                                        Id: 1,
+                                                        EndResult: "2 - 0",
+                                                        CorrectBet: "1",
+                                                        matchId: matchId,
+                                                        Missing: true
+                                                    }])
+                                                    .then(() => {
+                                                        done();
+                                                    });
                                             });
 
                                         });
-                                });
-                        });
+
+                                    });
+                            });
+
                     });
                 });
         })
@@ -168,8 +167,8 @@ describe('MATCHES/RESULTS', () => {
                 .end((err, res) => {
                     let data = JSON.parse(res.text).data;
                     res.should.have.status(200);
-                    data.correctBet.should.be.eql("1");
-                    data.endResult.should.be.eql("2 - 0");
+                    data.CorrectBet.should.be.eql("1");
+                    data.EndResult.should.be.eql("2 - 0");
                     done();
                 });
         });
@@ -183,6 +182,7 @@ describe('MATCHES/RESULTS', () => {
                     let data = JSON.parse(res.text).data;
                     res.should.have.status(200);
                     data.should.be.a('array');
+                    data.length.should.eql(1);
                     done();
                 });
         });
