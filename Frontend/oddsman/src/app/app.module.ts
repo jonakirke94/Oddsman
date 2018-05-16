@@ -30,12 +30,13 @@ import { TournamentService } from './services/tournament.service';
 import {CalendarModule} from 'primeng/calendar';
 import {InputTextModule} from 'primeng/inputtext';
 import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-invitations/admin-invitations.component';
-import { DataTableModule } from 'primeng/primeng'; // Here
-import {GrowlModule} from 'primeng/primeng';
+import { DataTableModule, Dialog, GrowlModule, DialogModule } from 'primeng/primeng'; // Here
 import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
 import {DropdownModule} from 'primeng/primeng';
+import { EditMatchComponent } from './adminpanel/admincomponents/edit-match/edit-match.component';
+import { MatchService } from './services/match.service';
 
 
 @NgModule({
@@ -53,7 +54,7 @@ import {DropdownModule} from 'primeng/primeng';
     AdminusersComponent,
     AdminTournamentsComponent,
     AdminInvitationsComponent, 
-    UserTournamentsComponent, SendBetsComponent, MyBetsComponent
+    UserTournamentsComponent, SendBetsComponent, MyBetsComponent, EditMatchComponent
    
   ],
   imports: [
@@ -70,7 +71,9 @@ import {DropdownModule} from 'primeng/primeng';
     InputTextModule,
     DataTableModule,
     GrowlModule,
-    DropdownModule
+    DropdownModule,
+    DialogModule
+    
 
     
   ],
@@ -80,6 +83,7 @@ import {DropdownModule} from 'primeng/primeng';
     TournamentService,
     UserService,
     AuthGuard,
+    MatchService,
     AdminguardGuard,
     {
       provide: HTTP_INTERCEPTORS,
