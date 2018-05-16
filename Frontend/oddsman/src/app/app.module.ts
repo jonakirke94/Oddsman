@@ -35,9 +35,11 @@ import { UserTournamentsComponent } from './dashboard/usercomponents/user-tourna
 import { SendBetsComponent } from './dashboard/usercomponents/send-bets/send-bets.component';
 import { MyBetsComponent } from './dashboard/usercomponents/my-bets/my-bets.component';
 import {DropdownModule} from 'primeng/primeng';
-import { HistoryComponent } from './dashboard/usercomponents/history/history.component';
 import { HomeComponent } from './home/home.component';
 import { StandingComponent } from './standing/standing.component';
+import { AdminHistoryComponent } from './adminpanel/admincomponents/history/history.component';
+import { HistoryComponent } from './history/history.component';
+import { UserHistoryComponentComponent } from './dashboard/usercomponents/user-history-component/user-history-component.component';
 
 
 @NgModule({
@@ -55,7 +57,7 @@ import { StandingComponent } from './standing/standing.component';
     AdminusersComponent,
     AdminTournamentsComponent,
     AdminInvitationsComponent, 
-    UserTournamentsComponent, SendBetsComponent, MyBetsComponent, HistoryComponent, StandingComponent
+    UserTournamentsComponent, SendBetsComponent, MyBetsComponent, HistoryComponent, StandingComponent, AdminHistoryComponent, UserHistoryComponentComponent
    
   ],
   imports: [
