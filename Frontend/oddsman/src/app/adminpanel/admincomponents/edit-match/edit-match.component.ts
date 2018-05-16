@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatchService, Match } from '../../../services/match.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     selector: 'app-edit-match',
@@ -9,18 +10,13 @@ import { MatchService, Match } from '../../../services/match.service';
 export class EditMatchComponent implements OnInit {
 
     matches: Match[];
-
     displayDialog: boolean;
-
     match: Match = {};
-
     selectedMatch: Match;
-
     newMatch: boolean;
-
-
-
     cols: any[];
+
+    private loadSubscription$: Subscription;
 
 
     constructor(private _match: MatchService) { }
@@ -40,13 +36,12 @@ export class EditMatchComponent implements OnInit {
     }
 
     ngOnDestroy() {
-
+        if (this.loadSubscription$) this.loadSubscription$.unsubscribe();
     }
 
     loadMatches() {
         this._match.getMissingMatches().subscribe(res => {
             this.matches = res;
-            console.log(this.matches)
         })
     }
 
@@ -57,7 +52,7 @@ export class EditMatchComponent implements OnInit {
     }
 
     save() {
-        this._match.updateMatch(this.selectedMatch.Id, this.match).subscribe(res => {
+        this.loadSubscription$ = this._match.updateMatch(this.selectedMatch.Id, this.match).subscribe(res => {
             this.loadMatches();
         });
         this.displayDialog = false;
