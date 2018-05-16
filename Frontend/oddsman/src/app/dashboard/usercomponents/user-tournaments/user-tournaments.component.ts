@@ -75,7 +75,8 @@ export class UserTournamentsComponent implements OnInit {
   }
 
   details(id) {
-    this.router.navigateByUrl(`/dashboard/historik/${id}`);  }
+    this.router.navigateByUrl(`/dashboard/historik/${id}`);
+  }
 
   refreshLists() {
     this.getRequestedTournaments();

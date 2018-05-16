@@ -32,12 +32,12 @@ export class HistoryComponent implements OnInit {
 
   ngOnDestroy() {
     this.params$.unsubscribe();
+    
     if (this.tournaments$ && this.tournaments$ !== null) this.tournaments$.unsubscribe();
 
   }
 
   refreshStanding(id) {
-    console.log('id:' + id)
     this.tournamentId = this.selectedTour.code;
   }
 

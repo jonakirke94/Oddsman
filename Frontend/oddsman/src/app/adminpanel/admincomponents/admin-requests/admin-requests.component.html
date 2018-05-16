@@ -1,6 +1,17 @@
+
+<div class="header">
+    <h1 class="title inline-title">Vælg turnering</h1>
+    
+    <p-dropdown [options]="tournaments" [(ngModel)]="selectedTour" placeholder="Select a tournament" (ngModelChange)="refresh()"
+        optionLabel="name">
+    </p-dropdown>
+    </div>
+
+
 <p-growl [value]="msgs"></p-growl>
 
-<div class="card-title">
+<span *ngIf="tournamentInfo.tourName">
+<div class="card-title"  >
     <h1 class="title">Turneringsforespørgsler: {{tournamentInfo.tourName}}</h1>
 
   </div>
@@ -23,3 +34,4 @@
         </ng-template>
     </p-column>
 </p-dataTable>
+</span>

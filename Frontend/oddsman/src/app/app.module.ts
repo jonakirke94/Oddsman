@@ -28,7 +28,6 @@ import { AdminTournamentsComponent } from './adminpanel/admincomponents/admin-to
 import { TournamentService } from './services/tournament.service';
 import {CalendarModule} from 'primeng/calendar';
 import {InputTextModule} from 'primeng/inputtext';
-import { AdminInvitationsComponent } from './adminpanel/admincomponents/admin-invitations/admin-invitations.component';
 import { DataTableModule } from 'primeng/primeng'; // Here
 import {GrowlModule} from 'primeng/primeng';
 import { UserTournamentsComponent } from './dashboard/usercomponents/user-tournaments/user-tournaments.component';
@@ -40,6 +39,7 @@ import { StandingComponent } from './standing/standing.component';
 import { AdminHistoryComponent } from './adminpanel/admincomponents/history/history.component';
 import { HistoryComponent } from './history/history.component';
 import { UserHistoryComponentComponent } from './dashboard/usercomponents/user-history-component/user-history-component.component';
+import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-requests/admin-requests.component';
 
 
 @NgModule({
@@ -56,7 +56,7 @@ import { UserHistoryComponentComponent } from './dashboard/usercomponents/user-h
     AdminStatsComponent,
     AdminusersComponent,
     AdminTournamentsComponent,
-    AdminInvitationsComponent, 
+    AdminRequestsComponent, 
     UserTournamentsComponent, SendBetsComponent, MyBetsComponent, HistoryComponent, StandingComponent, AdminHistoryComponent, UserHistoryComponentComponent
    
   ],

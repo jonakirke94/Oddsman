@@ -34,6 +34,7 @@ export class StandingComponent implements OnInit {
   loadData(id) {
     this._tour.getStanding(id).subscribe(res => {
       this.standings = res['data']['standings']
+      this.tournament = {};
       this.tournament.id =  res['data']['id'];
       this.tournament.name = res['data']['name'];
       this.tournament.ongoing = res['data']['ongoing'];
