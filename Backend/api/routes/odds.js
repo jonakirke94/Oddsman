@@ -7,5 +7,5 @@ const guard = require('../guards/authguard');
 const oddsController = require('../../controllers/odds');
 
 router.post("/:tourid", guard, oddsController.sendOdds);
-router.get("/recent", guard, oddsController.get_recent_bets);
+router.get("/recent", guard, oddsController.get_recent_bets_http);
 module.exports = router;

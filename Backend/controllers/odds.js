@@ -130,7 +130,14 @@ function getOptionNumber(op) {
     }
 }
 
-
+exports.get_recent_bets_http = (req, res, next) => {
+    get_recent_bets(9, (results) => {
+            return msg.show200(req, res, "Success", results);
+        })
+        .catch(err => {
+            return msg.show500(req, res, err);
+        });
+}
 exports.get_recent_bets = (limit = 1, callback) => {
     Bet.findAll({
         limit: limit,
