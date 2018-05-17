@@ -11,34 +11,25 @@ const odds = require('./controllers/odds')
 
 
 server.listen(port, function () {
-/*   io.on('connection', (socket) => {
-    console.log('Connected client on port %s.', port);
-    socket.on('action', (data) => {
-
-      socket.emit('refresh_odds', 'UPDATE FEED! (FROM SERVER)')
-
-     switch (data) {
-        case 'new_odds':
-          socket.emit('refresh_odds', 'UPDATE FEED! (FROM SERVER)')
-          console.log('UPDATE FEED! (FROM SERVER)')
-          break;
-        case 'new_results':
-          console.log('TELL CLIENTS RESULTS SHOULD BE REFRESHED!')
-          break;
-      } 
-    });
-  }); */
-
   io.on('connect', (socket) => {
     console.log('Connected client on port %s.', port);
     socket.on('action', (data) => {
 
      switch (data) {
         case 'new_odds':
-          odds.getRecentBet( function(bets) {
+        const bet = {
+          time: '00:00', tag: 'OO',
+           matches: [
+             { id: '5', match: 'OO-OO', bet: '1', odds: '2.55'},
+             { id: '6', match: 'LL-LL', bet: 'X', odds: '5.55'},
+             { id: '7', match: 'PP-PP', bet: '2', odds: '3.11'}
+            ]
+        }
+        io.emit('refresh_odds', bet)
+        /*   odds.getRecentBet( function(bets) {
             io.emit('refresh_odds', bets)
             console.log('UPDATE FEED! (FROM SERVER)')
-          })
+          }) */
         
           break;
         case 'new_results':
