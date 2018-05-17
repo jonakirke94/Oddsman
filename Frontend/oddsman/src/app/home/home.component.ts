@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { StandingComponent } from "../standing/standing.component";
 import { BetFeedComponent} from '../bet-feed/bet-feed.component';
+import { ResultFeedComponent} from '../result-feed/result-feed.component';
 import { SocketService, Action } from '../services/socket.service';
 
 

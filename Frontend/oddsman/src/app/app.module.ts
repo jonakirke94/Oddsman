@@ -45,6 +45,7 @@ import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-reque
 import * as io from 'socket.io-client';
 import { SocketService } from './services/socket.service';
 import { BetFeedComponent } from './bet-feed/bet-feed.component';
+import { ResultFeedComponent } from './result-feed/result-feed.component';
 
 
 @NgModule({
@@ -70,7 +71,8 @@ import { BetFeedComponent } from './bet-feed/bet-feed.component';
     AdminHistoryComponent,
     UserHistoryComponentComponent,
     EditMatchComponent,
-    BetFeedComponent
+    BetFeedComponent,
+    ResultFeedComponent
 
   ],
   imports: [
