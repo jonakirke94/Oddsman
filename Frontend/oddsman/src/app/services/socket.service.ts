@@ -30,7 +30,7 @@ export class SocketService {
 
     public onOddsMessage(): Observable<string> {
         return new Observable<string>(observer => {
-            this.socket.on('refresh_odds', (data:string) => {
+            this.socket.on('refresh_odds', (data) => {
               console.log(data)
               observer.next(data)
             });
@@ -60,7 +60,6 @@ export class SocketService {
 export enum Action {
   ODDS = 'new_odds',
   RESULTS = 'new_results'
-
 }
  
 export enum Event {

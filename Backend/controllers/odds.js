@@ -11,12 +11,14 @@ const Tournament_User = seq.users_tournaments;
 const helper = require('../controllers/helper');
 const User = seq.users;
 const {
-    Op
+    Op,
+    col,
+    where
 } = require('sequelize')
 const scraper = require('../services/scraper');
 
 
-let today = moment().add(2, 'd').add(12, 'h'); // used for faking a valid bet day
+let today = moment()/* .add(2, 'd').add(12, 'h'); */ // used for faking a valid bet day
 
 exports.sendOdds = (req, res, next) => {
     const tourId = req.params.tourid;
@@ -128,29 +130,91 @@ function getOptionNumber(op) {
     }
 }
 
-/* function saveOdds(userId, tourId, odds, callback) {
-    odds.forEach(odds => {
-        let matchId = odds.matchId;
-        let option = odds.option;
-        scraper.getMatch(matchId, null, (m) => {
-            if (!m) {
-                m = {
-                    matchId: m.Id,
-                    userId: userId,
-                    tournamentId: tourid,
-                    missing: true
-                }
+exports.get_recent_bets_http = (req, res, next) => {
+    try {
+        module.exports.get_recent_bets(9, (results) => {
+            return msg.show200(req, res, "Success", results);
+        })
+    } catch (err) {
+        return msg.show500(req, res, err);
+    }
+}
+exports.get_recent_bets = (limit = 3, callback) => {
+    Bet.findAll({
+        limit: limit,
+        order: [
+            ['createdAt', 'DESC']
+        ],
+        where: {
+            week: moment().isoWeek()
+        },
+        attributes: ['option', 'createdAt'],
+        include: [{
+            model: User,
+            attributes: ['tag'],
+            where: {
+                id: col('bets.userId')
             }
-            Match.create(m)
-                .then(match => {
-                    Bet.create({
-                        matchId: match.id,
-                        userId: userId,
-                        tournamentId: tourid
-                    }).then(bet => {
-                        // TODO: UPDATE FEED & ALERT USER?
-                    });
-                });
-        });
+        }, {
+            model: Match,
+            attributes: ['id', 'matchId', 'matchName', 'option1Odds', 'option2Odds', 'option3Odds'],
+            where: {
+                id: col('bets.matchId')
+            }
+        }]
+    }).then((bets) => {
+        if (bets) {
+            let results = [];
+            bets.forEach((bet, index, bets) => {
+                try {
+                    const b = bet.dataValues;
+                    const u = b.user.dataValues;
+                    const m = b.match.dataValues;
+
+                    const odds = {
+                        "1": m.option1Odds,
+                        "X": m.option2Odds,
+                        "2": m.option3Odds
+                    }
+
+                    const res = {
+                        time: b.createdAt,
+                        tag: u.tag,
+                        matches: [{
+                            id: m.matchId,
+                            match: m.matchName || "-",
+                            bet: b.option,
+                            odds: odds[b.option] || "-"
+                        }]
+                    }
+
+                    let exists = function (e) {
+                        return e.tag === res.tag;
+                    }
+
+                    if (results.some(exists)) {
+                        for (let j = 0; j < results.length; j++) {
+                            const r = results[j];
+                            if (r.tag === res.tag) {
+                                r.matches = r.matches.concat(res.matches);
+                            }
+                        }
+                    } else {
+                        results.push(res);
+                    }
+
+                } catch (error) {
+                    console.log("failed parsing bet");
+                }
+
+                if (index === bets.length - 1) {
+                    callback(results);
+                }
+            })
+        } else {
+            callback(results);
+        }
+    }).catch(err => {
+        console.log(err);
     });
-} */
+}

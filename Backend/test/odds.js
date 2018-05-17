@@ -9,10 +9,11 @@ const moment = require("moment");
 
 const tokenController = require("../controllers/token");
 const userController = require("../controllers/user");
+const oddsController = require("../controllers/odds");
 const seq = require('../models');
 const Bet = seq.bets;
 const Tournament = seq.tournaments;
-
+const Match = seq.matches;
 const helper = require('../test/helper');
 
 chai.use(chaiHttp);
@@ -40,46 +41,61 @@ describe('ODDS', () => {
                 .post("/tournament") //ENDPOINT[1]
                 .send(tour)
                 .end((err, res) => {
-                    Tournament.create({
+                    Tournament.bulkCreate([{
                         Name: "Season " + moment().isoWeek(),
                         Start: moment().subtract(1, 'M'),
                         End: moment().add(1, 'M')
-                    }).then(() => {
-                        Tournament.create({
-                            Name: "Season " + moment().isoWeek() + 1,
-                            Start: moment().subtract(1, 'M'),
-                            End: moment().add(1, 'M')
-                        }).then(() => {
-                            Tournament.create({
-                                Name: "Season " + moment().isoWeek() + 2,
-                                Start: moment().subtract(1, 'M'),
-                                End: moment().add(1, 'M')
-                            }).then(() => {
-                                chai.request(server)
-                                    .post("/user/signup") //ENDPOINT[2]
-                                    .send(user)
-                                    .end((err, res) => {
-                                        Bet.create({
-                                            tournamentId: 1,
-                                            userId: 1,
-                                            Week: moment().isoWeek(),
-                                            Option: "X",
-                                            OptionNo: 2
-                                        }).then(() => {
-                                            Bet.create({
-                                                tournamentId: 2,
-                                                userId: 1,
-                                                Week: moment().isoWeek(),
-                                                Option: "X",
-                                                OptionNo: 2
-                                            }).then(() => {
-                                                done();
-                                            });
-                                        });
+                    }, {
+                        Name: "Season " + moment().isoWeek() + 1,
+                        Start: moment().subtract(1, 'M'),
+                        End: moment().add(1, 'M')
+                    }, {
+                        Name: "Season " + moment().isoWeek() + 2,
+                        Start: moment().subtract(1, 'M'),
+                        End: moment().add(1, 'M')
+                    }]).then(() => {
+                        chai.request(server)
+                            .post("/user/signup") //ENDPOINT[2]
+                            .send(user)
+                            .end((err, res) => {
+                                Match.create({
+                                    Id: 1,
+                                    MatchId: 256,
+                                    Option1: "vinder",
+                                    Option2: "uafgjort",
+                                    Option3: "taber",
+                                    Option1Odds: 3.14,
+                                    Option2Odds: 8.34,
+                                    Option3Odds: 3.45
+                                }).then(() => {
+                                    Bet.bulkCreate([{
+                                        tournamentId: 1,
+                                        userId: 1,
+                                        Week: moment().isoWeek(),
+                                        Option: "X",
+                                        OptionNo: 2,
+                                        matchId: 1
+                                    }, {
+                                        tournamentId: 2,
+                                        userId: 1,
+                                        Week: moment().isoWeek(),
+                                        Option: "X",
+                                        OptionNo: 2,
+                                        matchId: 1
+                                    }, {
+                                        tournamentId: 2,
+                                        userId: 1,
+                                        Week: moment().isoWeek(),
+                                        Option: "2",
+                                        OptionNo: 3,
+                                        matchId: 1
+                                    }]).then(() => {
+                                        done();
                                     });
+                                });
                             });
-                        });
                     });
+
                 });
         })
     });
@@ -179,9 +195,34 @@ describe('ODDS', () => {
                     } else {
                         res.should.have.status(409);
                     }
-
                     done();
                 });
+        });
+    });
+    describe("/GET Bets", () => {
+        it("it get the most 3 recent bets", done => {
+            chai
+                .request(server)
+                .get("/odds/recent")
+                .end((err, res) => {
+                    const data = JSON.parse(res.text).data;
+                    res.should.have.status(200);
+                    data.should.be.a('array');
+                    data.length.should.be.eql(1);
+                    data[0].matches.length.should.be.eql(3);
+                    done();
+                })
+
+        });
+
+        it("it get the most recent bets", done => {
+            oddsController.get_recent_bets(null, (results) => {
+                results.should.be.a('array');
+                results.length.should.be.eql(1);
+                results[0].matches.length.should.be.eql(3);
+                done();
+            })
+
         });
     });
 });
