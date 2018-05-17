@@ -23,6 +23,17 @@ export class OddsService {
     .map(res => res);
   }
 
+  getNewestBets() {
+    return this.http
+      .get(`http://localhost:3000/odds/recent`)
+      .map(res => {
+        console.log(res)     
+      })
+  }
+  
+
+ 
+
   getBets(tourid) {
     return this.http
       .get(`http://localhost:3000/user/bets/${tourid}`)
