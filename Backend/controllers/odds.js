@@ -145,7 +145,10 @@ exports.get_recent_bets = (limit = 3, callback) => {
         order: [
             ['createdAt', 'DESC']
         ],
-        attributes: ['option'],
+        where: {
+            week: moment().isoWeek()
+        },
+        attributes: ['option', 'createdAt'],
         include: [{
             model: User,
             attributes: ['tag'],
@@ -178,11 +181,10 @@ exports.get_recent_bets = (limit = 3, callback) => {
                         time: b.createdAt,
                         tag: u.tag,
                         matches: [{
-                            $id: m.id,
                             id: m.matchId,
                             match: m.matchName || "-",
                             bet: b.option,
-                            odds: odds[b.option] || 0
+                            odds: odds[b.option] || "-"
                         }]
                     }
 
