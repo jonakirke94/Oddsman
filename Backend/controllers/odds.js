@@ -105,11 +105,6 @@ exports.sendOdds = (req, res, next) => {
         });
 }
 
-exports.getRecentBet = (callback) => {
-    bets = {test: 'X', testYt: 'Y'}
-    callback(bets);
-}  
-
 
 function isValidWeekDays() {
     // torsdag kl 12 - lørdag kl 12
@@ -202,7 +197,7 @@ exports.get_recent_bets = (limit = 1, callback) => {
                         callback(results);
                     }
                 } catch (error) {
-                    continue;
+                    console.log("failed parsing bet");
                 }
             })
         } else {
