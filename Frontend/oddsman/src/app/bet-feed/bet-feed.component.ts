@@ -15,7 +15,6 @@ import { Subscription } from 'rxjs/Subscription';
 export class BetFeedComponent implements OnInit {
 
   bets = []
-  ioConnection: any;
   tempBet;
 
   bets$: Subscription
@@ -45,21 +44,15 @@ export class BetFeedComponent implements OnInit {
       this._odds.changeBet(this.bets);
 
     })
-    //this.seedFakeBets();
   }
 
   private addBet(bet) :void {
-    if(!bet) {
-      bet = this.tempBet;
-    }
-
     this.bets.push(bet)
- 
-      this._odds.changeBet(this.bets);
+    this._odds.changeBet(this.bets);
   }
 
   private removeBet() :void {
-    this.tempBet = this.bets.shift();
+    this.bets.shift();
     this._odds.changeBet(this.bets);
   }
 
@@ -80,7 +73,7 @@ export class BetFeedComponent implements OnInit {
       });
   }
 
-  seedFakeBets() : void {
+  /* seedFakeBets() : void {
     this.bets.push({
       time: '18:17', tag: 'AA',
        matches: [
@@ -111,5 +104,5 @@ export class BetFeedComponent implements OnInit {
     this._odds.changeBet(this.bets);
 
   }
-
+ */
 }
