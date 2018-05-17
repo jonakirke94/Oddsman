@@ -131,7 +131,7 @@ function getOptionNumber(op) {
 }
 
 exports.get_recent_bets_http = (req, res, next) => {
-    get_recent_bets(9, (results) => {
+    module.exports.get_recent_bets(9, (results) => {
             return msg.show200(req, res, "Success", results);
         })
         .catch(err => {
