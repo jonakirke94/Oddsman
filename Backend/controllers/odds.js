@@ -103,6 +103,11 @@ exports.sendOdds = (req, res, next) => {
         });
 }
 
+exports.getRecentBet = (callback) => {
+    bets = {test: 'X', testYt: 'Y'}
+    callback(bets);
+}  
+
 
 function isValidWeekDays() {
     // torsdag kl 12 - lørdag kl 12
