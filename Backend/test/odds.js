@@ -82,6 +82,13 @@ describe('ODDS', () => {
                                         Option: "X",
                                         OptionNo: 2,
                                         matchId: 1
+                                    }, {
+                                        tournamentId: 2,
+                                        userId: 1,
+                                        Week: moment().isoWeek(),
+                                        Option: "2",
+                                        OptionNo: 3,
+                                        matchId: 1
                                     }]).then(() => {
                                         done();
                                     });
@@ -188,15 +195,31 @@ describe('ODDS', () => {
                     } else {
                         res.should.have.status(409);
                     }
-
                     done();
                 });
         });
+    });
+    describe("/GET Bets", () => {
+        it("it get the most 3 recent bets", done => {
+            chai
+                .request(server)
+                .get("/odds/recent")
+                .end((err, res) => {
+                    const data = JSON.parse(res.text).data;
+                    res.should.have.status(200);
+                    data.should.be.a('array');
+                    data.length.should.be.eql(1);
+                    data[0].matches.length.should.be.eql(3);
+                    done();
+                })
 
+        });
 
-        it("it get the 3 most recent bets", done => {
+        it("it get the most recent bets", done => {
             oddsController.get_recent_bets(null, (results) => {
-                console.log(JSON.stringify(results));
+                results.should.be.a('array');
+                results.length.should.be.eql(1);
+                results[0].matches.length.should.be.eql(3);
                 done();
             })
 

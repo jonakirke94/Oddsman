@@ -131,14 +131,15 @@ function getOptionNumber(op) {
 }
 
 exports.get_recent_bets_http = (req, res, next) => {
-    module.exports.get_recent_bets(9, (results) => {
+    try {
+        module.exports.get_recent_bets(9, (results) => {
             return msg.show200(req, res, "Success", results);
         })
-        .catch(err => {
-            return msg.show500(req, res, err);
-        });
+    } catch (err) {
+        return msg.show500(req, res, err);
+    }
 }
-exports.get_recent_bets = (limit = 1, callback) => {
+exports.get_recent_bets = (limit = 3, callback) => {
     Bet.findAll({
         limit: limit,
         order: [
@@ -161,7 +162,6 @@ exports.get_recent_bets = (limit = 1, callback) => {
     }).then((bets) => {
         if (bets) {
             let results = [];
-            console.log(JSON.stringify(bets));
             bets.forEach((bet, index, bets) => {
                 try {
                     const b = bet.dataValues;
@@ -200,15 +200,17 @@ exports.get_recent_bets = (limit = 1, callback) => {
                     } else {
                         results.push(res);
                     }
-                    if (index === bets.length - 1) {
-                        callback(results);
-                    }
+
                 } catch (error) {
                     console.log("failed parsing bet");
                 }
+
+                if (index === bets.length - 1) {
+                    callback(results);
+                }
             })
         } else {
-            callback([]);
+            callback(results);
         }
     }).catch(err => {
         console.log(err);
