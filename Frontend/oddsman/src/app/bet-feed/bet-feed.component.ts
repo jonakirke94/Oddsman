@@ -16,6 +16,7 @@ export class BetFeedComponent implements OnInit {
 
   bets = []
   ioConnection: any;
+  tempBet;
 
   bets$: Subscription
   newBets$: Subscription
@@ -45,28 +46,25 @@ export class BetFeedComponent implements OnInit {
     this.seedFakeBets();
   }
 
-  private addBet() :void {
-    this.bets.push({
-      time: '18:17', tag: 'NN',
-       matches: [
-         { id: '999', match: 'XXX - XXX', bet: '1', odds: '2.55'},
-         { id: '999', match: 'XXX-YYY', bet: 'X', odds: '5.55'},
-         { id: '888', match: 'ZZZ-VVVV', bet: '2', odds: '3.11'}
-        ]
-    })
+  private addBet(bet) :void {
+    if(!bet) {
+      bet = this.tempBet;
+    }
+
+    this.bets.push(bet)
  
       this._odds.changeBet(this.bets);
   }
 
   private removeBet() :void {
-    this.bets.shift();
+    this.tempBet = this.bets.shift();
     this._odds.changeBet(this.bets);
   }
 
   private pushBet(bet) {  
     this.removeBet(); 
     setTimeout(() => {
-      this.addBet();
+      this.addBet(bet);
     }, 500);
 
   }
