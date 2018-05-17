@@ -52,7 +52,9 @@ export class BetFeedComponent implements OnInit {
   }
 
   private removeBet() :void {
-    this.bets.shift();
+    if(this.bets.length >= 3){
+      this.bets.shift();
+    }
     this._odds.changeBet(this.bets);
   }
 

@@ -35,7 +35,8 @@ exports.sendOdds = (req, res, next) => {
                 model: Bet,
                 attributes: ['userId', 'tournamentId', 'week'],
                 where: {
-                    Week: today.isoWeek()
+                    Week: today.isoWeek(),
+                    userId: userId
                 },
                 required: false
             }
