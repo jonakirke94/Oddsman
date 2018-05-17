@@ -61,7 +61,6 @@ export class AdminRequestsComponent implements OnInit {
       this.requests$ = this._tourney
         .getTournamentRequests(id)
         .subscribe(res => {
-          console.log(res)
           this.tournamentInfo = res;
           this.requests = res.requests;
           this.loading = false;
@@ -70,18 +69,10 @@ export class AdminRequestsComponent implements OnInit {
   }
 
   refresh() {
-    console.log('TOURID ' + this.tourId);
-    console.log('selecetdTour.CodE: ' + this.selectedTour.code)
     const id = this.selectedTour.code ? this.selectedTour.code : this.tourId
-
-    console.log('ID:' + id)
     this.getRequests(id);
   }
 
-  /*   refreshRequests(id) {
-    console.log('id:' + id)
-    this.tournamentId = this.selectedTour.code;
-  } */
 
   popoulateDropdown() {
     this.tournaments$ = this._tourney.getAll().subscribe(res => {

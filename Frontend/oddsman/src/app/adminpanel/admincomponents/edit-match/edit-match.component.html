@@ -1,87 +1,3 @@
-<!-- <p-table [value]="matches">
-  <ng-template pTemplate="header">
-      <tr>
-          <th>Kamp nr.</th>
-          <th>Kamp</th>
-          <th>Start</th>
-          <th>1</th>
-          <th>X</th>
-          <th>2</th>
-
-         
-      </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-rowData>
-      <tr>
-          <td pEditableColumn>
-              <p-cellEditor>
-                  <ng-template pTemplate="input">
-                      <input type="text" [(ngModel)]="rowData.MatchId">
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                      {{rowData.MatchId}}
-                  </ng-template>
-              </p-cellEditor>
-          </td>
-          <td pEditableColumn>
-              <p-cellEditor>
-                  <ng-template pTemplate="input">
-                      <input type="text" [(ngModel)]="rowData.MatchName">
-                  </ng-template>
-                  <ng-template pTemplate="output">
-                      {{rowData.MatchName}}
-                  </ng-template>
-              </p-cellEditor>
-          </td>
-          <td pEditableColumn>
-            <p-cellEditor>
-                <ng-template pTemplate="input">
-                    <input type="text" [(ngModel)]="rowData.MatchDate">
-                </ng-template>
-                <ng-template pTemplate="output">
-                    {{rowData.MatchDate}}
-                </ng-template>
-            </p-cellEditor>
-        </td>
-        <td pEditableColumn>
-          <p-cellEditor>
-              <ng-template pTemplate="input">
-                  <input type="text" [(ngModel)]="rowData.Odds1Option">
-              </ng-template>
-              <ng-template pTemplate="output">
-                  {{rowData.Odds1Option}}
-              </ng-template>
-          </p-cellEditor>
-      </td>
-      <td pEditableColumn>
-        <p-cellEditor>
-            <ng-template pTemplate="input">
-                <input type="text" [(ngModel)]="rowData.Odds2Option">
-            </ng-template>
-            <ng-template pTemplate="output">
-                {{rowData.Odds2Option}}
-            </ng-template>
-        </p-cellEditor>
-    </td>
-    <td pEditableColumn>
-      <p-cellEditor>
-          <ng-template pTemplate="input">
-              <input type="text" [(ngModel)]="rowData.Odds3Option">
-          </ng-template>
-          <ng-template pTemplate="output">
-              {{rowData.Odds3Option}}
-          </ng-template>
-      </p-cellEditor>
-  </td>
-  <td>
-        <ng-template>
-            <button>Gem</button>
-        </ng-template>
-</td>
-      </tr>
-  </ng-template>
-</p-table> -->
-
 
 <p-table [columns]="cols" [value]="matches" selectionMode="single" [(selection)]="selectedMatch" (onRowSelect)="onRowSelect($event)"
   [paginator]="true" [rows]="15">
@@ -97,6 +13,7 @@
       <td *ngFor="let col of columns">
         <span *ngIf="isMatchDate(col)">{{rowData[col.field] | date: "kl hh:mm - dd/MM" }}</span>
         <span *ngIf="!isMatchDate(col)">{{rowData[col.field]}}</span>
+
       </td>
     </tr>
   </ng-template>
@@ -154,22 +71,7 @@
         <input pInputText type="number" id="option3Odds" [(ngModel)]="match.Option3Odds" />
       </div>
     </div>
-    <!--       <div class="ui-g-12">
-          <div class="ui-g-4">
-              <label for="brand">Brand</label>
-          </div>
-          <div class="ui-g-8">
-              <input pInputText id="brand" [(ngModel)]="car.brand" />
-          </div>
-      </div>
-      <div class="ui-g-12">
-          <div class="ui-g-4">
-              <label for="color">Color</label>
-          </div>
-          <div class="ui-g-8">
-              <input pInputText id="color" [(ngModel)]="car.color" />
-          </div>
-      </div> -->
+
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-helper-clearfix">
@@ -177,3 +79,5 @@
     </div>
   </p-footer>
 </p-dialog>
+
+<p-growl [value]="msgs"></p-growl>

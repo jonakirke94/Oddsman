@@ -13,6 +13,7 @@ const seq = require('../models');
 const Bet = seq.bets;
 const Tournament = seq.tournaments;
 const Match = seq.matches;
+const Result = seq.results;
 
 const helper = require('../test/helper');
 
@@ -26,7 +27,7 @@ const tokens = tokenController.generateTokens({
 
 /* seq.sequelize.sync(); */
 
-describe('MATCHES', () => {
+describe('MATCHES/RESULTS', () => {
     beforeEach(done => {
         helper.clean(function (result) {
             let matchId = null;
@@ -42,67 +43,73 @@ describe('MATCHES', () => {
                 .post("/tournament") //ENDPOINT[1]
                 .send(tour)
                 .end((err, res) => {
-                    Tournament.create({
+                    Tournament.bulkCreate([{
                         Name: "Season " + moment().isoWeek(),
                         Start: moment().subtract(1, 'M'),
                         End: moment().add(1, 'M')
-                    }).then(() => {
-                        Tournament.create({
-                            Name: "Season 17",
-                            Start: moment().subtract(5, 'M'),
-                            End: moment().subtract(2, 'M')
-                        }).then(() => {
-                            chai.request(server)
-                                .post("/user/signup") //ENDPOINT[2]
-                                .send(user)
-                                .end((err, res) => {
-                                    Match.create({
-                                            MatchId: 1,
-                                            Missing: true
-                                        })
-                                        .then((match) => {
-                                            matchId = match.Id;
-                                            Bet.create({
-                                                tournamentId: 1,
+                    }, {
+                        Name: "Season 17",
+                        Start: moment().subtract(5, 'M'),
+                        End: moment().subtract(2, 'M')
+                    }]).then(() => {
+                        chai.request(server)
+                            .post("/user/signup") //ENDPOINT[2]
+                            .send(user)
+                            .end((err, res) => {
+                                Match.create({
+                                        MatchId: 1,
+                                        Missing: true
+                                    })
+                                    .then((match) => {
+                                        matchId = match.Id;
+                                        Bet.create({
+                                            tournamentId: 1,
+                                            userId: 1,
+                                            Week: moment().isoWeek(),
+                                            Option: "1",
+                                            OptionNo: 1,
+                                            matchId: matchId
+                                        }).then(() => {
+                                            Bet.bulkCreate([{
+                                                tournamentId: 2,
                                                 userId: 1,
                                                 Week: moment().isoWeek(),
-                                                Option: "1",
-                                                OptionNo: 1,
+                                                Option: "X",
+                                                OptionNo: 2,
                                                 matchId: matchId
-                                            }).then(() => {
-                                                Bet.create({
-                                                    tournamentId: 2,
-                                                    userId: 1,
-                                                    Week: moment().isoWeek(),
-                                                    Option: "X",
-                                                    OptionNo: 2,
-                                                    matchId: matchId
-                                                }).then(() => {
-                                                    Bet.create({
-                                                        tournamentId: 2,
-                                                        userId: 1,
-                                                        Week: moment().isoWeek(),
-                                                        Option: "X",
-                                                        OptionNo: 2,
-                                                        matchId: matchId
-                                                    }).then(() => {
-                                                        Bet.create({
-                                                            tournamentId: 2,
-                                                            userId: 1,
-                                                            Week: moment().isoWeek(),
-                                                            Option: "3",
-                                                            OptionNo: 3,
-                                                            matchId: matchId
-                                                        }).then(() => {
-                                                            done();
-                                                        });
-                                                    });
-                                                });
+                                            }, {
+                                                tournamentId: 2,
+                                                userId: 1,
+                                                Week: moment().isoWeek(),
+                                                Option: "X",
+                                                OptionNo: 2,
+                                                matchId: matchId
+                                            }, {
+                                                tournamentId: 2,
+                                                userId: 1,
+                                                Week: moment().isoWeek(),
+                                                Option: "3",
+                                                OptionNo: 3,
+                                                matchId: matchId
+                                            }]).then(() => {
 
+                                                Result.bulkCreate([{
+                                                        Id: 1,
+                                                        EndResult: "2 - 0",
+                                                        CorrectBet: "1",
+                                                        matchId: matchId,
+                                                        Missing: true
+                                                    }])
+                                                    .then(() => {
+                                                        done();
+                                                    });
                                             });
+
                                         });
-                                });
-                        });
+
+                                    });
+                            });
+
                     });
                 });
         })
@@ -143,6 +150,39 @@ describe('MATCHES', () => {
                     let data = JSON.parse(res.text).data;
                     res.should.have.status(200);
                     data.should.be.a('array');
+                    done();
+                });
+        });
+    });
+
+    describe("/PATCH Result", () => {
+        it("it should update a Result", done => {
+            chai
+                .request(server)
+                .patch("/match/result/1")
+                .send({
+                    correctBet: "1",
+                    endResult: "2 - 0"
+                })
+                .end((err, res) => {
+                    let data = JSON.parse(res.text).data;
+                    res.should.have.status(200);
+                    data.CorrectBet.should.be.eql("1");
+                    data.EndResult.should.be.eql("2 - 0");
+                    done();
+                });
+        });
+    });
+    describe("/GET Results", () => {
+        it("it should get all missing Results", done => {
+            chai
+                .request(server)
+                .get("/match/result/missing")
+                .end((err, res) => {
+                    let data = JSON.parse(res.text).data;
+                    res.should.have.status(200);
+                    data.should.be.a('array');
+                    data.length.should.eql(1);
                     done();
                 });
         });

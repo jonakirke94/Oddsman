@@ -19,6 +19,7 @@ import { UserHistoryComponentComponent } from './dashboard/usercomponents/user-h
 import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-requests/admin-requests.component';
 import { AdminHistoryComponent } from './adminpanel/admincomponents/history/history.component';
 import { EditMatchComponent } from './adminpanel/admincomponents/edit-match/edit-match.component';
+import { ResultsComponent } from './adminpanel/admincomponents/results/results.component';
 
 
 const routes: Routes = [
@@ -48,6 +49,7 @@ const routes: Routes = [
       { path: 'requests', component: AdminRequestsComponent },
       { path: 'requests/:id', component: AdminRequestsComponent },
       { path: 'kampe', component: EditMatchComponent },
+      { path: 'resultater', component: ResultsComponent },
     ]
   },
 ];
