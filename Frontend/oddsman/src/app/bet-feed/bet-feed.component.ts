@@ -39,11 +39,13 @@ export class BetFeedComponent implements OnInit {
     this._socket.disconnectSocket();
   }
 
-  private loadBetFeed() :void {
+  private loadBetFeed() {
     this.newBets$ = this._odds.getNewestBets().subscribe(res => {
-      console.log(res)
+      this.bets = res
+      this._odds.changeBet(this.bets);
+
     })
-    this.seedFakeBets();
+    //this.seedFakeBets();
   }
 
   private addBet(bet) :void {

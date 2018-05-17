@@ -26,9 +26,8 @@ export class OddsService {
   getNewestBets() {
     return this.http
       .get(`http://localhost:3000/odds/recent`)
-      .map(res => {
-        console.log(res)     
-      })
+      .map(res =>  res['data']
+      )
   }
   
 

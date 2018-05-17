@@ -17,19 +17,12 @@ server.listen(port, function () {
 
      switch (data) {
         case 'new_odds':
-        const bet = {
-          time: '00:00', tag: 'OO',
-           matches: [
-             { id: '5', match: 'OO-OO', bet: '1', odds: '2.55'},
-             { id: '6', match: 'LL-LL', bet: 'X', odds: '5.55'},
-             { id: '7', match: 'PP-PP', bet: '2', odds: '3.11'}
-            ]
-        }
-        io.emit('refresh_odds', bet)
-        /*   odds.getRecentBet( function(bets) {
-            io.emit('refresh_odds', bets)
+          odds.get_recent_bets(null, function(bets) {
+            if(bets) {
+              io.emit('refresh_odds', bets[0])
+            }
             console.log('UPDATE FEED! (FROM SERVER)')
-          }) */
+          }) 
         
           break;
         case 'new_results':
