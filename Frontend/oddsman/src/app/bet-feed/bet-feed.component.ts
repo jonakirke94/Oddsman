@@ -3,6 +3,7 @@ import { SocketService, Event, Action } from '../services/socket.service';
 import { trigger,style,transition,animate,keyframes,query,stagger} from '@angular/animations'; 
 import { OddsService } from '../services/odds.service';
 import { feedAnimation } from "../animations";
+import { Subscription } from 'rxjs/Subscription';
 
 
 @Component({
@@ -16,28 +17,35 @@ export class BetFeedComponent implements OnInit {
   bets = []
   ioConnection: any;
 
+  bets$: Subscription
+  newBets$: Subscription
+  socketMsg$: Subscription
 
   constructor(private _socket : SocketService, private _odds : OddsService) {
   }
 
   ngOnInit() {
     this.loadBetFeed();
-    this._odds.bet.subscribe(res => this.bets = res);
+    this.bets$ = this._odds.bet.subscribe(res => this.bets = res);
     this._odds.changeBet(this.bets);
-
-
-  this.initIoConnection();
+    this.initIoConnection();
   }
 
   ngOnDestroy() {
+    this.bets$.unsubscribe();
+    this.newBets$.unsubscribe();
+    this.socketMsg$.unsubscribe();
     this._socket.disconnectSocket();
   }
 
-  private loadBetFeed() : void {
+  private loadBetFeed() :void {
+    this.newBets$ = this._odds.getNewestBets().subscribe(res => {
+      console.log(res)
+    })
     this.seedFakeBets();
   }
 
-  addBet() {
+  private addBet() :void {
     this.bets.push({
       time: '18:17', tag: 'NN',
        matches: [
@@ -50,16 +58,13 @@ export class BetFeedComponent implements OnInit {
       this._odds.changeBet(this.bets);
   }
 
-  removeBet() {
+  private removeBet() :void {
     this.bets.shift();
     this._odds.changeBet(this.bets);
   }
 
-  pushBet(bet) {
-    
-      this.removeBet(); 
-
-
+  private pushBet(bet) {  
+    this.removeBet(); 
     setTimeout(() => {
       this.addBet();
     }, 500);
@@ -69,13 +74,10 @@ export class BetFeedComponent implements OnInit {
   private initIoConnection(): void {
     this._socket.initSocket();
 
-
-    this.ioConnection = this._socket.onOddsMessage()
+    this.socketMsg$ = this._socket.onOddsMessage()
       .subscribe((bet) => {
-        console.log(bet)
         this.pushBet(bet)
       });
-
   }
 
   seedFakeBets() : void {
