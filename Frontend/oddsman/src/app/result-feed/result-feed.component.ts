@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { feedAnimation } from "../animations";
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { feedAnimation } from '../animations';
+import { SocketService } from '../services/socket.service';
+import { MatchService } from '../services/match.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'result-feed',
@@ -7,25 +10,32 @@ import { feedAnimation } from "../animations";
   styleUrls: ['./result-feed.component.sass'],
   animations: [feedAnimation]
 })
-export class ResultFeedComponent implements OnInit {
+export class ResultFeedComponent implements OnInit, OnDestroy {
 
   results = [];
 
-  constructor() { }
+  results$: Subscription;
 
-
+  constructor(private _match: MatchService) {
+  }
 
   ngOnInit() {
     this.loadBetFeed();
   }
 
-
-  private loadBetFeed() {
-    this.seedFakeBets();
-
+  ngOnDestroy() {
+    if (this.results$) { this.results$.unsubscribe(); }
   }
 
-  seedFakeBets(): void {
+  private loadBetFeed() {
+    /* this.seedFakeBets(); */
+    this.results$ = this._match.getRecentResults().subscribe(res => {
+      this.results = res;
+      this._match.changeRes(this.results);
+    });
+  }
+
+  /* seedFakeBets(): void {
     this.results.push({
       time: '18:17', tag: 'AA',
       matches: [
@@ -52,10 +62,5 @@ export class ResultFeedComponent implements OnInit {
         { id: '64', match: 'ZZZ-VVVV', bet: '2', odds: '3.11' }
       ]
     });
-
-
-
-  }
-
-
+}*/
 }
