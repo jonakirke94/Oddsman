@@ -1,15 +1,23 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 
 @Injectable()
 export class MatchService {
 
+  private results = new BehaviorSubject<any>([]);
+  result = this.results.asObservable();
+
+  changeRes(result) {
+    this.results.next(result);
+  }
+
   constructor(private http: HttpClient) { }
 
   getMissingMatches() {
     return this.http
-      .get("http://localhost:3000/match/missing")
+      .get('http://localhost:3000/match/missing')
       .map(res => <Match[]>res['data'])
       .shareReplay();
   }
@@ -17,6 +25,14 @@ export class MatchService {
   updateMatch(id, match) {
     return this.http.patch(`http://localhost:3000/match/${id}`, match).map(res => res);
   }
+
+  getRecentResults() {
+    return this.http
+      .get('http://localhost:3000/match/results')
+      .map(res => res['data']);
+  }
+
+
 
 }
 
