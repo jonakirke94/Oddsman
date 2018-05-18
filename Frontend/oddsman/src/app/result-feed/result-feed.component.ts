@@ -20,7 +20,8 @@ export class ResultFeedComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.loadBetFeed();
+    setInterval(this.loadBetFeed(), 500);
+
   }
 
   ngOnDestroy() {
