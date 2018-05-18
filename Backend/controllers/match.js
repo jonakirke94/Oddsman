@@ -70,6 +70,25 @@ exports.get_missing_matches = (req, res, next) => {
     })
 }
 
+exports.get_results = (req, res, next) => {
+    const limit = 5;
+
+    Match.findAll({
+        limit: limit,
+        order: [
+            ['updatedAt', 'DESC']
+        ],
+    }).then(matches => {
+
+        console.log(matches)
+        return msg.show200(req, res, "Success", matches);
+
+    }).catch(err => {
+        console.log(err)
+        return msg.show500(req, res, err);
+    })
+}
+
 
 /* HELPERS */
 
