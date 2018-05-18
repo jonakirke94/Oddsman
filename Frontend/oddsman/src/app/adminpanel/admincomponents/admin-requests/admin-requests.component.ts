@@ -87,7 +87,7 @@ export class AdminRequestsComponent implements OnInit {
   }
 
   acceptRequest(request: Request) {
-    const tourId = this.tourId;
+    const tourId = this.selectedTour.code ? this.selectedTour.code : this.tourId
     const userId = request.userId;
 
     this.accepted$ = this._tourney
@@ -99,12 +99,12 @@ export class AdminRequestsComponent implements OnInit {
           summary: "Godkendte anmodning",
           detail: "Deltager: " + request.userName
         });
-        this.getRequests(this.tourId);
+        this.getRequests(tourId);
       });
   }
 
   declineRequest(request: Request) {
-    const tourId = this.tourId;
+    const tourId = this.selectedTour.code ? this.selectedTour.code : this.tourId
     const userId = request.userId;
 
     this.declined$ = this._tourney
@@ -116,7 +116,7 @@ export class AdminRequestsComponent implements OnInit {
           summary: "Afviste anmodning",
           detail: "Deltager: " + request.userName
         });
-        this.getRequests(this.tourId);
+        this.getRequests(tourId);
       });
   }
 }

@@ -331,7 +331,7 @@ function accept_request(req, res, next) {
 
           //add user to tournament
           Tournament.findById(tourId).then((tournament) => {
-              tournament.setUsers(userId).then(() => {
+              tournament.addUser(userId).then(() => {
                 return msg.show200(req, res, "Success");
               }).catch(function (err) {
                 if (err.name === 'SequelizeForeignKeyConstraintError') {
