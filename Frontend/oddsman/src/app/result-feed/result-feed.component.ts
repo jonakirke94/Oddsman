@@ -3,6 +3,10 @@ import { feedAnimation } from '../animations';
 import { SocketService } from '../services/socket.service';
 import { MatchService } from '../services/match.service';
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/Rx';
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'result-feed',
@@ -15,54 +19,40 @@ export class ResultFeedComponent implements OnInit, OnDestroy {
   results = [];
 
   results$: Subscription;
+  polling$: Subscription;
+
 
   constructor(private _match: MatchService) {
   }
 
   ngOnInit() {
-    setInterval(this.loadBetFeed(), 500);
-
+    if (this.isWithinMatchDays()) {
+      this.resultPolling();
+    }
   }
 
   ngOnDestroy() {
     if (this.results$) { this.results$.unsubscribe(); }
+    if (this.polling$) { this.polling$.unsubscribe(); }
   }
 
-  private loadBetFeed() {
-    /* this.seedFakeBets(); */
+  private resultPolling() {
+    //300000 = 5m
+
+    this.polling$ = Observable.interval(300000).startWith(0).subscribe(res => this.getRecentResults());
+  }
+
+  private getRecentResults() {
     this.results$ = this._match.getRecentResults().subscribe(res => {
-      this.results = res;
-      console.log(res);
+    this.results = res;
       this._match.changeRes(this.results);
-    });
+    }
+    );
   }
 
-  /* seedFakeBets(): void {
-    this.results.push({
-      time: '18:17', tag: 'AA',
-      matches: [
-        { id: '5', match: 'Manchester United - Manchester City', bet: '1', odds: '2.55' },
-        { id: '12', match: 'XXX-YYY', bet: 'X', odds: '5.55' },
-        { id: '64', match: 'ZZZ-VVVV', bet: '2', odds: '3.11' }
-      ]
-    });
-
-    this.results.push({
-      time: '18:17', tag: 'BB',
-      matches: [
-        { id: '5', match: 'Aab-FCK', bet: '1', odds: '2.55' },
-        { id: '12', match: 'XXX-YYY', bet: 'X', odds: '5.55' },
-        { id: '64', match: 'ZZZ-VVVV', bet: '2', odds: '3.11' }
-      ]
-    });
-
-    this.results.push({
-      time: '18:17', tag: 'CC',
-      matches: [
-        { id: '5', match: 'Aab-FCK', bet: '1', odds: '2.55' },
-        { id: '12', match: 'XXX-YYY', bet: 'X', odds: '5.55' },
-        { id: '64', match: 'ZZZ-VVVV', bet: '2', odds: '3.11' }
-      ]
-    });
-}*/
+  isWithinMatchDays() {
+    const weekday = moment().isoWeekday();
+    //sunday == 0
+    return weekday == 6 || weekday == 0 || weekday == 1 //sat/sun/mon
+  }
 }
