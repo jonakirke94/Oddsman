@@ -74,7 +74,8 @@ import { ResultsComponent } from './adminpanel/admincomponents/results/results.c
     UserHistoryComponentComponent,
     EditMatchComponent,
     BetFeedComponent,
-    ResultFeedComponent
+    ResultFeedComponent,
+    ResultsComponent
 
   ],
   imports: [

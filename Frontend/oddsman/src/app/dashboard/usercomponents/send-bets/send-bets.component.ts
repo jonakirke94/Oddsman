@@ -143,12 +143,6 @@ export class SendBetsComponent implements OnInit {
     })
   }
 
-    sendMessage() {
-      this._socket.initSocket(); 
-
-      let message = "TEST MESSAGE FROM SEND BETS COMPONENT"
-      this._socket.send(Action.ODDS);
-    }
   
 
 
