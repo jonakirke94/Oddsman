@@ -74,17 +74,22 @@ exports.get_results = (req, res, next) => {
     const limit = 5;
 
     Match.findAll({
+        attributes: [['MatchName', 'Name']],
         limit: limit,
         order: [
             ['updatedAt', 'DESC']
         ],
+        include: {
+            model: Result,
+            attributes: [['EndResult', 'Score']],
+            required: true,
+            where: {
+                Missing: false
+            }
+        }
     }).then(matches => {
-
-        console.log(matches)
         return msg.show200(req, res, "Success", matches);
-
     }).catch(err => {
-        console.log(err)
         return msg.show500(req, res, err);
     })
 }
