@@ -31,6 +31,7 @@ export class ResultFeedComponent implements OnInit, OnDestroy {
     /* this.seedFakeBets(); */
     this.results$ = this._match.getRecentResults().subscribe(res => {
       this.results = res;
+      console.log(res);
       this._match.changeRes(this.results);
     });
   }
