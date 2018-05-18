@@ -60,7 +60,46 @@ exports.get_missing_results = (req, res, next) => {
         }
     }).then((results) => {
         return msg.show200(req, res, "Success", results || []);
+	}).catch(err => {
+        return msg.show500(req, res, err);
+    });
+}
 
+exports.get_results = (req, res, next) => {
+    const limit = 5;
+
+    Match.findAll({
+        attributes: [['MatchName', 'Name']],
+        limit: limit,
+        order: [
+            ['updatedAt', 'DESC']
+        ],
+        include: {
+            model: Result,
+            attributes: [['EndResult', 'Score'], ['updatedAt', 'Updated']],
+            required: true,
+            where: {
+                Missing: false
+            }
+        }
+    }).then(matches => {
+        matchArr = [];
+
+        matches.forEach((match, index, matches) => {
+            try {
+                const m = match.dataValues;
+                const r = m.result.dataValues;
+
+                matchArr.push({
+                    name: m.Name,
+                    score: r.Score,
+                    updated: r.Updated
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        })
+        return msg.show200(req, res, "Success", matchArr);
     }).catch(err => {
         return msg.show500(req, res, err);
     })

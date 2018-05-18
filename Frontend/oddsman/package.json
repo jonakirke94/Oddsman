@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "^5.2.0",
     "@angular/router": "^5.2.0",
     "@auth0/angular-jwt": "^1.1.0",
+    "@types/socket.io-client": "^1.4.32",
     "bulma": "^0.7.1",
     "bulma-divider": "^1.0.1",
     "chart.js": "^2.7.0",
@@ -32,10 +33,11 @@
     "ng2-charts": "^1.6.0",
     "primeng": "^5.2.5",
     "rxjs": "^5.5.6",
+    "socket.io-client": "^2.1.0",
     "zone.js": "^0.8.19"
   },
   "devDependencies": {
-    "@angular/cli": "~1.7.3",
+    "@angular/cli": "^6.0.3",
     "@angular/compiler-cli": "^5.2.0",
     "@angular/language-service": "^5.2.0",
     "@types/jasmine": "~2.8.3",
@@ -52,6 +54,7 @@
     "protractor": "~5.1.2",
     "ts-node": "~4.1.0",
     "tslint": "~5.9.1",
-    "typescript": "~2.5.3"
+    "typescript": "~2.5.3",
+    "@angular-devkit/build-angular": "~0.6.3"
   }
 }

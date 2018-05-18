@@ -626,7 +626,7 @@ function isTourStartedOrNull(tourId) {
         Start: {
           [Op.gt]: today
         }
-      } //$gt = g
+      }
     })
     .then(tour => {
       return tour === null

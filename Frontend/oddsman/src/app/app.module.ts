@@ -42,6 +42,10 @@ import { AdminHistoryComponent } from './adminpanel/admincomponents/history/hist
 import { HistoryComponent } from './history/history.component';
 import { UserHistoryComponentComponent } from './dashboard/usercomponents/user-history-component/user-history-component.component';
 import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-requests/admin-requests.component';
+import * as io from 'socket.io-client';
+import { SocketService } from './services/socket.service';
+import { BetFeedComponent } from './bet-feed/bet-feed.component';
+import { ResultFeedComponent } from './result-feed/result-feed.component';
 import { ResultsComponent } from './adminpanel/admincomponents/results/results.component';
 
 
@@ -69,7 +73,8 @@ import { ResultsComponent } from './adminpanel/admincomponents/results/results.c
     AdminHistoryComponent,
     UserHistoryComponentComponent,
     EditMatchComponent,
-    ResultsComponent
+    BetFeedComponent,
+    ResultFeedComponent
 
   ],
   imports: [
@@ -99,6 +104,7 @@ import { ResultsComponent } from './adminpanel/admincomponents/results/results.c
     UserService,
     AuthGuard,
     MatchService,
+    SocketService,
     AdminguardGuard,
     {
       provide: HTTP_INTERCEPTORS,

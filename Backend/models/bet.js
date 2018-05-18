@@ -21,8 +21,8 @@ module.exports = function (sequelize, DataTypes) {
     })
 
     Bet.associate = (models) => {
-
         Bet.belongsTo(models.matches);
+        Bet.belongsTo(models.users);
     }
     return Bet;
 }

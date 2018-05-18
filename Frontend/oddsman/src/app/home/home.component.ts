@@ -1,6 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
-import { StandingComponent} from "../standing/standing.component";
+import { Component, OnInit } from '@angular/core';
+import { StandingComponent } from "../standing/standing.component";
+import { BetFeedComponent} from '../bet-feed/bet-feed.component';
+import { ResultFeedComponent} from '../result-feed/result-feed.component';
+import { SocketService, Action } from '../services/socket.service';
 
 
 
@@ -12,17 +14,21 @@ import { StandingComponent} from "../standing/standing.component";
   
 })
 
+
+
 export class HomeComponent implements OnInit {
 
-
-
-
-  constructor() { }
-
-  ngOnInit() {
+  //temporary
+  constructor(private _socket: SocketService) {
   }
 
-  
+  ngOnInit() {
+    this._socket.initSocket();
+  }
 
+  sendMessage() {
+    let message = "TEST MESSAGE FROM HOME COMPONENT"
+    this._socket.send(Action.ODDS);
+  }
 
 }
