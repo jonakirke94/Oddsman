@@ -73,6 +73,11 @@ exports.sendOdds = (req, res, next) => {
                                 Missing: true
                             }
                         }
+
+                        if (!m.Missing) {
+                            scraper.scheduleResultScrape(m.MatchId);
+                        }
+
                         Match.create(m)
                             .then(match => {
 
