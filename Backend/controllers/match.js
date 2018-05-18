@@ -81,14 +81,30 @@ exports.get_results = (req, res, next) => {
         ],
         include: {
             model: Result,
-            attributes: [['EndResult', 'Score']],
+            attributes: [['EndResult', 'Score'], ['updatedAt', 'Updated']],
             required: true,
             where: {
                 Missing: false
             }
         }
     }).then(matches => {
-        return msg.show200(req, res, "Success", matches);
+        matchArr = [];
+
+        matches.forEach((match, index, matches) => {
+            try {
+                const m = match.dataValues;
+                const r = m.result.dataValues;
+
+                matchArr.push({
+                    name: m.Name,
+                    score: r.Score,
+                    updated: r.Updated
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        })
+        return msg.show200(req, res, "Success", matchArr);
     }).catch(err => {
         return msg.show500(req, res, err);
     })
