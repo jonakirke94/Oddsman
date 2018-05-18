@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SocketService, Event, Action } from '../services/socket.service';
-import { trigger,style,transition,animate,keyframes,query,stagger} from '@angular/animations'; 
+import { trigger, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
 import { OddsService } from '../services/odds.service';
 import { feedAnimation } from "../animations";
 import { Subscription } from 'rxjs/Subscription';
@@ -14,14 +14,14 @@ import { Subscription } from 'rxjs/Subscription';
 })
 export class BetFeedComponent implements OnInit {
 
-  bets = []
+  bets = [];
   tempBet;
 
-  bets$: Subscription
-  newBets$: Subscription
-  socketMsg$: Subscription
+  bets$: Subscription;
+  newBets$: Subscription;
+  socketMsg$: Subscription;
 
-  constructor(private _socket : SocketService, private _odds : OddsService) {
+  constructor(private _socket: SocketService, private _odds: OddsService) {
   }
 
   ngOnInit() {
@@ -40,38 +40,38 @@ export class BetFeedComponent implements OnInit {
 
   private loadBetFeed() {
     this.newBets$ = this._odds.getNewestBets().subscribe(res => {
-      this.bets = res
+      this.bets = res;
       this._odds.changeBet(this.bets);
 
-    })
+    });
   }
 
-  private addBet(bet) :void {
-    this.bets.push(bet)
+  private addBet(bet): void {
+    this.bets.push(bet);
     this._odds.changeBet(this.bets);
   }
 
-  private removeBet() :void {
-    if(this.bets.length >= 3){
+  private removeBet(): void {
+    if (this.bets.length >= 3) {
       this.bets.shift();
     }
     this._odds.changeBet(this.bets);
   }
 
-  private pushBet(bet) {  
-    this.removeBet(); 
+  private pushBet(bet) {
+    this.removeBet();
     setTimeout(() => {
       this.addBet(bet);
     }, 500);
 
   }
- 
+
   private initIoConnection(): void {
     this._socket.initSocket();
 
     this.socketMsg$ = this._socket.onOddsMessage()
       .subscribe((bet) => {
-        this.pushBet(bet)
+        this.pushBet(bet);
       });
   }
 
