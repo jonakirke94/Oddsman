@@ -13,7 +13,7 @@ namespace Scraper.Core.Model
         public int RoundId { get; set; }
         public string MatchName { get; set; }
         public DateTime MatchDate { get; set; }
-        public DateTime LastUpdated { get; set; }
+        public DateTime LastUpdated { get; set; } = new DateTime();
         public string Option1 { get; set; }
         public string Option2 { get; set; }
         public string Option3 { get; set; }

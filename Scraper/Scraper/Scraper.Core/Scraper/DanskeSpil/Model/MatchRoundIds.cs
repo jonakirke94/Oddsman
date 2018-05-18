@@ -43,7 +43,23 @@ namespace Scraper.Core.Scraper.DanskeSpil.Model
 
         public static int GetMatchRoundId(DateTime date)
         {
-            return _rounds.Select(r => r).FirstOrDefault(r => r.Start <= date.Date && date.Date <= r.End)?.MatchRoundId ?? -1;
+            var id = _rounds.Select(r => r)
+                .FirstOrDefault(r => r.Start.Date <= date.Date && date.Date <= r.End.Date)
+                ?.MatchRoundId ?? -1;
+
+            if (id != -1) return id;
+
+            var latest = _rounds.OrderByDescending(r => r.MatchRoundId).ToList().First();
+            Console.WriteLine($"GETMATCHID: {latest.Start} < {date} > {latest.End}");
+
+            var difference = (date - latest.End).Days;
+
+            if (difference > 3 || difference < 0) return id;
+
+            Console.WriteLine($"Difference: {difference}");
+            id = latest.MatchRoundId + 1;
+
+            return id;
         }
     }
 }
