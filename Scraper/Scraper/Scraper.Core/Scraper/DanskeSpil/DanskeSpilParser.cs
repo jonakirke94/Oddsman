@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
-using Scraper.Core.Extension;
+using Scraper.Core.Extensions;
 using Scraper.Core.Model;
 using Scraper.Core.Scraper.DanskeSpil.Model;
 using Match = Scraper.Core.Model.Match;

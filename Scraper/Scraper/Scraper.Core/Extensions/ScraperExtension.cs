@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using HtmlAgilityPack;
 
-namespace Scraper.Core.Extension
+namespace Scraper.Core.Extensions
 {
     public static class ScraperExtension
     {

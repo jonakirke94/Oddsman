@@ -1,11 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Scraper.Core.Scraper.DanskeSpil.Model
+namespace Scraper.Core.Model
 {
     public class DateRange
     {
+        public DateRange() { }
+        public DateRange(DateTime start, DateTime end)
+        {
+            Start = start;
+            End = end;
+        }
+
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
 

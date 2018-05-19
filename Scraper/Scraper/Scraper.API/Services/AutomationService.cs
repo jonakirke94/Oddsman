@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.Extensions.DependencyInjection;
 using Scraper.Core.Data;
+using Scraper.Core.Extensions;
 using Scraper.Core.Model;
 using Scraper.Core.Scraper.DanskeSpil;
-using Scraper.Core.Scraper.DanskeSpil.Model;
 
 namespace Scraper.API.Services
 {
@@ -21,17 +21,22 @@ namespace Scraper.API.Services
             _scopeFactory = scopeFactory;
         }
 
-        public async Task ScrapeUpcomingMatches()
+        public async Task ScrapeUpcomingMatches(DateRange range = null)
         {
-            var matches = new List<Match>(_scraper.GetUpcomingMatches(
-                new DateRange
-                {   
-                    Start = DateTime.Now.AddDays(2).Date, End = DateTime.Now.AddDays(5).Date
-                }));
+            if (range == null)
+            {
+                range = new DateRange
+                {
+                    Start = DateTime.Today,
+                    End =  DateTime.Today.AddDays(2).AddHours(23).AddMinutes(59)
+                };
+            }
+
+            var matches = new List<Match>(_scraper.GetUpcomingMatches(range));
 
             var validMatches = matches
                 .Select(m => m)
-                .Where(m => WithinValidDate(m.MatchDate))
+                .Where(m => m.MatchDate.InRangeOf(range))
                 .ToList();
 
             var subMatches = new List<Match>();
@@ -98,35 +103,37 @@ namespace Scraper.API.Services
         }
 
 
-        /// <summary>
-        /// Valid matches is found between Saturday 12.00 and Monday 23.59
-        /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        private static bool WithinValidDate(DateTime date)
-        {
-            var today = DateTime.Now.Date;
-            switch (today.DayOfWeek) // Making sure that the next occuring weekday is Monday or Saturday (not counting the current day).
-            {
-                case DayOfWeek.Monday:
-                    today = today.AddDays(1);
-                    break;
-                case DayOfWeek.Saturday:
-                    today = today.AddDays(1);
-                    break;
-            }
+        ///// <summary>
+        ///// Valid matches is found between Saturday 12.00 and Monday 23.59
+        ///// </summary>
+        ///// <param name="date"></param>
+        ///// <returns></returns>
+        //private static bool WithinValidDate(DateTime date)
+        //{
+        //    var today = DateTime.Today;
+        //    switch (today.DayOfWeek) // Making sure that the next occuring weekday is Monday or Saturday (not counting the current day).
+        //    {
+        //        case DayOfWeek.Monday:
+        //            today = today.AddDays(1);
+        //            break;
+        //        case DayOfWeek.Saturday:
+        //            today = today.AddDays(1);
+        //            break;
+        //    }
 
-            var nextSaturday = GetNextWeekday(today, DayOfWeek.Saturday).AddHours(12);
-            var nextMonday = GetNextWeekday(today, DayOfWeek.Monday).AddHours(23).AddMinutes(59);
+        //    var nextSaturday = GetNextWeekday(today, DayOfWeek.Saturday).AddHours(12);
+        //    var nextMonday = GetNextWeekday(today, DayOfWeek.Monday).AddHours(23).AddMinutes(59);
+           
+        //    return date.InRangeOf(nextSaturday, nextMonday);
+        //}
 
-            return date >= nextSaturday && date <= nextMonday;
-        }
+        //private static DateTime GetNextWeekday(DateTime start, DayOfWeek day)
+        //{
+        //    // The (... + 7) % 7 ensures we end up with a value in the range [0, 6]
+        //    var daysToAdd = ((int)day - (int)start.DayOfWeek + 7) % 7;
+        //    return start.AddDays(daysToAdd);
+        //}
 
-        private static DateTime GetNextWeekday(DateTime start, DayOfWeek day)
-        {
-            // The (... + 7) % 7 ensures we end up with a value in the range [0, 6]
-            var daysToAdd = ((int)day - (int)start.DayOfWeek + 7) % 7;
-            return start.AddDays(daysToAdd);
-        }
+        
     }
 }
