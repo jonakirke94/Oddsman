@@ -83,13 +83,13 @@ namespace Scraper.API.Controllers
 
         private static DateRange GetNextRoundDates()
         {
+            var today = DateTime.Today;
+
             var range = new DateRange
             {
-                Start = DateTime.Today.NextWeekdayDate(DayOfWeek.Friday).AddHours(12),
-                End = DateTime.Today.NextWeekdayDate(DayOfWeek.Monday).AddHours(23).AddMinutes(59)
+                Start = today.NextWeekdayDate(DayOfWeek.Friday).AddHours(12),
+                End = today.NextWeekdayDate(DayOfWeek.Monday).AddHours(23).AddMinutes(59)
             };
-
-            var today = DateTime.Today;
 
             while (range.Start > range.End)
             {
