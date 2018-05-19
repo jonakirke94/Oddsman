@@ -54,7 +54,11 @@ namespace Scraper.API.Controllers
             return Ok("Job Added Succesfully");
         }
 
-
-
+        [HttpPost]
+        public async Task<IActionResult> StartWeeklyScrape()
+        {
+            RecurringJob.AddOrUpdate("scrape-matches", () => _automate.ScrapeUpcomingMatches(), Cron.Weekly(DayOfWeek.Thursday, 6));
+            return Ok("Started Weekly Scrape Job");
+        }
     }
 }

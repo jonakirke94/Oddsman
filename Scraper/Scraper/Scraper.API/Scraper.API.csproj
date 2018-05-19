@@ -2,17 +2,27 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+    <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Remove="Deps\Hangfire.MySql.Core.dll" />
+    <None Remove="Properties\PublishProfiles\API.pubxml" />
+    <None Remove="Properties\PublishProfiles\FolderProfile.pubxml" />
+  </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.4" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.6.19" />
-    <PackageReference Include="Hangfire.MySql.Core" Version="2.1.6-preview" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.2" />
+    <PackageReference Include="MySqlConnector" Version="0.34.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.1" />
   </ItemGroup>
@@ -22,7 +32,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Libs\Hangfire.MySql.Core.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Scraper.Core\Scraper.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Hangfire.MySql.Core">
+      <HintPath>Libs\Hangfire.MySql.Core.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

@@ -4,6 +4,7 @@ using Hangfire;
 using Hangfire.MySql.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MySql.Data.MySqlClient;
 using Scraper.API.Controllers;
+using Scraper.API.Filters;
 using Scraper.API.Services;
 using Scraper.Core.Data;
 
@@ -30,6 +32,12 @@ namespace Scraper.API
         {
             services.AddMvc();
             services.AddDbContext<DanskeSpilContext>(o => o.UseMySql(Configuration.GetConnectionString("Default")));
+            services.AddCors();
+            services.Configure<ForwardedHeadersOptions>(o =>
+            {
+                o.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
 
             var options = new MySqlStorageOptions
             {
@@ -57,7 +65,7 @@ namespace Scraper.API
                 app.UseDeveloperExceptionPage();
             }
 
-
+            app.UseForwardedHeaders();
 
             using (var serviceScope = scope.CreateScope())
             {
@@ -74,16 +82,31 @@ namespace Scraper.API
                 }
             }
 
-            app.UseMvc();
+            app.UseCors(builder =>
+                builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+            );
+
+            app.UseStaticFiles();
+
+            
 
 
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthFilter() }
+            });
             app.UseHangfireServer();
 
             // Add tasks on startup
             var automate = new AutomationService(scope);
-            //RecurringJob.AddOrUpdate("scrape-matches", () => automate.ScrapeUpcomingMatches(), Cron.Weekly(DayOfWeek.Thursday, 6));
-            BackgroundJob.Schedule(() => automate.ScrapeUpcomingMatches(), DateTimeOffset.Now.AddMinutes(1));
+
+            //BackgroundJob.Schedule(() => automate.ScrapeUpcomingMatches(), DateTimeOffset.Now.AddMinutes(1));
+
+
+            app.UseMvc();
         }
     }
 }

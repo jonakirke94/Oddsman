@@ -43,6 +43,10 @@ namespace Scraper.Core.Scraper.DanskeSpil.Model
 
         public static int GetMatchRoundId(DateTime date)
         {
+            if (date == DateTime.MinValue)
+            {
+                Console.WriteLine($"IS Min VAL: {date}");
+            }
             var id = _rounds.Select(r => r)
                 .FirstOrDefault(r => r.Start.Date <= date.Date && date.Date <= r.End.Date)
                 ?.MatchRoundId ?? -1;

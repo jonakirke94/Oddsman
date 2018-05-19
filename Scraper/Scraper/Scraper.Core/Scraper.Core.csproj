@@ -2,8 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+    <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+  </PropertyGroup>
   <ItemGroup>
     <Folder Include="Driver\V2.33\" />
   </ItemGroup>
