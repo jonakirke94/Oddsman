@@ -28,7 +28,7 @@ namespace Scraper.API.Services
                 range = new DateRange
                 {
                     Start = DateTime.Today,
-                    End =  DateTime.Today.AddDays(2).AddHours(23).AddMinutes(59)
+                    End =  DateTime.Today.AddDays(4).AddHours(23).AddMinutes(59)
                 };
             }
 
