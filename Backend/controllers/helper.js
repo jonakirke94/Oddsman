@@ -1,5 +1,5 @@
 const jwtDecode = require('jwt-decode');
-exports.getUserId = (req) => {
+exports.get_user_id = (req) => {
     //decode the token and fetch id
     const token = req.headers.authorization.split(' ');
 

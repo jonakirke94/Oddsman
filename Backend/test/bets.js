@@ -18,7 +18,7 @@ const helper = require('../test/helper');
 
 chai.use(chaiHttp);
 
-const tokens = tokenController.generateTokens({
+const tokens = tokenController.generate_tokens({
     Email: "Bryan@email.dk",
     Id: 1,
     IsAdmin: false

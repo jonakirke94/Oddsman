@@ -14,7 +14,7 @@ chai.use(chaiHttp);
 describe("/Generate tokens", () => {
   it("it should return tokens and expirations", done => {
     const user = {Email: "Test@Test.dk", Id: 1}
-    const tokens = token.generateTokens(user);
+    const tokens = token.generate_tokens(user);
     should.not.equal(tokens.access_token, undefined);
     should.not.equal(tokens.refresh_token, undefined);
     should.not.equal(tokens.access_exp, undefined);
