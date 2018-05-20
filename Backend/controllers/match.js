@@ -3,19 +3,18 @@ const router = express.Router();
 const msg = require("../db/http");
 const moment = require('moment');
 const seq = require('../models');
-const Tournament = seq.tournaments;
-const Request = seq.requests;
-const Bet = seq.bets;
-const Match = seq.matches;
-const Tournament_User = seq.users_tournaments;
 const helper = require('../controllers/helper');
-const User = seq.users;
-const Result = seq.results;
+const TournamentTable = seq.tournaments;
+const RequestTable = seq.requests;
+const BetTable = seq.bets;
+const MatchTable = seq.matches;
+const TournamentUserTable = seq.users_tournaments;
+const UserTable = seq.users;
+const ResultTable = seq.results;
 const {
     Op
 } = require('sequelize')
 const scraper = require('../services/scraper');
-
 
 let today = moment();
 
@@ -23,7 +22,7 @@ exports.edit_match = (req, res, next) => {
     const matchId = req.params.matchid;
     // Convert match values to all lowercase
     const match = req.body;
-    Match.findById(matchId)
+    MatchTable.findById(matchId)
         .then((m) => {
             if (!m) return msg.show404(req, res, "The match could not be found");
             patchObject(match, m.dataValues, (patch) => {
@@ -41,7 +40,7 @@ exports.edit_match = (req, res, next) => {
 }
 
 exports.get_missing_matches = (req, res, next) => {
-    Match.findAll({
+    MatchTable.findAll({
         where: {
             Missing: true
         }
@@ -54,7 +53,7 @@ exports.get_missing_matches = (req, res, next) => {
 }
 
 exports.get_missing_results = (req, res, next) => {
-    Result.findAll({
+    ResultTable.findAll({
         where: {
             Missing: true
         }
@@ -68,14 +67,14 @@ exports.get_missing_results = (req, res, next) => {
 exports.get_results = (req, res, next) => {
     const limit = 5;
 
-    Match.findAll({
+    MatchTable.findAll({
         attributes: [['MatchName', 'Name']],
         limit: limit,
         order: [
             ['updatedAt', 'DESC']
         ],
         include: {
-            model: Result,
+            model: ResultTable,
             attributes: [['EndResult', 'Score'], ['updatedAt', 'Updated']],
             required: true,
             where: {
@@ -109,7 +108,7 @@ exports.edit_result = (req, res, next) => {
     const resultId = req.params.resultid;
     const result = req.body;
 
-    Result.findById(resultId)
+    ResultTable.findById(resultId)
         .then((r) => {
             if (!r) return msg.show404(req, res, "The result could not be found");
             patchObject(result, r.dataValues, (patch) => {

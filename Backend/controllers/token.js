@@ -1,17 +1,20 @@
 const express = require("express");
 const router = express.Router();
-
 const msg = require("../db/http");
 const mysql = require('mysql');
-const config = require('config');
+
+var path = require('path');
+var env = process.env.NODE_ENV || 'test';
+var config  = require(path.join(__dirname, '..', 'config', 'config.json'))[env];
+
 const jwt = require("jsonwebtoken");
-
 const userController = require('./user');
+
 const seq = require('../models');
-const User = seq.users;
+const UserTabel = seq.users;
 
 
-exports.refreshToken = (req, res, next) => {
+exports.refresh_token = (req, res, next) => {
   const token = req.body.accesstoken;
 
   //get userid from JWT payload
@@ -42,7 +45,7 @@ exports.refreshToken = (req, res, next) => {
 
 exports.saveRefreshToken = (id, refreshtoken, callback) => {
 
-    User.update({ RefreshToken: refreshtoken }, { where: { Id: id } })
+    UserTabel.update({ RefreshToken: refreshtoken }, { where: { Id: id } })
       .then(success => {
         return callback(success);
       })
@@ -52,7 +55,6 @@ exports.saveRefreshToken = (id, refreshtoken, callback) => {
 };
 
 exports.generateTokens = user => {
-
     const REFRESH_EXP = 691200; // 691200s = 8d
     const ACCESS_EXP = 300; // 300s = 5m
  

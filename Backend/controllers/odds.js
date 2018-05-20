@@ -3,13 +3,13 @@ const router = express.Router();
 const msg = require("../db/http");
 const moment = require('moment');
 const seq = require('../models');
-const Tournament = seq.tournaments;
-const Match = seq.matches;
-const Request = seq.requests;
-const Bet = seq.bets;
-const Tournament_User = seq.users_tournaments;
 const helper = require('../controllers/helper');
-const User = seq.users;
+const TournamentTable = seq.tournaments;
+const MatchTable = seq.matches;
+const RequestTable = seq.requests;
+const BetTable = seq.bets;
+const TournamentUserTable = seq.users_tournaments;
+const UserTable = seq.users;
 const {
     Op,
     col,
@@ -20,7 +20,7 @@ const scraper = require('../services/scraper');
 
 let today = moment()/* .add(2, 'd').add(12, 'h'); */ // used for faking a valid bet day
 
-exports.sendOdds = (req, res, next) => {
+exports.send_odds = (req, res, next) => {
     const tourId = req.params.tourid;
     const odds = req.body;
     const userId = helper.getUserId(req);
@@ -30,9 +30,9 @@ exports.sendOdds = (req, res, next) => {
         return msg.show409(req, res, `Der blev ikke modtaget nogen odds`);
     }
 
-    Tournament.findById(tourId, {
+    TournamentTable.findById(tourId, {
             include: {
-                model: Bet,
+                model: BetTable,
                 attributes: ['userId', 'tournamentId', 'week'],
                 where: {
                     Week: today.isoWeek(),
@@ -43,14 +43,14 @@ exports.sendOdds = (req, res, next) => {
         })
         .then(tourney => {
             if (tourney) {
-                let validDay = isValidWeekDays();
+                let validDay = is_valid_weekdays();
 
                 if (!validDay) {
                     /* console.log("invalid day") */
                     return msg.show409(req, res, "Det er ikke muligt at oddse på turneringen idag");
                 }
 
-                let active = isActiveTournament(tourney.dataValues.Start, tourney.dataValues.End);
+                let active = is_active_tournament(tourney.dataValues.Start, tourney.dataValues.End);
 
                 if (!active) {
                     /* console.log("inactive tourney") */
@@ -81,16 +81,16 @@ exports.sendOdds = (req, res, next) => {
                             scraper.scheduleResultScrape(m.MatchId);
                         }
 
-                        Match.create(m)
+                        MatchTable.create(m)
                             .then(match => {
 
-                                Bet.create({
+                                BetTable.create({
                                     matchId: match.Id,
                                     userId: userId,
                                     tournamentId: tourId,
                                     Week: moment().isoWeek(),
                                     Option: option,
-                                    OptionNo: getOptionNumber(option)
+                                    OptionNo: get_option_number(option)
                                 }).then(() => {
                                     ctr++;
                                     if (ctr === odds.length) {
@@ -112,18 +112,18 @@ exports.sendOdds = (req, res, next) => {
 }
 
 
-function isValidWeekDays() {
+function is_valid_weekdays() {
     // torsdag kl 12 - lørdag kl 12
     let start = moment().startOf('isoWeek').add(3, 'd').add(12, 'h');
     let end = moment().startOf('isoWeek').add(5, 'd').add(23, 'h').add(59, 'm');
     return today.isBetween(start, end, null, '[]'); // inclusive
 }
 
-function isActiveTournament(start, end) {
+function is_active_tournament(start, end) {
     return today.isBetween(start, end, null, '[]');
 }
 
-function getOptionNumber(op) {
+function get_option_number(op) {
     switch (op) {
         case "1":
             return 1;
@@ -146,7 +146,7 @@ exports.get_recent_bets_http = (req, res, next) => {
     }
 }
 exports.get_recent_bets = (limit = 3, callback) => {
-    Bet.findAll({
+    BetTable.findAll({
         limit: limit,
         order: [
             ['createdAt', 'DESC']
@@ -156,13 +156,13 @@ exports.get_recent_bets = (limit = 3, callback) => {
         },
         attributes: ['option', 'createdAt'],
         include: [{
-            model: User,
+            model: UserTable,
             attributes: ['tag'],
             where: {
                 id: col('bets.userId')
             }
         }, {
-            model: Match,
+            model: MatchTable,
             attributes: ['id', 'matchId', 'matchName', 'option1Odds', 'option2Odds', 'option3Odds'],
             where: {
                 id: col('bets.matchId')
