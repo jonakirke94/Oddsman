@@ -1,18 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const msg = require("../db/http");
-const mysql = require("mysql");
-const jwtDecode = require('jwt-decode');
 const moment = require('moment');
 
 const seq = require('../models');
-const Tournament = seq.tournaments;
-const Match = seq.matches;
-const Bet = seq.bets;
-const Result = seq.results;
-const Request = seq.requests;
-const Tournament_User = seq.users_tournaments;
-const User = seq.users;
+const TournamentTable = seq.tournaments;
+const MatchTable = seq.matches;
+const BetTable = seq.bets;
+const ResultTable = seq.results;
+const RequestTable = seq.requests;
+const TournamentUserTable = seq.users_tournaments;
+const UserTable = seq.users;
 const {
   Op
 } = require('sequelize')
@@ -47,7 +45,7 @@ exports.create = (req, res, next) => {
     Start: startDate,
     End: endDate
   }
-  Tournament
+  TournamentTable
     .create(newTournament, {
       logging: false
     })
@@ -63,7 +61,7 @@ exports.create = (req, res, next) => {
 
 exports.get_all = (req, res, next) => {
 
-  Tournament.findAll({
+  TournamentTable.findAll({
     attributes: ['Id', 'Name', 'Start', 'End'],
     include: {
       model: seq.users,
@@ -81,7 +79,7 @@ exports.get_all = (req, res, next) => {
 }
 
 exports.request = (req, res, next) => {
-  const userId = getUserId(req);
+  const userId = get_user_id(req);
 
   if (userId === -1) {
     return msg.show500(req, res, "Could not decode token");
@@ -99,7 +97,7 @@ exports.request = (req, res, next) => {
         return msg.show409(req, res, 'User is already enlisted');
       }
 
-      isTourStartedOrNull(tourId).then(result => {
+      is_started_or_null(tourId).then(result => {
         if (result) {
           return msg.show409(req, res, 'Tournament already started or doesnt exist');
         }
@@ -111,7 +109,7 @@ exports.request = (req, res, next) => {
           Status: 'pending'
         }
 
-        Request.create(request, {
+        RequestTable.create(request, {
             logging: false
           })
           .then(req => {
@@ -135,7 +133,7 @@ exports.request = (req, res, next) => {
 exports.get_current_tournament = (req, res, next) => {
   const today = moment();
 
-  Tournament.findOne({
+  TournamentTable.findOne({
     attributes: ['id', 'name'],
     where: {
       Active: true
@@ -154,10 +152,10 @@ exports.get_current_tournament = (req, res, next) => {
 }
 
 exports.get_current_tournament_user = (req, res, next) => {
-  const userId = helper.getUserId(req);
+  const userId = helper.get_user_id(req);
   const today = moment();
 
-  Tournament.findOne({
+  TournamentTable.findOne({
     attributes: ['id', 'name'],
     where: {
       [Op.and]: [{
@@ -174,7 +172,7 @@ exports.get_current_tournament_user = (req, res, next) => {
     },
     through: {
       attributes: [''],
-      model: Tournament_User,
+      model: TournamentUserTable,
       where: {
         userId: userId
       },
@@ -194,13 +192,13 @@ exports.get_current_tournament_user = (req, res, next) => {
 
 exports.get_tournament_requests = (req, res, next) => {
   const tourId = req.params.tourid;
-  Tournament.findById(tourId, {
+  TournamentTable.findById(tourId, {
     attributes: [
       ['id', 'tourId'],
       ['name', 'tourName'], 'start'
     ],
     include: {
-      model: User,
+      model: UserTable,
       attributes: [
         ['id', 'userId'],
         ['name', 'userName'],
@@ -209,7 +207,7 @@ exports.get_tournament_requests = (req, res, next) => {
       ],
       through: {
         attributes: [],
-        model: Request,
+        model: RequestTable,
         where: {
           Status: {
             [Op.eq]: "pending"
@@ -227,15 +225,15 @@ exports.get_tournament_requests = (req, res, next) => {
 }
 
 exports.get_users_requests = (req, res, next) => { // TODO: Test with an accepted user on tournament 1
-  const userId = getUserId(req);
+  const userId = helper.get_user_id(req);
   if (userId === -1) {
     return msg.show500(req, res, "Could not decode token");
   }
 
-  User.findById(userId, {
+  UserTable.findById(userId, {
     attributes: [],
     include: {
-      model: Tournament,
+      model: TournamentTable,
       attributes: ['Id', 'Name', 'Start', 'End'],
       through: {
         where: {
@@ -266,7 +264,7 @@ function decline_request(req, res, next) {
   const tourId = req.params.tourid;
   const userId = req.params.userid;
 
-  Request.update({
+  RequestTable.update({
     Status: "declined"
   }, {
     where: {
@@ -291,13 +289,13 @@ function accept_request(req, res, next) {
       return msg.show409(req, res, 'User is already enlisted');
     }
 
-    isTourStartedOrNull(tourId).then(result => {
+    is_started_or_null(tourId).then(result => {
       if (result) {
         return msg.show409(req, res, 'Tournament already started or doesnt exist');
       }
 
       //set request to accepted
-      Request.update({
+      RequestTable.update({
           Status: 'accepted'
         }, {
           where: {
@@ -308,7 +306,7 @@ function accept_request(req, res, next) {
         .then(request => {
 
           //add user to tournament
-          Tournament.findById(tourId).then((tournament) => {
+          TournamentTable.findById(tourId).then((tournament) => {
               tournament.addUser(userId).then(() => {
                 return msg.show200(req, res, "Success");
               }).catch(function (err) {
@@ -330,20 +328,19 @@ function accept_request(req, res, next) {
 };
 
 exports.get_enlisted_tournaments = (req, res, next) => {
-  const userId = getUserId(req);
-
+  const userId = helper.get_user_id(req);
 
   if (userId === -1) {
     return msg.show400(req, res, 'No token provided');
   }
 
-  User.findById(userId, {
+  UserTable.findById(userId, {
     attributes: [],
     include: {
-      model: Tournament,
+      model: TournamentTable,
       attributes: ['Id', 'Name', 'Start', 'End'],
       through: {
-        model: Tournament_User,
+        model: TournamentUserTable,
         where: {
           UserId: userId
         },
@@ -359,22 +356,19 @@ exports.get_enlisted_tournaments = (req, res, next) => {
   })
 }
 
-
-
-
 exports.get_delisted_tournaments = (req, res, next) => {
   //get tournaments the user is not participating in, which have not started or been requested to
-  const userId = getUserId(req);
+  const userId = helper.get_user_id(req);
 
   if (userId === -1) {
     return msg.show500(req, res, err);
   }
-  Request.findAll({
+  RequestTable.findAll({
     where: {
       userId: userId
     },
     through: {
-      model: Tournament,
+      model: TournamentTable,
       where: {
         Start: {
           [Op.gt]: Date.now()
@@ -387,7 +381,7 @@ exports.get_delisted_tournaments = (req, res, next) => {
     reqs.forEach(r => {
       reqsArr.push(r.dataValues.tournamentId);
     });
-    Tournament.findAll({
+    TournamentTable.findAll({
       where: {
         id: {
           [Op.notIn]: reqsArr
@@ -395,7 +389,7 @@ exports.get_delisted_tournaments = (req, res, next) => {
       },
       attributes: ['id', 'name', 'start', 'end'],
       include: {
-        model: User,
+        model: UserTable,
         attributes: ['name', 'tag', 'email']
       }
     }).then(tourneys => {
@@ -406,26 +400,25 @@ exports.get_delisted_tournaments = (req, res, next) => {
   })
 }
 
-
 exports.get_overview = (req, res, next) => {
   const tourId = req.params.tourid;
-  Tournament.findById(tourId, {
+  TournamentTable.findById(tourId, {
       attributes: ['id', 'name', 'start', 'end'],
       include: {
         through: {
-          model: Tournament_User
+          model: TournamentUserTable
         },
-        model: User,
+        model: UserTable,
         attributes: ['id', 'tag', 'name'],
         include: {
-          model: Bet,
+          model: BetTable,
           required: false,
           attributes: ['id', 'week', 'option', 'optionNo', 'matchId'],
           where: {
             tournamentId: tourId
           },
           include: {
-            model: Match,
+            model: MatchTable,
             required: false,
             where: {
               Missing: false,
@@ -433,7 +426,7 @@ exports.get_overview = (req, res, next) => {
             },
             attributes: ['id', 'Option1Odds', 'Option2Odds', 'Option3Odds'],
             include: {
-              model: Result,
+              model: ResultTable,
               required: false,
               attributes: ['id', 'correctBet']
             }
@@ -443,7 +436,7 @@ exports.get_overview = (req, res, next) => {
       }
     })
     .then((tourney) => {
-      generateStandings(tourney, (standings) => {
+      generate_standings(tourney, (standings) => {
         return msg.show200(req, res, "Success", standings);
       });
     })
@@ -452,7 +445,7 @@ exports.get_overview = (req, res, next) => {
     });
 }
 
-function generateStandings(tourney, callback) {
+function generate_standings(tourney, callback) {
   const end = tourney.dataValues.end;
 
   const ongoing = new Date(end) > new Date() ? true : false;
@@ -465,8 +458,6 @@ function generateStandings(tourney, callback) {
     week: week,
     standings: []
   }
-
-
 
   const users = tourney.dataValues.users;
 
@@ -507,7 +498,6 @@ function generateStandings(tourney, callback) {
 
   }
 
-  /* console.log(tournament.standings); */
   // Sort by most points
   tournament.standings.sort(function (a, b) {
     if (a.points < b.points) return 1;
@@ -527,30 +517,15 @@ function generateStandings(tourney, callback) {
     }
   }
 
-  /* console.log(tournament.standings); */
   callback(tournament);
 }
 
 
 
 
-/* HELPERS */
-
-function getUserId(req) {
-  //decode the token and fetch id
-  const token = req.headers.authorization.split(' ');
-
-  try {
-    var decoded = jwtDecode(token[1])
-    return decoded.userId;
-  } catch (err) {
-    return -1;
-  }
-}
-
 
 function has_requested(userId, tourId) {
-  return Request.count({
+  return RequestTable.count({
     where: {
       tournamentId: tourId,
       userId: userId
@@ -564,7 +539,7 @@ function has_requested(userId, tourId) {
 }
 
 function is_enlisted(userId, tourId) {
-  return Tournament_User.count({
+  return TournamentUserTable.count({
     where: {
       tournamentId: tourId,
       userId: userId
@@ -577,9 +552,9 @@ function is_enlisted(userId, tourId) {
   });
 }
 
-function isTourStartedOrNull(tourId) {
+function is_started_or_null(tourId) {
   const today = new Date(new Date().toDateString());
-  return Tournament.find({
+  return TournamentTable.find({
       where: {
         Id: tourId,
         Start: {

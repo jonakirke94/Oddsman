@@ -20,13 +20,13 @@ const User = db.users;
 
 chai.use(chaiHttp);
 
-const token1 = tokenController.generateTokens({
+const token1 = tokenController.generate_tokens({
     Email: "Bryan@gmail.dk",
     Id: 1,
     IsAdmin: false
 });
 
-const token2 = tokenController.generateTokens({
+const token2 = tokenController.generate_tokens({
     Email: "World@gmail.dk",
     Id: 2,
     IsAdmin: false
