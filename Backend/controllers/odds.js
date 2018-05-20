@@ -69,7 +69,7 @@ exports.sendOdds = (req, res, next) => {
                     let matchId = o.matchId;
                     let option = o.option;
 
-                    scraper.getMatch(matchId, null, (m) => {
+                    scraper.get_match(matchId, null, (m) => {
                         if (m === null) {
                             m = {
                                 MatchId: matchId,
@@ -78,7 +78,7 @@ exports.sendOdds = (req, res, next) => {
                         }
 
                         if (!m.Missing) {
-                            scraper.scheduleResultScrape(m.MatchId);
+                            scraper.schedule_result_scrape(m.MatchId);
                         }
 
                         Match.create(m)

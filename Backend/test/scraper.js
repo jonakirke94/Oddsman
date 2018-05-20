@@ -13,10 +13,10 @@ const ScraperIsRunning = false; // tick this when not testing scraper
 chai.use(chaiHttp);
 
 
-describe("/ SCRAPER API", () => {
+describe("/SCRAPER API", () => {
     if(ScraperIsRunning){
         it("Should get a match", done => {
-            scraper.getMatch(52973, 837205, (res) => {
+            scraper.get_match(52973, 837205, (res) => {
                 res.should.be.a("object");
                 //console.log(res);
                 done();
@@ -31,7 +31,7 @@ describe("/ SCRAPER API", () => {
         });
 
         it("Should schedule a result scrape", done =>{
-            scraper.scheduleResultScrape(44804, (res) => {
+            scraper.schedule_result_scrape(44804, (res) => {
                 res.status.should.be.eql("200");
                 res.data.should.be.eql("Job Added Succesfully");
                 done();

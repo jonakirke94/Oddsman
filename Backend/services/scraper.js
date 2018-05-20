@@ -16,23 +16,23 @@ const ac = {
 
 const baseUrl = `http://${ac.hostname}:${ac.port}${ac.basePath}`;
 
-exports.getMatch = (matchId, eventId = null, callback) => {
+exports.get_match = (matchId, eventId = null, callback) => {
     let url = util.format(`${baseUrl}${ac.matchEndpoint}`, matchId, eventId);
     get(url, callback);
 
 }
 
-exports.getResult = (matchRoundId, matchId, parentMatchId = null, callback) => {
+exports.get_result = (matchRoundId, matchId, parentMatchId = null, callback) => {
     let url = util.format(`${baseUrl}${ac.resultEndpoint}`, matchRoundId, matchId, parentMatchId);
     get(url, callback);
 }
 
-exports.getResults = (idList, callback) =>{
+exports.get_results = (idList, callback) =>{
     let url = util.format(`${baseUrl}${ac.resultsEndpoint}`);
     post(ac.hostname, ac.port, path, idList, callback)
 } 
 
-exports.scheduleResultScrape = (matchId, callback) => {
+exports.schedule_result_scrape = (matchId, callback) => {
     let path = util.format(`${ac.basePath}${ac.taskEndpoint}`, matchId);
     post(ac.hostname, ac.port, path, null, callback);
 
