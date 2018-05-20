@@ -1,6 +1,5 @@
 process.env.NODE_ENV = "test";
 
-const config = require("config");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const server = require("../server");
@@ -13,13 +12,13 @@ const helper = require('../test/helper');
 
 chai.use(chaiHttp);
 
-const tokens = tokenController.generateTokens({
+const tokens = tokenController.generate_tokens({
   Email: "Bryan@email.dk",
   Id: 1,
   IsAdmin: false
 });
 
-const tokens2 = tokenController.generateTokens({
+const tokens2 = tokenController.generate_tokens({
   Email: "Ryan@email1.dk",
   Id: 2,
   IsAdmin: false
@@ -54,24 +53,24 @@ describe("/Users", () => {
 
   describe("/GET Users", () => {
     it("it should get a user with id 1", () => {
-      return userController.getById(1, function (user) {
+      return userController.get_by_id(1, function (user) {
         should.equal(user.Id, 1);
         should.equal(user.Name, "Kobe Bryan");
       })
     })
     it("it should not GET anything with a crazy id", () => {
-      return userController.getById(12314).then(user => {
+      return userController.get_by_id(12314).then(user => {
         should.equal(user, null);
       })
     })
     it("it should GET a user by email correctly", () => {
-      return userController.getByEmail('Bryan@email.dk').then(user => {
+      return userController.get_by_email('Bryan@email.dk').then(user => {
         should.equal(user.Id, 1);
         should.equal(user.Name, "Kobe Bryan");
       })
     });
     it("it should not GET anything with a crazy email", () => {
-      return userController.getByEmail('asdasda@email.dk').then(user => {
+      return userController.get_by_email('asdasda@email.dk').then(user => {
         should.equal(user, null);
       })
     });
@@ -211,7 +210,7 @@ describe("/Users", () => {
         .post("/user/login") //ENDPOINT[2]
         .send(login)
         .end((err, res) => {
-          userController.getById(1).then(user => {
+          userController.get_by_id(1).then(user => {
             res.should.have.status(200);
             done();
           })
@@ -224,7 +223,7 @@ describe("/Users", () => {
         .post("/user/login") //ENDPOINT[2]
         .send(login)
         .end((err, res) => {
-          userController.getById(1).then(user => {
+          userController.get_by_id(1).then(user => {
             res.should.have.status(200);
             should.exist(res.body.data.access_token);
             should.exist(res.body.data.refresh_exp);
@@ -239,7 +238,7 @@ describe("/Users", () => {
         .post("/user/login") //ENDPOINT[2]
         .send(login)
         .end((err, res) => {
-          userController.getById(1).then(user => {
+          userController.get_by_id(1).then(user => {
             should.exist(user.RefreshToken);
             done();
           });
@@ -306,7 +305,7 @@ describe("/Users", () => {
         .send(values)
         .end((err, res) => {
           res.should.have.status(200);
-          userController.getById(1).then(user => {
+          userController.get_by_id(1).then(user => {
             user.Name.should.be.eql("newname");
             user.Email.should.be.eql("Bryan@email.dk");
             user.Tag.should.be.eql("XXX");

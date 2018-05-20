@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as socketIo from 'socket.io-client';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
+import { Action } from '../models/action';
 
 
 
@@ -11,7 +12,6 @@ const SERVER_URL = 'http://localhost:3000';
 export class SocketService {
 
     constructor() { }
-
 
     private socket;
     messages = [];
@@ -31,24 +31,10 @@ export class SocketService {
     public onOddsMessage(): Observable<string> {
         return new Observable<string>(observer => {
             this.socket.on('refresh_odds', (data) => {
-                console.log(data)
                 observer.next(data)
             });
         }).shareReplay();
     }
-
-    /*     public sendX(message: string): void {
-            this.socket.emit('message', message)
-            //this.onMessage().subscribe(res => console.log(res));
-        }
-    
-        public onMessage(): Observable<string> {
-            return new Observable<string>(observer => {
-                this.socket.on('message', (data: string) => observer.next(data));
-            });
-        } */
-
-
 
     public onEvent(event: Event): Observable<any> {
         return new Observable<Event>(observer => {
@@ -57,12 +43,5 @@ export class SocketService {
     }
 }
 
-export enum Action {
-    ODDS = 'new_odds',
-    RESULTS = 'new_results'
-}
 
-export enum Event {
-    CONNECT = 'connect',
-    DISCONNECT = 'disconnect'
-}
+

@@ -1,17 +1,19 @@
 const express = require("express");
 const router = express.Router();
-
 const msg = require("../db/http");
-const mysql = require('mysql');
-const config = require('config');
+
+var path = require('path');
+var env = process.env.NODE_ENV || 'test';
+var config  = require(path.join(__dirname, '..', 'config', 'config.json'))[env];
+
 const jwt = require("jsonwebtoken");
-
 const userController = require('./user');
+
 const seq = require('../models');
-const User = seq.users;
+const UserTable = seq.users;
 
 
-exports.refreshToken = (req, res, next) => {
+exports.refresh_token = (req, res, next) => {
   const token = req.body.accesstoken;
 
   //get userid from JWT payload
@@ -21,14 +23,14 @@ exports.refreshToken = (req, res, next) => {
 
  const email = decoded.email;
 
- userController.getByEmail(email).then(user => {
+ userController.get_by_email(email).then(user => {
    if(!user) {
     return msg.show400(req, res, err);
    }
 
-   const tokens = module.exports.generateTokens(user);
+   const tokens = module.exports.generate_tokens(user);
 
-   module.exports.saveRefreshToken(user.Id, tokens.refresh_token, function(data) {
+   module.exports.save_refresh_token(user.Id, tokens.refresh_token, function(data) {
     const newTokens = {
       access_token: tokens.access_token,
       refresh_exp: tokens.refresh_exp
@@ -40,9 +42,9 @@ exports.refreshToken = (req, res, next) => {
  })
 }
 
-exports.saveRefreshToken = (id, refreshtoken, callback) => {
+exports.save_refresh_token = (id, refreshtoken, callback) => {
 
-    User.update({ RefreshToken: refreshtoken }, { where: { Id: id } })
+    UserTable.update({ RefreshToken: refreshtoken }, { where: { Id: id } })
       .then(success => {
         return callback(success);
       })
@@ -51,8 +53,7 @@ exports.saveRefreshToken = (id, refreshtoken, callback) => {
       });
 };
 
-exports.generateTokens = user => {
-
+exports.generate_tokens = user => {
     const REFRESH_EXP = 691200; // 691200s = 8d
     const ACCESS_EXP = 300; // 300s = 5m
  

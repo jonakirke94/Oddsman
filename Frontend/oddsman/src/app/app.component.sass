@@ -1,6 +1,3 @@
-@import '../styles/mq'
-@import '../styles/variables'
-
 
 body
   display: flex
@@ -11,55 +8,4 @@ body
   min-height: 73vh
   flex: 1
 
-.nav
-  background-color: $darker
-  a:hover
-    color: $grey
 
-.navbar 
-  background-color: $darker
-
-.navbar-menu
-    padding: 0
-
-.active 
-   border-color: $dark-prim !important
-
-a.navbar-item
-  color: $white
-  border-bottom: 5px solid transparent
-  &:hover
-    border-color: $dark-prim
-    background: none
-  padding: 2em 3em 3em 3em
-  +tablet-only
-    background-color: $grey
-    padding: 0.5em 0.75em 0.75em 0.75em
-    &:hover
-      background: $grey
-      color: $dark-prim
-  +mobile 
-    background-color: $grey
-    padding: 0.5em 0.75em 0.75em 0.75em 
-    &:hover
-      background: $grey
-      color: $dark-prim
-.nav-left a 
-  color: $white
-  font-weight: bold
-
-a.r-item
-  color:#C1C1C1
-  padding: 0.5rem 1.75rem
-  +mobile
-    color: $grey
-    &:hover
-      background-color: $white
-
-
-.nav-toggle span
-  background-color: #C1C1C1
-
-footer
-    background-color: $dark-prim
-    overflow: hidden

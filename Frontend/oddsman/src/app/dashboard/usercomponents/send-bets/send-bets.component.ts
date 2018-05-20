@@ -5,7 +5,8 @@ import { OddsService } from '../../../services/odds.service';
 import { TournamentService } from '../../../services/tournament.service';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs/Subscription';
-import { SocketService, Action } from '../../../services/socket.service';
+import { SocketService} from '../../../services/socket.service';
+import { Action } from '../../../models/action';
 
 @Component({
   selector: 'app-send-bets',
@@ -124,7 +125,7 @@ export class SendBetsComponent implements OnInit {
   ]
 
     this._odds.sendOdds(this.tournament.id, odds).subscribe(res => {
-      //emit NEWODDS action to server
+      //INIT SOCKET AND EMIT ACTION SO SERVER CAN TELL CLIENTS SHOULD REFRESH FEED
       this._socket.initSocket(); 
       this._socket.send(Action.ODDS);
 

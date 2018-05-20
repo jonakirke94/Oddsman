@@ -1,6 +1,5 @@
 process.env.NODE_ENV = "test";
 
-const config = require("config");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const server = require("../server");
@@ -8,23 +7,20 @@ const should = chai.should();
 const moment = require("moment");
 
 const tokenController = require("../controllers/token");
-const userController = require("../controllers/user");
 const seq = require('../models');
 const Bet = seq.bets;
-const Tournament = seq.tournaments;
-const Match = seq.matches;
+const TournamentTable = seq.tournaments;
+const MatchTable = seq.matches;
 
 const helper = require('../test/helper');
 
 chai.use(chaiHttp);
 
-const tokens = tokenController.generateTokens({
+const tokens = tokenController.generate_tokens({
     Email: "Bryan@email.dk",
     Id: 1,
     IsAdmin: false
 });
-
-/* seq.sequelize.sync(); */
 
 describe('BETS', () => {
     beforeEach(done => {
@@ -42,12 +38,12 @@ describe('BETS', () => {
                 .post("/tournament") //ENDPOINT[1]
                 .send(tour)
                 .end((err, res) => {
-                    Tournament.create({
+                    TournamentTable.create({
                         Name: "Season " + moment().isoWeek(),
                         Start: moment().subtract(1, 'M'),
                         End: moment().add(1, 'M')
                     }).then(() => {
-                        Tournament.create({
+                        TournamentTable.create({
                             Name: "Season 17",
                             Start: moment().subtract(5, 'M'),
                             End: moment().subtract(2, 'M')
@@ -56,7 +52,7 @@ describe('BETS', () => {
                                 .post("/user/signup") //ENDPOINT[2]
                                 .send(user)
                                 .end((err, res) => {
-                                    Match.create({
+                                    MatchTable.create({
                                             MatchId: 1,
                                             Missing: true
                                         })

@@ -1,20 +1,18 @@
  process.env.NODE_ENV = "test";
 
- const config = require("config");
  const chai = require("chai");
  const chaiHttp = require("chai-http");
  const server = require("../server");
  const should = chai.should();
  const db = require('../models');
- const Tournament = db.tournaments;
+ const TournamentTable = db.tournaments;
  const tokenController = require('../controllers/token')
- const token = require("../controllers/token");
  const helper = require('../test/helper');
  const moment = require('moment');
 
  chai.use(chaiHttp);
 
- const tokens = tokenController.generateTokens({
+ const tokens = tokenController.generate_tokens({
    Email: "Bryan@email.dk",
    Id: 1,
    IsAdmin: false
@@ -234,12 +232,12 @@
          .post("/user/signup") //ENDPOINT[2]
          .send(user)
          .end((err, res) => {
-           Tournament.create({
+           TournamentTable.create({
              Name: "Active",
              Start: moment().subtract(1, 'M'),
              End: moment().add(1, 'M')
            }).then(() => {
-             Tournament.create({
+             TournamentTable.create({
                Name: "Not Active",
                Start: moment().add(2, 'M'),
                End: moment().add(4, 'M')
@@ -264,7 +262,7 @@
          .post("/user/signup") //ENDPOINT[2]
          .send(user)
          .end((err, res) => {
-           Tournament.create({
+           TournamentTable.create({
              Name: "Not Active",
              Start: moment().add(2, 'M'),
              End: moment().add(4, 'M')
@@ -464,7 +462,7 @@
          });
      });
      it("it should not POST a request with an invalid id", done => {
-       const xtokens = tokenController.generateTokens({
+       const xtokens = tokenController.generate_tokens({
          Email: "Bryan@email.dk",
          Id: 100,
          IsAdmin: false

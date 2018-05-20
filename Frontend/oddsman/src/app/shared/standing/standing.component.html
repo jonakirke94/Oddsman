@@ -1,0 +1,32 @@
+   <!-- TABLE -->
+   <p-table [value]="standings"  autoLayout="true" *ngIf="tournament">
+    <ng-template pTemplate="header">
+        <tr>        
+            <th colspan="8" class="has-text-centered">Stilling {{tournament.name}}</th>
+        </tr>
+        <tr>
+            <th>#</th>
+            <th>Tag</th>
+            <th>Deltager</th>
+            <th>Tips</th>
+            <th>Points</th>
+            <th>Afstand til #1</th>
+            <th [hidden]="!tournament.ongoing">Points i uge {{tournament.week}}</th>
+
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-standing>
+        <tr>
+            <td>{{standing.position}}</td>
+            <td>{{standing.tag}}</td>
+            <td>{{standing.name}}</td>
+            <td>{{standing.wins}} / {{standing.tips}}</td>
+            <td>{{standing.points}}</td>
+            <td>{{standing.deficit}}</td>
+            <td [hidden]="!tournament.ongoing">{{standing.pointsWeek}}</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+
+    </ng-template>
+</p-table>

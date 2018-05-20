@@ -1,69 +1,7 @@
-<nav class="navbar">
-  <div class="navbar-brand">
-    <div class="navbar-burger burger" data-target="navbarExampleTransparentExample" (click)="toggleNav = !toggleNav;" [ngClass]="{'is-active' : toggleNav}">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-  </div>
-
-  <div id="navbarExampleTransparentExample" class="navbar-menu" [ngClass]="{'is-active' : toggleNav}">
-    <div class="navbar-start">
-      <a class="navbar-item" routerLink="/" [class.active]="router.url==='/'">
-        Stilling
-      </a>
-      <a class="navbar-item" routerLink="/" [class.active]="router.url==='/statistic'">
-        Statistik
-      </a>
-      <a class="navbar-item" routerLink="/" [class.active]="router.url==='/info'">
-        Info
-      </a>
-
-    </div>
-
-    <div class="navbar-end" *ngIf="(isLoggedin$ | async)">
-    
-      <a class="navbar-item" *ngIf="(isAdmin$ | async) === false" routerLink="/dashboard/sendtips" [class.active]="router.url==='/dashboard/sendtips'">
-         Send tips
-      </a>
-
-      <a class="navbar-item" *ngIf="(isAdmin$ | async) === false"  routerLink="/dashboard" [class.active]="router.url==='/dashboard'">
-        Dashboard
-      </a>
-
-      <a class="navbar-item" *ngIf="(isAdmin$ | async)"  routerLink="/admin" [class.active]="router.url==='/admin'">
-        Admin Panel
-      </a>
-
-      <a class="navbar-item" routerLink="/login" (click)="logout()">
-        Log out
-      </a>
-    </div>
-
-    <div class="navbar-end" *ngIf="(isLoggedin$ | async) == false">
-        <a class="navbar-item" routerLink="/login" [class.active]="router.url==='/login'">
-            Login   
-        </a>
-
-        <a class="navbar-item" routerLink="/signup" [class.active]="router.url==='/signup'">
-            Signup
-        </a>
-    </div>
-  </div>
-</nav>
+<layout-header></layout-header>
 
 <div class="content-wrapper">
 <router-outlet></router-outlet>
 </div>
 
-<footer class="footer">
-    <div class="container">
-      <div class="content has-text-centered">
-        <p>
-          <strong>Bulma</strong> by <a href="http://jgthms.com">Jeremy Thomas</a>. The source code is licensed
-          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
-          is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
-        </p>
-      </div>
-    </div>
-  </footer>
+<layout-footer></layout-footer>

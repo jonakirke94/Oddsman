@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken');
 const msg = require('../../db/http');
-const config = require('config');
+
+var path = require('path');
+var env = process.env.NODE_ENV || 'test';
+var config  = require(path.join(__dirname, '../..', 'config', 'config.json'))[env];
+
 const userController = require('../../controllers/user')
 
 
@@ -28,7 +32,7 @@ module.exports = (req, res, next) => {
                 })
 
                 const userId = decoded.userId;
-                userController.getById(userId).then(data => {
+                userController.get_by_id(userId).then(data => {
                     jwt.verify(data.RefreshToken, REFRESH_SECRET, function(err, decoded){
                         if(err) {
                             if(err["name"] == 'TokenExpiredError'){

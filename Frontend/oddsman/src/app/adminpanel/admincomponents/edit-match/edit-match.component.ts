@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { MatchService, Match } from '../../../services/match.service';
+import { MatchService} from '../../../services/match.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Message } from "primeng/components/common/api";
+import { Match } from '../../../models/match';
 
 @Component({
     selector: 'app-edit-match',

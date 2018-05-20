@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { MatchService, Result } from '../../../services/match.service';
+import { MatchService,} from '../../../services/match.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Message } from "primeng/components/common/api";
+import { Result } from '../../../models/result';
 
 
 @Component({
@@ -52,8 +53,6 @@ export class ResultsComponent implements OnInit {
   }
 
   save() {
-    console.log('Result:')
-    console.log(this.result)
     this.loadSubscription$ = this._match.updateResult(this.selectedResult.Id, this.result).subscribe(res => {
       this.msgs = [];
       this.msgs.push({

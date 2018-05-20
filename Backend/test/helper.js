@@ -1,9 +1,5 @@
 const db = require('../models');
 
-/* db.sequelize.sync({force: true}) */
-
-
-
 exports.clean = (done) => {
 
   let multiQueryArr = [];
