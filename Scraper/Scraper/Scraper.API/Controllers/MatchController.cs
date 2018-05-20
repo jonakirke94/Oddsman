@@ -96,7 +96,7 @@ namespace Scraper.API.Controllers
         }
 
 
-        [HttpGet("Results")]
+        [HttpPost("Results")]
         [ProducesResponseType(200, Type = typeof(Result))]
         public async Task<IActionResult> GetResults([FromBody] IEnumerable<int> ids)
         {
@@ -127,18 +127,17 @@ namespace Scraper.API.Controllers
                                         continue;
                                     }
                                     // If the match haven't been played yet continue
-                                    if (match.MatchDate > DateTime.Now.AddHours(2)) continue;
+                                    if (match.MatchDate > DateTime.Now.AddHours(3))
+                                    {
+                                        // Schedule a later scrape since we can't find it.
+                                        BackgroundJob.Schedule(() => _automate.ScrapeMatchResult(id), TimeSpan.FromHours(1));
+                                    }
 
                                     // Try scraping the match and add it.
                                     var sRes = Scraper.GetMatchResult(match.RoundId, id, match.ParentId);
                                     if (sRes != null)
                                     {
                                         results.Add(sRes);
-                                    }
-                                    else
-                                    {
-                                        // Schedule a later scrape since we can't find it.
-                                        BackgroundJob.Schedule(() => _automate.ScrapeMatchResult(id), TimeSpan.FromHours(1));
                                     }
                                 }
 

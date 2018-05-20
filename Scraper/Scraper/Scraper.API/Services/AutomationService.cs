@@ -21,9 +21,11 @@ namespace Scraper.API.Services
             _scopeFactory = scopeFactory;
         }
 
-        public async Task ScrapeUpcomingMatches(DateRange range = null)
+        public async Task ScrapeUpcomingMatches(DateTime start, DateTime end)
         {
-            if (range == null)
+            var range = new DateRange(start, end);
+
+            if (start == DateTime.MinValue || end == DateTime.MinValue)
             {
                 range = new DateRange
                 {

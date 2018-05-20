@@ -37,6 +37,16 @@ describe("/ SCRAPER API", () => {
                 done();
             });
         })
+
+        it("Should get Results", done =>{
+            scraper.getResults([
+                1, 2
+            ],
+            (res) => {
+                res.status.should.be.eql("200");
+                done();
+            });
+        })
     }
 });
 

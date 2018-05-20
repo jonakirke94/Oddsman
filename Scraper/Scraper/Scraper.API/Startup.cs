@@ -42,7 +42,7 @@ namespace Scraper.API
             var options = new MySqlStorageOptions
             {
                 TransactionIsolationLevel = IsolationLevel.ReadCommitted,
-                QueuePollInterval = TimeSpan.FromSeconds(15),
+                QueuePollInterval = TimeSpan.FromSeconds(30),
                 JobExpirationCheckInterval = TimeSpan.FromHours(1),
                 CountersAggregateInterval = TimeSpan.FromMinutes(5),
                 PrepareSchemaIfNecessary = true,
@@ -51,7 +51,7 @@ namespace Scraper.API
             };
 
             var storage = new MySqlStorage(Configuration.GetConnectionString("Hangfire"), options);
-
+            //GlobalConfiguration.Configuration.UseStorage(storage);
             services.AddHangfire(o => o.UseStorage(storage));
         }
 
@@ -91,14 +91,16 @@ namespace Scraper.API
 
             app.UseStaticFiles();
 
-            
-
-
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
                 Authorization = new[] { new HangfireAuthFilter() }
             });
-            app.UseHangfireServer();
+            app.UseHangfireServer(new BackgroundJobServerOptions
+            {
+               // trying to limit MySQL connections
+               WorkerCount = 10,
+               HeartbeatInterval = TimeSpan.FromMinutes(1)
+            });
 
             // Add tasks on startup
             var automate = new AutomationService(scope);

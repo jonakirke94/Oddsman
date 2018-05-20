@@ -26,6 +26,10 @@ exports.getResult = (matchRoundId, matchId, parentMatchId = null, callback) => {
     get(url, callback);
 }
 
+exports.getResults = (idList, callback) =>{
+    let url = util.format(`${baseUrl}${ac.resultEndpoint}`);
+} 
+
 exports.scheduleResultScrape = (matchId, callback) => {
     let path = util.format(`${ac.basePath}${ac.taskEndpoint}`, matchId);
     post(ac.hostname, ac.port, path, null, callback);

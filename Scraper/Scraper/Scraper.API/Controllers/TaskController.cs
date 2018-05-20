@@ -43,16 +43,23 @@ namespace Scraper.API.Controllers
                     {
                         var match = db.Matches.FirstOrDefault(m => m.MatchId == matchId);
                         if (match == null) return NotFound();
-                        
-                        var difference = (match.MatchDate.AddHours(3) - DateTime.Now).Ticks;
-                        var timespan = TimeSpan.FromTicks(difference);
-
-                        if (difference < 0)
+                        if (match.MatchDate.AddHours(3) < DateTime.Now)
                         {
-                            timespan = TimeSpan.FromHours(1);
+                            BackgroundJob.Enqueue(() => _automate.ScrapeMatchResult(matchId));
                         }
+                        else
+                        {
+                            var difference = (match.MatchDate.AddHours(3) - DateTime.Now).Ticks;
+                            var timespan = TimeSpan.FromTicks(difference);
 
-                        BackgroundJob.Schedule(() => _automate.ScrapeMatchResult(matchId), timespan);
+                            if (difference < 0)
+                            {
+                                timespan = TimeSpan.FromHours(1);
+                            }
+
+                            BackgroundJob.Schedule(() => _automate.ScrapeMatchResult(matchId), timespan);
+                        }
+                        
 
                     }
                     catch (Exception ex)
@@ -71,7 +78,16 @@ namespace Scraper.API.Controllers
         {
             var range = GetNextRoundDates();
 
-            RecurringJob.AddOrUpdate("scrape-matches", () => _automate.ScrapeUpcomingMatches(range), Cron.Weekly(DayOfWeek.Thursday, 6));
+            RecurringJob.AddOrUpdate("scrape-matches", () => _automate.ScrapeUpcomingMatches(range.Start, range.End), Cron.Weekly(DayOfWeek.Thursday, 6));
+            return Ok("Queued Weekly Scrape Job");
+        }
+
+        [HttpPost("test")]
+        public async Task<IActionResult> Test()
+        {
+            var range = new DateRange(DateTime.Now.AddDays(-1), DateTime.Now.AddDays(2));
+
+            BackgroundJob.Enqueue(() => _automate.ScrapeUpcomingMatches(range.Start, range.End));
             return Ok("Queued Weekly Scrape Job");
         }
 
@@ -81,7 +97,7 @@ namespace Scraper.API.Controllers
         //    return Ok(JsonConvert.SerializeObject(GetNextRoundDates()));
         //}
 
-        private static DateRange GetNextRoundDates()
+        public static DateRange GetNextRoundDates()
         {
             var today = DateTime.Today;
 
