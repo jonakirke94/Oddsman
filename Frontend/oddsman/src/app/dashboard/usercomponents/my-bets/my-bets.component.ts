@@ -14,14 +14,11 @@ import { Subscription } from 'rxjs/Subscription';
 export class MyBetsComponent implements OnInit {
 
   loading: boolean;
-
   tournaments: Tour[];
-
   selectedTour: Tour;
-
   bets: any[];
 
-  tournaments$ : Subscription;
+  tournaments$: Subscription;
   bets$: Subscription;
 
 
@@ -41,7 +38,7 @@ export class MyBetsComponent implements OnInit {
     this.bets$ = this._odds.getBets(tourId).subscribe(res => {
       this.bets = res
       this.loading = false;
-      
+
     });
   }
 
@@ -65,18 +62,18 @@ export class MyBetsComponent implements OnInit {
   calculateOddsTotal(week: string) {
     let total = 0;
 
-    if(this.bets) {
-        for(let bet of this.bets) {
-            if(bet.week === week && bet.match.result) {
-                if(bet.match.result.CorrectBet) {
-                  total += bet.odds
-                }
-            }
+    if (this.bets) {
+      for (let bet of this.bets) {
+        if (bet.week === week && bet.match.result) {
+          if (bet.match.result.CorrectBet) {
+            total += bet.odds
+          }
         }
+      }
     }
 
     return total;
-}
+  }
 }
 
 
