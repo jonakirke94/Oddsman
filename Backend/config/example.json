@@ -1,13 +1,47 @@
 {
-    "DbSettings": {
-      "host": "X",
-      "database": "X",
-      "user": "X",
-      "password": "X",
-      "multipleStatements": true //ONLY IN test.json
+  "dev": {
+    "dbSettings": {
+    "username": "X",
+    "password": "X",
+    "database": "X",
+    "host": "X",
+    "logging": false,
+    "dialect": "mysql"
     },
     "JWT_ACCESS_SECRET": "X",
     "JWT_REFRESH_SECRET": "X",
     "ADMIN_PASSWORD": "X"
-  }
+  },
   
+  "test": {
+    "dbSettings": {
+      "username": "X",
+      "password": "X",
+      "database": "X",
+      "host": "X",
+      "dialect": "mysql",
+      "logging": false,
+       "dialectOptions": {
+        "multipleStatements": true
+      }
+    },
+    "JWT_ACCESS_SECRET": "X",
+    "JWT_REFRESH_SECRET": "X",
+    "ADMIN_PASSWORD": "X"
+      
+  },
+  "prod": {
+    "dbSettings": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },    
+  "JWT_ACCESS_SECRET": "X",
+  "JWT_REFRESH_SECRET": "X",
+  "ADMIN_PASSWORD": "X"
+}
+}
+
+

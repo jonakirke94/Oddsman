@@ -8,12 +8,12 @@ const should = chai.should();
 const moment = require("moment");
 
 const tokenController = require("../controllers/token");
-const userController = require("../controllers/user");
+
 const oddsController = require("../controllers/odds");
 const seq = require('../models');
-const Bet = seq.bets;
-const Tournament = seq.tournaments;
-const Match = seq.matches;
+const BetTable = seq.bets;
+const TournamentTable = seq.tournaments;
+const MatchTable = seq.matches;
 const helper = require('../test/helper');
 
 chai.use(chaiHttp);
@@ -41,7 +41,7 @@ describe('ODDS', () => {
                 .post("/tournament") //ENDPOINT[1]
                 .send(tour)
                 .end((err, res) => {
-                    Tournament.bulkCreate([{
+                    TournamentTable.bulkCreate([{
                         Name: "Season " + moment().isoWeek(),
                         Start: moment().subtract(1, 'M'),
                         End: moment().add(1, 'M')
@@ -58,7 +58,7 @@ describe('ODDS', () => {
                             .post("/user/signup") //ENDPOINT[2]
                             .send(user)
                             .end((err, res) => {
-                                Match.create({
+                                MatchTable.create({
                                     Id: 1,
                                     MatchId: 256,
                                     Option1: "vinder",
@@ -68,7 +68,7 @@ describe('ODDS', () => {
                                     Option2Odds: 8.34,
                                     Option3Odds: 3.45
                                 }).then(() => {
-                                    Bet.bulkCreate([{
+                                    BetTable.bulkCreate([{
                                         tournamentId: 1,
                                         userId: 1,
                                         Week: moment().isoWeek(),
@@ -188,8 +188,6 @@ describe('ODDS', () => {
                     },
                 ])
                 .end((err, res) => {
-                    /* let msg = JSON.parse(res.text).msg;
-                    console.log(msg); */
                     if (moment().weekday(3) == moment().weekday() || moment().weekday(4) == moment().weekday() || moment().weekday(5) == moment().weekday()) {
                         res.should.have.status(200);
                     } else {
