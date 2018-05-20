@@ -64,10 +64,6 @@ export class AuthService {
     localStorage.setItem("refresh_expiresAt", JSON.stringify(expiresAt.valueOf()));
 
     authResult.data.isAdmin ? this.isAdmin.next(true) : this.isAdmin.next(false);
-
-    //if using this remember to reset values when updating the user
-    //let authInfo = new CurrentUser(email);
-    //localStorage.setItem("authInfo", JSON.stringify(authInfo));
   }
 
   logout() {
@@ -75,11 +71,9 @@ export class AuthService {
     this.isAdmin.next(false);
     localStorage.removeItem("accesstoken");
     localStorage.removeItem("refresh_expiresAt");
-   // localStorage.removeItem("authInfo");
   }
 
   public isLoggedIn() {
-    //do some testing here.
     const IsValid = moment().isBefore(this.getExpiration());
     IsValid ? this.loggedIn.next(true) : this.loggedIn.next(false);
     return this.loggedIn.asObservable();
