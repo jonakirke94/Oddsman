@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken');
 const msg = require('../../db/http');
-const config = require('config');
+
+var path = require('path');
+var env = process.env.NODE_ENV || 'test';
+var config  = require(path.join(__dirname, '../..', 'config', 'config.json'))[env];
+
 const userController = require('../../controllers/user')
 
 //read more: https://jwt.io/
@@ -46,10 +50,6 @@ module.exports = (req, res, next) => {
                             }
                         });
                     })
-                    /*  userController.getUserByProperty('UserId', userId, function(data) {         */
-                    //check if expired else we generate new tokens
-
-                    /* }); */
                 } else {
                     //something else went wrong while decoding the token
                     return msg.show401(req, res, next);

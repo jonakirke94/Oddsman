@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken');
 const msg = require('../../db/http');
-const config = require('config');
+
+var path = require('path');
+var env = process.env.NODE_ENV || 'test';
+var config  = require(path.join(__dirname, '../..', 'config', 'config.json'))[env];
+
 const userController = require('../../controllers/user')
 
 
