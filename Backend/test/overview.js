@@ -32,6 +32,23 @@ const token2 = tokenController.generateTokens({
     IsAdmin: false
 });
 
+const user1 = {
+    name: "BRYBRY",
+    email: "Bryan@gmail.dk",
+    id: 1,
+    isAdmin: false,
+    tag: "MYBOI",
+    password: "123456789"
+};
+const user2 = {
+    name: "KirkeBoss",
+    email: "World@gmail.dk",
+    id: 2,
+    isAdmin: false,
+    tag: "JKIRK",
+    password: "123456789"
+};
+
 /************************************************
  * ENDPOINT EXPLANATION
  * 1: CREATE A TOURNAMENT
@@ -47,23 +64,6 @@ describe('TOURNAMENTS', () => {
     beforeEach(done => {
         helper.clean(function (result) {
             let matchId = null;
-
-            const user1 = {
-                name: "BRYBRY",
-                email: "Bryan@gmail.dk",
-                id: 1,
-                isAdmin: false,
-                tag: "MYBOI",
-                password: "123456789"
-            };
-            const user2 = {
-                name: "KirkeBoss",
-                email: "World@gmail.dk",
-                id: 2,
-                isAdmin: false,
-                tag: "JKIRK",
-                password: "123456789"
-            };
 
             Tournament.create({
                 Name: "Active",
@@ -83,53 +83,51 @@ describe('TOURNAMENTS', () => {
                                 Tournament_User.create({
                                     userId: 1,
                                     tournamentId: 1
-                                }).then(() => {
-                                    Tournament_User.create({
-                                        userId: 2,
-                                        tournamentId: 1
-                                    }).then(() => {
-                                        Match.create({
-                                            Option1Odds: 1.98,
-                                            Option2Odds: 2.11,
-                                            Option3Odds: 36.12
-                                        }).then((match) => {
-                                            matchId = match.Id;
-                                            Result.create({
-                                                    EndResult: "2 - 0",
-                                                    CorrectBet: "X",
-                                                    matchId: 1
-                                                })
-                                                .then(() => {
-                                                    Bet.create({
-                                                            tournamentId: 1,
-                                                            userId: 1,
-                                                            Week: moment().isoWeek(),
-                                                            Option: "X",
-                                                            OptionNo: 2,
-                                                            matchId: matchId
-                                                        })
-                                                        .then(() => {
-                                                            Bet.create({
-                                                                    tournamentId: 1,
-                                                                    userId: 2,
-                                                                    Week: moment().isoWeek(),
-                                                                    Option: "1",
-                                                                    OptionNo: 1,
-                                                                    matchId: matchId
-                                                                })
-                                                                .then(() => {
-                                                                    done();
-                                                                })
-                                                        })
-                                                })
-                                        })
-                                    });
-
-                                });
-
+                            }).then(() => {
+                                Tournament_User.create({
+                                    userId: 2,
+                                    tournamentId: 1
+                            }).then(() => {
+                                Match.create({
+                                    Option1Odds: 1.98,
+                                    Option2Odds: 2.11,
+                                    Option3Odds: 36.12
+                            }).then((match) => {
+                                    matchId = match.Id;
+                                    Result.create({
+                                        EndResult: "2 - 0",
+                                        CorrectBet: "X",
+                                        matchId: 1
+                                })
+                            .then(() => {
+                                Bet.create({
+                                    tournamentId: 1,
+                                    userId: 1,
+                                    Week: moment().isoWeek(),
+                                    Option: "X",
+                                    OptionNo: 2,
+                                    matchId: matchId
+                                })
+                            .then(() => {
+                                Bet.create({
+                                    tournamentId: 1,
+                                    userId: 2,
+                                    Week: moment().isoWeek(),
+                                    Option: "1",
+                                    OptionNo: 1,
+                                    matchId: matchId
+                                })
+                            .then(() => {
+                                done();
+                            })
+                            })
+                            })
+                            })
                             });
-                    });
-            });
+                            });
+                            });
+                        });
+                });
         })
     });
     afterEach(function (done) {
@@ -144,7 +142,6 @@ describe('TOURNAMENTS', () => {
                 .request(server)
                 .get("/tournament/1/overview")
                 .end((err, res) => {
-                    console.log(JSON.stringify(res.body.data));
                     res.should.have.status(200);
                     res.body.data.should.be.a('object');
                     res.body.data.standings.should.be.a('array');

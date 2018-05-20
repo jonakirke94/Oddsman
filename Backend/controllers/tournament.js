@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db/db");
 const msg = require("../db/http");
 const mysql = require("mysql");
 const jwtDecode = require('jwt-decode');
@@ -445,7 +444,6 @@ exports.get_overview = (req, res, next) => {
     })
     .then((tourney) => {
       generateStandings(tourney, (standings) => {
-        // console.log(standings)
         return msg.show200(req, res, "Success", standings);
       });
     })
