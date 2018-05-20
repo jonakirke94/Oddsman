@@ -1,8 +1,9 @@
 
-const config = require("config");
-const userController = require('../controllers/user');
+var path = require('path');
+var env = process.env.NODE_ENV || 'test';
+var config  = require(path.join(__dirname, '..', 'config', 'config.json'))[env];
+
 const bcrypt = require('bcrypt');
-const mysql= require('mysql');
 const db = require('../models')
 const User = db.users;
 

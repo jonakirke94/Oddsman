@@ -37,7 +37,8 @@ app.use((req, res, next) => {
 });
 
 //don't show the log when it is test
-if (config.util.getEnv('NODE_ENV') !== 'test') {
+const env = process.env.NODE_ENV || 'test';
+if (env !== 'test') {
     //use morgan to log at command line
     //app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
 
