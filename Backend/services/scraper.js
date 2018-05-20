@@ -10,6 +10,7 @@ const ac = {
     basePath: "/api/v1",
     matchEndpoint: "/match/%s/%s", // MatchId / EventId
     resultEndpoint: "/match/result/%s/%s/%s", // MatchRoundId, MatchId, parentMatchId
+    resultsEndpoint: "/match/results", // requires body (list of int)
     taskEndpoint: "/task/%s" // MatchId
 }
 
@@ -27,7 +28,8 @@ exports.getResult = (matchRoundId, matchId, parentMatchId = null, callback) => {
 }
 
 exports.getResults = (idList, callback) =>{
-    let url = util.format(`${baseUrl}${ac.resultEndpoint}`);
+    let url = util.format(`${baseUrl}${ac.resultsEndpoint}`);
+    post(ac.hostname, ac.port, path, idList, callback)
 } 
 
 exports.scheduleResultScrape = (matchId, callback) => {
