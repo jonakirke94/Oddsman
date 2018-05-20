@@ -2,7 +2,8 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { StandingComponent} from '../standing/standing.component';
-import { TournamentService, Tour } from '../../services/tournament.service';
+import { TournamentService} from '../../services/tournament.service';
+import { Tour } from '../../models/tour';
 
 @Component({
   selector: 'history',

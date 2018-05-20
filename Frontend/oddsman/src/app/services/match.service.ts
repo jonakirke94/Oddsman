@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Match } from '../models/match';
+import { Result } from '../models/result';
 
 
 @Injectable()
@@ -47,21 +49,4 @@ export class MatchService {
 
 }
 
-export class Match {
-  Id?;
-  MatchId?;
-  MatchName?;
-  MatchDate?;
-  Option1?;
-  Option2?;
-  Option3?;
-  Option1Odds?;
-  Option2Odds?;
-  Option3Odds?;
-}
 
-export class Result {
-  Id?;
-  EndResult?;
-  CorrectBet?;
-}

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { TournamentService, Tour } from '../../../services/tournament.service';
+import { TournamentService} from '../../../services/tournament.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { OddsService } from '../../../services/odds.service';
 import { SelectItem } from 'primeng/components/common/api';
 import { Subscription } from 'rxjs/Subscription';
+import { Tour } from '../../../models/tour';
 
 
 @Component({

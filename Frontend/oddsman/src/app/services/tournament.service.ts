@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Request} from '../models/request'
 
 @Injectable()
 export class TournamentService {
@@ -89,14 +90,5 @@ export class TournamentService {
   }
 }
 
-export class Request {
-  userId;
-  userName;
-  userEmail;
-  userTag;
-}
 
-export interface Tour {
-  name: string;
-  code: string;
-}
+
