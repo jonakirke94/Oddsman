@@ -42,6 +42,10 @@ import { AdminguardGuard } from './guards/adminguard.guard';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth.interceptor';
 
+/* Layout Module */ 
+import { FooterComponent } from './layout/footer/footer.component';
+import { HeaderComponent } from './layout/header/header.component';
+
 
 @NgModule({
   imports: [
@@ -50,7 +54,13 @@ import { AuthInterceptor } from './auth.interceptor';
     AppRoutingModule
 
   ],
-  declarations: [    
+  exports : [
+    FooterComponent,  
+    HeaderComponent,
+  ],
+  declarations: [  
+    FooterComponent,  
+    HeaderComponent,
     LoginComponent,
     LoadingSpinnerComponent,
     SignupComponent,
@@ -73,7 +83,8 @@ import { AuthInterceptor } from './auth.interceptor';
     EditMatchComponent,
     BetFeedComponent,
     ResultFeedComponent,
-    ResultsComponent],
+    ResultsComponent
+  ],
   providers: [    
     AuthService,
     OddsService,

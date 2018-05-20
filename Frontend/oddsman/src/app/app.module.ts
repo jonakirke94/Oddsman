@@ -7,9 +7,12 @@ import * as io from 'socket.io-client';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
+
   ],
   imports: [
     BrowserModule,
