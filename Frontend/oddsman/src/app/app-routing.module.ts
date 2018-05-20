@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { LoginComponent } from './login/login.component';
-import { SignupComponent } from './signup/signup.component';
+
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminpanelComponent } from './adminpanel/adminpanel.component';
-import { AuthGuard } from './guards/auth.guard';
-import { AdminguardGuard } from './guards/adminguard.guard';
+
+import { LoginComponent } from './authentication/login/login.component';
+import { SignupComponent } from './authentication/signup/signup.component';
+
 import { UserstatsComponent } from './dashboard/usercomponents/userstats/userstats.component';
 import { UsersettingsComponent } from './dashboard/usercomponents/usersettings/usersettings.component';
 import { AdminStatsComponent } from './adminpanel/admincomponents/admin-stats/admin-stats.component';
@@ -20,7 +21,8 @@ import { AdminRequestsComponent } from './adminpanel/admincomponents/admin-reque
 import { AdminHistoryComponent } from './adminpanel/admincomponents/history/history.component';
 import { EditMatchComponent } from './adminpanel/admincomponents/edit-match/edit-match.component';
 import { ResultsComponent } from './adminpanel/admincomponents/results/results.component';
-
+import { AuthGuard } from '../guards/auth.guard';
+import { AdminguardGuard } from '../guards/adminguard.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent }, //index

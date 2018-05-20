@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { StandingComponent } from "../standing/standing.component";
-import { BetFeedComponent} from '../bet-feed/bet-feed.component';
-import { ResultFeedComponent} from '../result-feed/result-feed.component';
-import { SocketService, Action } from '../services/socket.service';
-
-
+import { StandingComponent } from "../shared/standing/standing.component";
+import { BetFeedComponent} from '../shared/bet-feed/bet-feed.component';
+import { ResultFeedComponent} from '../shared/result-feed/result-feed.component';
 
 @Component({
   selector: 'app-standing',
@@ -14,21 +11,16 @@ import { SocketService, Action } from '../services/socket.service';
   
 })
 
-
-
 export class HomeComponent implements OnInit {
 
   //temporary
-  constructor(private _socket: SocketService) {
+  constructor() {
   }
 
   ngOnInit() {
-    this._socket.initSocket();
+  
   }
 
-  sendMessage() {
-    let message = "TEST MESSAGE FROM HOME COMPONENT"
-    this._socket.send(Action.ODDS);
-  }
+
 
 }

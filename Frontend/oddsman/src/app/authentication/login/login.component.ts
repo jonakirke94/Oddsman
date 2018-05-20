@@ -1,11 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import {HttpClient,HttpEvent,HttpInterceptor,HttpHandler,HttpRequest,HttpHeaders} from "@angular/common/http";
 import { FormGroup, FormControl, Validators,  } from "@angular/forms";
-import { AuthService } from "../services/auth.service";
 import { Router } from "@angular/router";
 import "rxjs/add/operator/map";
-import { flyInOut } from "../animations";
-import { LoadingSpinnerComponent } from "../loading-spinner/loading-spinner.component";
+import { LoadingSpinnerComponent } from "../../shared/loading-spinner/loading-spinner.component";
+import { flyInOut } from "../../animations";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: "app-login",

@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { feedAnimation } from '../animations';
-import { SocketService } from '../services/socket.service';
-import { MatchService } from '../services/match.service';
+
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
 import * as moment from 'moment';
+import { feedAnimation } from '../../animations';
+import { MatchService } from '../../services/match.service';
 
 
 @Component({
