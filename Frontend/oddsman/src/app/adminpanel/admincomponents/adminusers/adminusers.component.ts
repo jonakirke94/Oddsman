@@ -12,13 +12,10 @@ import { Subscription } from 'rxjs/Subscription';
 export class AdminusersComponent implements OnInit {
 
   loading: boolean;
-
   users: User[] = [];
-
   cols: any[];
 
   getusers$ : Subscription;
-
 
   constructor(private http: HttpClient, private _user: UserService) {}
 

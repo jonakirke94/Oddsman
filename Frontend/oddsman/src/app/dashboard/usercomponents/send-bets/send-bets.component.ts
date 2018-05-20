@@ -124,7 +124,7 @@ export class SendBetsComponent implements OnInit {
   ]
 
     this._odds.sendOdds(this.tournament.id, odds).subscribe(res => {
-      //emit NEWODDS action to server
+      //INIT SOCKET AND EMIT ACTION SO SERVER CAN TELL CLIENTS SHOULD REFRESH FEED
       this._socket.initSocket(); 
       this._socket.send(Action.ODDS);
 
