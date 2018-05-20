@@ -29,9 +29,6 @@ exports.show404 = function(req, res, next) {
     msg: 'Not Found'
   })
   res.end();
-  /*   const error = new Error("Not Found");
-    error.status = 404;
-    next(error); */
 };
 
 //conflict

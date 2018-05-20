@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const msg = require("../db/http");
-const mysql = require('mysql');
 
 var path = require('path');
 var env = process.env.NODE_ENV || 'test';
