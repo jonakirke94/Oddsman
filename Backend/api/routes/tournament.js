@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const db = require(".././../db/db");
-const msg = require(".././../db/http");
 const adminguard = require('../guards/adminguard');
 const guard = require('../guards/authguard');
 
@@ -18,8 +16,5 @@ router.get("/", tournamentController.get_all);
 router.get("/current/user", guard, tournamentController.get_current_tournament_user) //get a user's current tournament if any
 router.get('/current', tournamentController.get_current_tournament) //get the tournament that is currently ongoing
 router.get("/:tourid/overview", tournamentController.get_overview)
-
-
-
 
 module.exports = router;
