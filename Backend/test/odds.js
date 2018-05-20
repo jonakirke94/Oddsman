@@ -7,8 +7,8 @@ const should = chai.should();
 const moment = require("moment");
 
 const tokenController = require("../controllers/token");
-
 const oddsController = require("../controllers/odds");
+
 const seq = require('../models');
 const BetTable = seq.bets;
 const TournamentTable = seq.tournaments;

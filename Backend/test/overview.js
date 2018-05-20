@@ -51,14 +51,9 @@ const user2 = {
  * ENDPOINT EXPLANATION
  * 1: CREATE A TOURNAMENT
  * 2: CREATE A USER
- * 3: CREATE A REQUEST
- * 4: MANAGE REQUEST
- * 5: GET ALL TOURNAMENTS
- * 6: GET ENLISTED TOURNAMENTS FOR A USER
- * 7: GET DELISTED TOURNAMENTS FOR A USER
  ************************************************/
 
-describe('TOURNAMENTS', () => {
+describe('STANDING', () => {
     beforeEach(done => {
         helper.clean(function (result) {
             let matchId = null;
