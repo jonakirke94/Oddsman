@@ -4,7 +4,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
 
 /* COMPONENTS */
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from './components/home/home.component';
+import { InfoComponent } from './components/info/info.component';
+import { StatisticsComponent } from './components/statistics/statistics.component';
+
 
 /* SERVICES */
 import { AuthService } from './services/auth.service';
@@ -22,14 +25,15 @@ import { AuthenticationModule } from './authentication/authentication.module';
 
 /* GUARDS */
 
-import { AuthGuard } from '../guards/auth.guard';
-import { AdminguardGuard } from '../guards/adminguard.guard';
+import { AuthGuard } from './guards/auth.guard';
+import { AdminguardGuard } from './guards/adminguard.guard';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth.interceptor';
 
 /* Layout Module */ 
 import { FooterComponent } from './layout/footer/footer.component';
 import { HeaderComponent } from './layout/header/header.component';
+
 
 
 
@@ -55,6 +59,8 @@ import { HeaderComponent } from './layout/header/header.component';
     FooterComponent,  
     HeaderComponent,
     HomeComponent,
+    InfoComponent,
+    StatisticsComponent
   ],
   providers: [    
     AuthService,
