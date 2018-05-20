@@ -4,6 +4,11 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const expressValidator = require('express-validator');
 
+/* CONFIG */
+var path = require('path');
+var env = process.env.NODE_ENV || 'test';
+var config  = require(path.join(__dirname, '.', 'config', 'config.json'))[env];
+
 /* DATABASE */
 const db = require('./models');
 const http = require('./db/http');
@@ -36,8 +41,6 @@ app.use((req, res, next) => {
     next();
 });
 
-//don't show the log when it is test
-const env = process.env.NODE_ENV || 'test';
 if (env !== 'test') {
     //use morgan to log at command line
     //app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
