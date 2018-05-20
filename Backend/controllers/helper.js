@@ -3,6 +3,8 @@ const seq = require('../models');
 const RequestTable = seq.requests;
 const TournamentUserTable = seq.users_tournaments;
 const TournamentTable = seq.tournaments;
+const moment = require('moment');
+
 
 const {
     Op
@@ -72,6 +74,7 @@ exports.is_started_or_null = (tourId) => {
 
 
 exports.is_valid_weekdays = () => {
+    let today = moment();
     // torsdag kl 12 - lørdag kl 12
     let start = moment().startOf('isoWeek').add(3, 'd').add(12, 'h');
     let end = moment().startOf('isoWeek').add(5, 'd').add(23, 'h').add(59, 'm');
@@ -79,5 +82,6 @@ exports.is_valid_weekdays = () => {
 }
 
 exports.is_active_tournament = (start, end) => {
+    let today = moment();
     return today.isBetween(start, end, null, '[]');
 }
