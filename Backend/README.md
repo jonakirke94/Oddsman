@@ -1,1 +1,1 @@
-"# test" 
+Nodejs RESTful api serving as backend in Oddsman

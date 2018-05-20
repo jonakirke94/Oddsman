@@ -9,8 +9,8 @@ const moment = require("moment");
 const tokenController = require("../controllers/token");
 const seq = require('../models');
 const Bet = seq.bets;
-const Tournament = seq.tournaments;
-const Match = seq.matches;
+const TournamentTable = seq.tournaments;
+const MatchTable = seq.matches;
 
 const helper = require('../test/helper');
 
@@ -21,8 +21,6 @@ const tokens = tokenController.generate_tokens({
     Id: 1,
     IsAdmin: false
 });
-
-/* seq.sequelize.sync(); */
 
 describe('BETS', () => {
     beforeEach(done => {
@@ -40,12 +38,12 @@ describe('BETS', () => {
                 .post("/tournament") //ENDPOINT[1]
                 .send(tour)
                 .end((err, res) => {
-                    Tournament.create({
+                    TournamentTable.create({
                         Name: "Season " + moment().isoWeek(),
                         Start: moment().subtract(1, 'M'),
                         End: moment().add(1, 'M')
                     }).then(() => {
-                        Tournament.create({
+                        TournamentTable.create({
                             Name: "Season 17",
                             Start: moment().subtract(5, 'M'),
                             End: moment().subtract(2, 'M')
@@ -54,7 +52,7 @@ describe('BETS', () => {
                                 .post("/user/signup") //ENDPOINT[2]
                                 .send(user)
                                 .end((err, res) => {
-                                    Match.create({
+                                    MatchTable.create({
                                             MatchId: 1,
                                             Missing: true
                                         })

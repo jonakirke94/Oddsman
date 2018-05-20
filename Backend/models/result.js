@@ -21,8 +21,5 @@ module.exports = function (sequelize, DataTypes) {
         }
     })
 
-    /* Result.associate = (models) => {
-    } */
-
     return Result;
 }

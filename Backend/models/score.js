@@ -28,9 +28,6 @@ module.exports = function (sequelize, DataTypes) {
         }
 
     })
-    /* Score.associate = (models) => {
-        Score.hasOne(models.users);
-    } */
 
     return Score;
 }

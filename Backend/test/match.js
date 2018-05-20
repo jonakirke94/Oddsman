@@ -24,8 +24,6 @@ const tokens = tokenController.generate_tokens({
     IsAdmin: false
 });
 
-/* seq.sequelize.sync(); */
-
 describe('MATCHES/RESULTS', () => {
     beforeEach(done => {
         helper.clean(function (result) {

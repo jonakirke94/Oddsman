@@ -5,7 +5,6 @@ const TournamentUserTable = seq.users_tournaments;
 const TournamentTable = seq.tournaments;
 const moment = require('moment');
 
-
 const {
     Op
   } = require('sequelize')
