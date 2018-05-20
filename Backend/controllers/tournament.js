@@ -220,7 +220,6 @@ exports.get_tournament_requests = (req, res, next) => {
     },
 
   }).then(requests => {
-    //console.log(JSON.stringify(requests));
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     console.log(err)
@@ -248,30 +247,10 @@ exports.get_users_requests = (req, res, next) => { // TODO: Test with an accepte
       }
     }
   }).then(requests => {
-    //console.log(JSON.stringify(requests))
     return msg.show200(req, res, "Success", requests);
   }).catch(function (err) {
     return msg.show500(req, res, err);
   })
-
-  /* Tournament.findAll({    
-    through: {
-      model: Request,
-      where: {status: "pending", userId: userId}
-    },
-    through:{
-      model: Tournament_User,
-      include: {
-        model: User,
-        attributes: ['id', 'name', 'tag', 'email']
-      }
-    }
-  }).then(requests => {
-    console.log(JSON.stringify(requests))
-    return msg.show200(req, res, "Success", requests);
-  }).catch(function (err) {
-    return msg.show500(req, res, err);
-  }) */
 }
 
 exports.manage_request = (req, res, next) => {
@@ -373,29 +352,12 @@ exports.get_enlisted_tournaments = (req, res, next) => {
       }
     }
   }).then(tourneys => {
-    //console.log(JSON.stringify(tourneys));
     return msg.show200(req, res, "Success", tourneys);
   }).catch(err => {
     return msg.show500(req, res, err);
   }).catch(err => {
     return msg.show500(req, res, err);
   })
-
-  /*  Tournament.findAll({
-     through: {
-       model: Tournament_User,
-       where: {
-         userId: userId
-       }
-     }
-   }).then(tourneys => {
-    // console.log(JSON.stringify(tourneys));
-     return msg.show200(req, res, "Success", tourneys);
-   }).catch(err => {
-     return msg.show500(req, res, err);
-   }).catch(err => {
-     return msg.show500(req, res, err);
-   }) */
 }
 
 
@@ -438,7 +400,6 @@ exports.get_delisted_tournaments = (req, res, next) => {
         attributes: ['name', 'tag', 'email']
       }
     }).then(tourneys => {
-      console.log(JSON.stringify(tourneys));
       return msg.show200(req, res, "Success", tourneys);
     }).catch(err => {
       return msg.show500(req, res, err);
