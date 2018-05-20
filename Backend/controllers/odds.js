@@ -43,14 +43,14 @@ exports.send_odds = (req, res, next) => {
         })
         .then(tourney => {
             if (tourney) {
-                let validDay = is_valid_weekdays();
+                let validDay = helper.is_valid_weekdays();
 
                 if (!validDay) {
                     /* console.log("invalid day") */
                     return msg.show409(req, res, "Det er ikke muligt at oddse på turneringen idag");
                 }
 
-                let active = is_active_tournament(tourney.dataValues.Start, tourney.dataValues.End);
+                let active = helper.is_active_tournament(tourney.dataValues.Start, tourney.dataValues.End);
 
                 if (!active) {
                     /* console.log("inactive tourney") */
@@ -112,16 +112,9 @@ exports.send_odds = (req, res, next) => {
 }
 
 
-function is_valid_weekdays() {
-    // torsdag kl 12 - lørdag kl 12
-    let start = moment().startOf('isoWeek').add(3, 'd').add(12, 'h');
-    let end = moment().startOf('isoWeek').add(5, 'd').add(23, 'h').add(59, 'm');
-    return today.isBetween(start, end, null, '[]'); // inclusive
-}
 
-function is_active_tournament(start, end) {
-    return today.isBetween(start, end, null, '[]');
-}
+
+
 
 function get_option_number(op) {
     switch (op) {
