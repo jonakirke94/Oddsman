@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.component';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import {AbstractControl, FormControl, Validators, FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
-import { flyInOut } from "../animations";
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
+import { flyInOut } from '../../animations';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-signup',

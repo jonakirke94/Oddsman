@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {HistoryComponent} from '../../../history/history.component'
+import {HistoryComponent} from '../../../shared/history/history.component'
 
 @Component({
   selector: 'app-admin-history',

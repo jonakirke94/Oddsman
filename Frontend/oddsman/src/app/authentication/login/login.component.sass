@@ -1,4 +1,4 @@
-@import '../../styles/variables'
+@import '../../../styles/variables'
 
 .error-text
     padding: 10px 0 10px 0
@@ -27,7 +27,7 @@
 			min-height: 250px
 		
 
-		#email, #password , #name, #tag, #confirm
+		#email, #password 
 			display: block
 			width: 100%
 			font-size: 1rem
@@ -36,13 +36,20 @@
 			border: none
 			border-bottom: 1px solid $grey
 			transition: all .5s
-			
-		.is-valid
-				border-bottom: 2px solid $prim !important
 
 		.is-invalid
-				border-bottom: 2px solid $danger !important
+			border-bottom: 2px solid $danger !important 	
+			
 
+
+		.checkbox 
+			color: $grey
+			font-size: 0.8rem
+
+			span 
+				margin-left: 0.5rem
+			
+		
 
 		a 
 			font-size: 0.8rem
@@ -67,7 +74,7 @@
 			margin-top: 3rem
 
 			&:hover, &:focus 
-                background: $dark-prim	           
+                background: $dark-prim      
                 color: white
                
                

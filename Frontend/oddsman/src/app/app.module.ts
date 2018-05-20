@@ -7,20 +7,8 @@ import * as io from 'socket.io-client';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
 
-
-//https://stackoverflow.com/questions/39906949/angular2-how-to-clean-up-the-appmodule
-
-/* CoreModule: 
-- Components
-- Layout Files
-- Services
-- Guards
-- Interceptors
-*/
-
-/* 
-- NgPrime Components
-- Chart/Form Modules
+/*
+ App structure based on answer of https://stackoverflow.com/questions/39906949/angular2-how-to-clean-up-the-appmodule
 */
 
 @NgModule({

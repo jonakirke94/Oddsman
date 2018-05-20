@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
-import { TournamentService } from '../services/tournament.service';
 import { Subscription } from 'rxjs/Subscription';
+import { TournamentService } from '../../services/tournament.service';
 
 
 @Component({
