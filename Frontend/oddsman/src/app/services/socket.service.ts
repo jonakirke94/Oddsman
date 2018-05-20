@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as socketIo from 'socket.io-client';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
+import { Action } from '../models/action';
 
 
 
@@ -42,12 +43,5 @@ export class SocketService {
     }
 }
 
-export enum Action {
-    ODDS = 'new_odds',
-    RESULTS = 'new_results'
-}
 
-export enum Event {
-    CONNECT = 'connect',
-    DISCONNECT = 'disconnect'
-}
+

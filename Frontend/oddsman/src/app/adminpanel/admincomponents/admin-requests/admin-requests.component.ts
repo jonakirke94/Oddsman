@@ -2,11 +2,10 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Message } from "primeng/components/common/api";
 import { Subscription } from "rxjs/Subscription";
-import {
-  TournamentService,
-  Request,
-  Tour
-} from "../../../services/tournament.service";
+import { TournamentService} from "../../../services/tournament.service";
+import { Tour } from "../../../models/tour";
+import { Request } from "../../../models/request";
+
 
 @Component({
   selector: "app-admin-requests",

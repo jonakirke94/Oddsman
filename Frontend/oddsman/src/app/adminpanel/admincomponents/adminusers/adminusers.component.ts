@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SortEvent } from 'primeng/components/common/sortevent';
-import { User, UserService } from '../../../services/user.service';
+import { UserService } from '../../../services/user.service';
 import { Subscription } from 'rxjs/Subscription';
+import { User } from '../../../models/user';
 
 @Component({
   selector: 'app-adminusers',

@@ -5,7 +5,8 @@ import { OddsService } from '../../../services/odds.service';
 import { TournamentService } from '../../../services/tournament.service';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs/Subscription';
-import { SocketService, Action } from '../../../services/socket.service';
+import { SocketService} from '../../../services/socket.service';
+import { Action } from '../../../models/action';
 
 @Component({
   selector: 'app-send-bets',

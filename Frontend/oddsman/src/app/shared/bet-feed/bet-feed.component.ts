@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { trigger, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
 import { Subscription } from 'rxjs/Subscription';
 import { feedAnimation } from '../../animations';
-import { SocketService, Event, Action } from '../../services/socket.service';
+import { SocketService} from '../../services/socket.service';
 import { OddsService } from '../../services/odds.service';
 
 
