@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
+import { SharedModule } from './shared/shared.module';
 
-
+/* COMPONENTS */
 import { LoginComponent } from './login/login.component';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import { SignupComponent } from './signup/signup.component';
@@ -26,13 +27,20 @@ import { EditMatchComponent } from './adminpanel/admincomponents/edit-match/edit
 import { BetFeedComponent } from './bet-feed/bet-feed.component';
 import { ResultFeedComponent } from './result-feed/result-feed.component';
 import { ResultsComponent } from './adminpanel/admincomponents/results/results.component';
-import { SharedModule } from './shared/shared.module';
+
+/* SERVICES */
 import { AuthService } from './services/auth.service';
 import { OddsService } from './services/odds.service';
 import { TournamentService } from './services/tournament.service';
 import { UserService } from './services/user.service';
 import { MatchService } from './services/match.service';
 import { SocketService } from './services/socket.service';
+
+/* GUARDS */
+import { AuthGuard } from './guards/auth.guard';
+import { AdminguardGuard } from './guards/adminguard.guard';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './auth.interceptor';
 
 
 @NgModule({
@@ -72,7 +80,14 @@ import { SocketService } from './services/socket.service';
     TournamentService,
     UserService,  
     MatchService,
-    SocketService,],
+    SocketService,
+    AuthGuard,
+    AdminguardGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }],
   entryComponents: []
 })
 export class CoreModule { }
