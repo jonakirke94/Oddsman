@@ -64,7 +64,6 @@ export class TournamentService {
     .map(res => res);
   }
 
-  //fetches the users current active tournament
   getCurrentUserTournament() {
     return this.http
     .get(`${this.baseUrl}/current/user`)
