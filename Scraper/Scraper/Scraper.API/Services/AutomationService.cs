@@ -82,7 +82,7 @@ namespace Scraper.API.Services
                 {
                     using (var db = scope.ServiceProvider.GetRequiredService<DanskeSpilContext>())
                     {
-                        var match = db.Matches.Find(matchId);
+                        var match = db.Matches.FirstOrDefault(m => m.MatchId == matchId);
                         if (match != null)
                         {
                             var result = _scraper.GetMatchResult(match.RoundId, matchId, match.ParentId);
