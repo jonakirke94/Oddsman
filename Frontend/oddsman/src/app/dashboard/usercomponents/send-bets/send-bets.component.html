@@ -8,8 +8,6 @@
           <h1 class="title" *ngIf="tournament">{{tournament.name}} | Runde {{currentWeek}}</h1>
         </div>
 
-        <loading-spinner *ngIf="showSpinner"></loading-spinner>
-
         <form [formGroup]="sendbetsForm" novalidate (ngSubmit)="sendBets()" *ngIf="!showMessage && !showSpinner">
           <div class="field has-addons">
             <p class="control is-expanded">

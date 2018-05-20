@@ -8,6 +8,20 @@ import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
 
 
+//https://stackoverflow.com/questions/39906949/angular2-how-to-clean-up-the-appmodule
+
+/* CoreModule: 
+- Components
+- Layout Files
+- Services
+- Guards
+- Interceptors
+*/
+
+/* 
+- NgPrime Components
+- Chart/Form Modules
+*/
 
 @NgModule({
   declarations: [
@@ -19,7 +33,8 @@ import { CoreModule } from './core.module';
     AppRoutingModule,
     BrowserAnimationsModule,
     SharedModule,
-    CoreModule 
+    CoreModule,
+    
   ],
   providers: [
   ],
