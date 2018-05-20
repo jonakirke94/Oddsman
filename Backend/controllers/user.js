@@ -2,21 +2,22 @@ const express = require("express");
 const router = express.Router();
 
 const bcrypt = require("bcrypt");
-const jwtDecode = require('jwt-decode');
 
 const tokenController = require('../controllers/token');
 
 const msg = require("../db/http");
 const db = require('../models');
-const helper = require('../controllers/helper');
-const User = db.users;
-const Bet = db.bets;
 const sequelize = require('sequelize');
-const Match = db.matches;
-const Result = db.results;
+const helper = require('../controllers/helper');
+const UserTable = db.users;
+const BetTable = db.bets;
+
+const MatchTable = db.matches;
+const ResultTable = db.results;
+
 
 exports.update = (req, res, next) => {
-  const userId = helper.getUserId(req);
+  const userId = helper.get_user_id(req);
 
   if (userId === -1) {
     return msg.show500(req, res, 'Couldnt fetch userid');
@@ -52,7 +53,7 @@ exports.update = (req, res, next) => {
   }
 
 
-  User.findById(userId).then(userToUpdate => {
+  UserTable.findById(userId).then(userToUpdate => {
     userToUpdate
       .update({
         Name: name,
@@ -101,7 +102,7 @@ exports.user_signup = (req, res, next) => {
       IsAdmin: false
     }
 
-    User
+    UserTable
       .create(newUser).then(user => {
         return msg.show200(req, res, "Success", user.dataValues);
       })
@@ -114,7 +115,7 @@ exports.user_signup = (req, res, next) => {
 exports.user_login = (req, res, next) => {
   const email = req.body.email;
 
-  module.exports.getByEmail(email).then(user => {
+  module.exports.get_by_email(email).then(user => {
     if (!user || !req.body.password) {
       return msg.show401(req, res, next);
     }
@@ -126,10 +127,10 @@ exports.user_login = (req, res, next) => {
       }
       if (result) {
         //generate tokens
-        const tokens = tokenController.generateTokens(user);
+        const tokens = tokenController.generate_tokens(user);
 
         //save refreshtoken to user
-        tokenController.saveRefreshToken(
+        tokenController.save_refresh_token(
           user.Id,
           tokens.refresh_token,
           function (success) {
@@ -154,7 +155,7 @@ exports.user_all = (req, res, next) => {
 
   const attributes = ['id', 'name', 'tag', 'email']
 
-  User.findAll({
+  UserTable.findAll({
     attributes: attributes,
     raw: true,
     where: {
@@ -167,8 +168,8 @@ exports.user_all = (req, res, next) => {
   });
 }
 
-exports.getById = (id) => {
-  return User.findById(id).then(user => {
+exports.get_by_id = (id) => {
+  return UserTable.findById(id).then(user => {
     if (user == null) {
       return null;
     } else {
@@ -177,8 +178,8 @@ exports.getById = (id) => {
   })
 }
 
-exports.getByEmail = (email) => {
-  return User.findOne({
+exports.get_by_email = (email) => {
+  return UserTable.findOne({
     where: {
       'Email': email
     }
@@ -191,11 +192,10 @@ exports.getByEmail = (email) => {
   })
 }
 
-
 exports.bets = (req, res, next) => {
-  const userId = helper.getUserId(req);
+  const userId = helper.get_user_id(req);
   const tourId = req.params.tourid;
-  Bet.findAll({
+  BetTable.findAll({
       attributes: ['id', 'option', 'optionNo', 'week'],
       where: {
         userId: userId,
@@ -205,10 +205,10 @@ exports.bets = (req, res, next) => {
         ["Week", "DESC"]
       ],
       include: {
-        model: Match,
+        model: MatchTable,
         attributes: ['matchId', 'matchDate', 'matchName', 'Option1Odds', 'Option2Odds', 'Option3Odds'],
         include: {
-          model: Result,
+          model: ResultTable,
           attributes: ['endResult', 'correctBet']
         }
       }

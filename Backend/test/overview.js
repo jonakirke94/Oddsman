@@ -7,16 +7,15 @@ const server = require("../server");
 const should = chai.should();
 const db = require('../models');
 const tokenController = require('../controllers/token')
-const token = require("../controllers/token");
 const helper = require('../test/helper');
 const moment = require('moment');
-const Tournament = db.tournaments;
-const Match = db.matches;
-const Bet = db.bets;
-const Result = db.results;
-const Request = db.requests;
-const Tournament_User = db.users_tournaments;
-const User = db.users;
+const TournamentTable = db.tournaments;
+const MatchTable = db.matches;
+const BetTable = db.bets;
+const ResultTable = db.results;
+const RequestTable = db.requests;
+const TournamentUserTable = db.users_tournaments;
+const UserTable = db.users;
 
 chai.use(chaiHttp);
 
@@ -65,7 +64,7 @@ describe('TOURNAMENTS', () => {
         helper.clean(function (result) {
             let matchId = null;
 
-            Tournament.create({
+            TournamentTable.create({
                 Name: "Active",
                 Start: moment().subtract(1, 'M'),
                 End: moment().add(1, 'M')
@@ -80,27 +79,27 @@ describe('TOURNAMENTS', () => {
                             .post("/user/signup") //ENDPOINT[2]
                             .send(user2)
                             .end((err, res) => {
-                                Tournament_User.create({
+                                TournamentUserTable.create({
                                     userId: 1,
                                     tournamentId: 1
                             }).then(() => {
-                                Tournament_User.create({
+                                TournamentUserTable.create({
                                     userId: 2,
                                     tournamentId: 1
                             }).then(() => {
-                                Match.create({
+                                MatchTable.create({
                                     Option1Odds: 1.98,
                                     Option2Odds: 2.11,
                                     Option3Odds: 36.12
                             }).then((match) => {
                                     matchId = match.Id;
-                                    Result.create({
+                                    ResultTable.create({
                                         EndResult: "2 - 0",
                                         CorrectBet: "X",
                                         matchId: 1
                                 })
                             .then(() => {
-                                Bet.create({
+                                BetTable.create({
                                     tournamentId: 1,
                                     userId: 1,
                                     Week: moment().isoWeek(),
@@ -109,7 +108,7 @@ describe('TOURNAMENTS', () => {
                                     matchId: matchId
                                 })
                             .then(() => {
-                                Bet.create({
+                                BetTable.create({
                                     tournamentId: 1,
                                     userId: 2,
                                     Week: moment().isoWeek(),

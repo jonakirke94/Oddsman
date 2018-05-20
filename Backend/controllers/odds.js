@@ -23,7 +23,7 @@ let today = moment()/* .add(2, 'd').add(12, 'h'); */ // used for faking a valid 
 exports.send_odds = (req, res, next) => {
     const tourId = req.params.tourid;
     const odds = req.body;
-    const userId = helper.getUserId(req);
+    const userId = helper.get_user_id(req);
 
     /* console.log(odds) */
     if (!odds.length) {

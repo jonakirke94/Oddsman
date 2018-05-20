@@ -8,12 +8,12 @@ const should = chai.should();
 const moment = require("moment");
 
 const tokenController = require("../controllers/token");
-const userController = require("../controllers/user");
+
 const seq = require('../models');
-const Bet = seq.bets;
-const Tournament = seq.tournaments;
-const Match = seq.matches;
-const Result = seq.results;
+const BetTable = seq.bets;
+const TournamentTable = seq.tournaments;
+const MatchTable = seq.matches;
+const ResultTable = seq.results;
 
 const helper = require('../test/helper');
 
@@ -43,7 +43,7 @@ describe('MATCHES/RESULTS', () => {
                 .post("/tournament") //ENDPOINT[1]
                 .send(tour)
                 .end((err, res) => {
-                    Tournament.bulkCreate([{
+                    TournamentTable.bulkCreate([{
                         Name: "Season " + moment().isoWeek(),
                         Start: moment().subtract(1, 'M'),
                         End: moment().add(1, 'M')
@@ -56,13 +56,13 @@ describe('MATCHES/RESULTS', () => {
                             .post("/user/signup") //ENDPOINT[2]
                             .send(user)
                             .end((err, res) => {
-                                Match.create({
+                                MatchTable.create({
                                         MatchId: 1,
                                         Missing: true
                                     })
                                     .then((match) => {
                                         matchId = match.Id;
-                                        Bet.create({
+                                        BetTable.create({
                                             tournamentId: 1,
                                             userId: 1,
                                             Week: moment().isoWeek(),
@@ -70,7 +70,7 @@ describe('MATCHES/RESULTS', () => {
                                             OptionNo: 1,
                                             matchId: matchId
                                         }).then(() => {
-                                            Bet.bulkCreate([{
+                                            BetTable.bulkCreate([{
                                                 tournamentId: 2,
                                                 userId: 1,
                                                 Week: moment().isoWeek(),
@@ -93,7 +93,7 @@ describe('MATCHES/RESULTS', () => {
                                                 matchId: matchId
                                             }]).then(() => {
 
-                                                Result.bulkCreate([{
+                                                ResultTable.bulkCreate([{
                                                         Id: 1,
                                                         EndResult: "2 - 0",
                                                         CorrectBet: "1",

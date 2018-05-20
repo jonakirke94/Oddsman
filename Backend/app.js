@@ -2,32 +2,27 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const config = require('config');
 const expressValidator = require('express-validator');
+
+/* DATABASE */
+const db = require('./models');
 const http = require('./db/http');
 const seed = require('./db/seed');
 
+/* ROUTES */
 const userRoutes = require('./api/routes/user');
 const tokenRoutes = require('./api/routes/token');
 const oddsRoutes = require('./api/routes/odds');
 const tournamentRoutes = require('./api/routes/tournament');
 const matchRoutes = require('./api/routes/match');
-const db = require('./models');
 
 
-  
-
-/* db.sequelize.sync(); */
-
-
-
+//body parser middleware
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
 app.use(expressValidator());
-
-
 
 //set up CORS to pass correct headers
 // https://www.youtube.com/watch?v=zoSJ3bNGPp0
@@ -40,9 +35,6 @@ app.use((req, res, next) => {
     }
     next();
 });
-
-
-
 
 //don't show the log when it is test
 if (config.util.getEnv('NODE_ENV') !== 'test') {
@@ -60,8 +52,6 @@ if (config.util.getEnv('NODE_ENV') !== 'test') {
 
     seed.seedAdmin(admin);
 }
-
-
 
 //set up routes
 app.use('/user', userRoutes);

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const msg = require("../db/http");
 const moment = require('moment');
-
+const helper = require('../controllers/helper');
 const seq = require('../models');
 const TournamentTable = seq.tournaments;
 const MatchTable = seq.matches;
@@ -14,8 +14,6 @@ const UserTable = seq.users;
 const {
   Op
 } = require('sequelize')
-
-const helper = require('../controllers/helper');
 
 
 
@@ -79,7 +77,7 @@ exports.get_all = (req, res, next) => {
 }
 
 exports.request = (req, res, next) => {
-  const userId = get_user_id(req);
+  const userId = helper.get_user_id(req);
 
   if (userId === -1) {
     return msg.show500(req, res, "Could not decode token");
@@ -87,17 +85,17 @@ exports.request = (req, res, next) => {
 
   const tourId = req.params.tourid
 
-  has_requested(userId, tourId).then(hasRequest => {
+  helper.has_requested(userId, tourId).then(hasRequest => {
     if (hasRequest) {
       return msg.show409(req, res, 'User already has a request');
     }
 
-    is_enlisted(userId, tourId).then(isEnlisted => {
+    helper.is_enlisted(userId, tourId).then(isEnlisted => {
       if (isEnlisted) {
         return msg.show409(req, res, 'User is already enlisted');
       }
 
-      is_started_or_null(tourId).then(result => {
+      helper.is_started_or_null(tourId).then(result => {
         if (result) {
           return msg.show409(req, res, 'Tournament already started or doesnt exist');
         }
@@ -283,13 +281,13 @@ function accept_request(req, res, next) {
   const tourId = req.params.tourid;
   const userId = req.params.userid;
 
-  is_enlisted(userId, tourId).then(isEnlisted => {
+  helper.is_enlisted(userId, tourId).then(isEnlisted => {
     if (isEnlisted) {
 
       return msg.show409(req, res, 'User is already enlisted');
     }
 
-    is_started_or_null(tourId).then(result => {
+    helper.is_started_or_null(tourId).then(result => {
       if (result) {
         return msg.show409(req, res, 'Tournament already started or doesnt exist');
       }
@@ -522,50 +520,3 @@ function generate_standings(tourney, callback) {
 
 
 
-
-
-function has_requested(userId, tourId) {
-  return RequestTable.count({
-    where: {
-      tournamentId: tourId,
-      userId: userId
-    }
-  }).then(count => {
-    if (count == 0) {
-      return false;
-    }
-    return true;
-  });
-}
-
-function is_enlisted(userId, tourId) {
-  return TournamentUserTable.count({
-    where: {
-      tournamentId: tourId,
-      userId: userId
-    }
-  }).then(count => {
-    if (count == 0) {
-      return false;
-    }
-    return true;
-  });
-}
-
-function is_started_or_null(tourId) {
-  const today = new Date(new Date().toDateString());
-  return TournamentTable.find({
-      where: {
-        Id: tourId,
-        Start: {
-          [Op.gt]: today
-        }
-      }
-    })
-    .then(tour => {
-      return tour === null
-    })
-    .then(doesExist => {
-      return doesExist
-    })
-}

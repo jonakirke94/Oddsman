@@ -31,7 +31,7 @@ module.exports = (req, res, next) => {
 
 
                     const userId = decoded.userId;
-                    userController.getById(userId).then(data => {
+                    userController.get_by_id(userId).then(data => {
                         jwt.verify(data.RefreshToken, REFRESH_SECRET, function (err, decoded) {
                             if (err) {
                                 if (err["name"] == 'TokenExpiredError') {
