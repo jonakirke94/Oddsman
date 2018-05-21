@@ -60,7 +60,7 @@ namespace Scraper.API.Controllers
         }
 
 
-        [HttpGet("Result/{matchRoundId}/{matchId}/{parentMatchId?}")]
+        [HttpGet("result/{matchRoundId}/{matchId}/{parentMatchId?}")]
         [ProducesResponseType(200, Type = typeof(Result))]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -70,7 +70,6 @@ namespace Scraper.API.Controllers
             try
             {
                 var match = _db.Matches.Include(m => m.Result).FirstOrDefault(m => m.MatchId == matchId && m.RoundId == matchRoundId);
-
                 if (match != null)
                 {
                     if (match.Result == null)
@@ -91,14 +90,14 @@ namespace Scraper.API.Controllers
             }
 
             if (res == null) return NotFound();
-
+            res.Match = null;
             return Ok(res);
         }
 
 
-        [HttpPost("Results")]
+        [HttpPost("results")]
         [ProducesResponseType(200, Type = typeof(Result))]
-        public async Task<IActionResult> GetResults([FromBody] IEnumerable<int> ids)
+        public async Task<IActionResult> GetResults([FromBody] List<int> ids)
         {
             var results = new List<Result>();
             try

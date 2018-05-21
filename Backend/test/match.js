@@ -183,7 +183,5 @@ describe('MATCHES/RESULTS', () => {
                     done();
                 });
         });
-    });
-
-    
+    });    
 });
