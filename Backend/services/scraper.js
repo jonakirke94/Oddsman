@@ -6,7 +6,7 @@ const util = require('util');
 // API Configuration / Options
 const ac = {
     hostname: "localhost",
-    port: 53649,
+    port: 8822,
     basePath: "/api/v1",
     matchEndpoint: "/match/%s/%s", // MatchId / EventId
     resultEndpoint: "/match/result/%s/%s/%s", // MatchRoundId, MatchId, parentMatchId
@@ -28,8 +28,8 @@ exports.get_result = (matchRoundId, matchId, parentMatchId = null, callback) => 
 }
 
 exports.get_results = (idList, callback) =>{
-    let url = util.format(`${baseUrl}${ac.resultsEndpoint}`);
-    post(ac.hostname, ac.port, path, idList, callback)
+    let path = util.format(`${baseUrl}${ac.resultsEndpoint}`);
+    post(ac.hostname, ac.port, path, JSON.stringify(idList), callback)
 } 
 
 exports.schedule_result_scrape = (matchId, callback) => {
@@ -82,16 +82,15 @@ function get(url, callback) {
 }
 
 function post(hostname, port, path, payload, callback) {
-    const postData = querystring.stringify(payload);
-
+    console.log(payload);
     const options = {
         hostname: hostname,
         port: port,
         path: path,
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': Buffer.byteLength(postData)
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(payload)
         }
     };
 
@@ -101,7 +100,7 @@ function post(hostname, port, path, payload, callback) {
         //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
         res.setEncoding('utf8');
         res.on('data', (chunk) => {
-            //console.log(`BODY: ${chunk}`);      
+            /* console.log(`BODY: ${chunk}`);   */    
             callback({status: `${res.statusCode}`, data: `${chunk}`});     
         });
         res.on('end', () => {
@@ -115,6 +114,6 @@ function post(hostname, port, path, payload, callback) {
     });
 
     // write data to request body
-    req.write(postData);
+    req.write(payload);
     req.end();
 }

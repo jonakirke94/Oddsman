@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 describe("/SCRAPER API", () => {
     if(ScraperIsRunning){
         it("Should get a match", done => {
-            scraper.get_match(52973, 837205, (res) => {
+            scraper.get_match(51387, 846936, (res) => {
                 res.should.be.a("object");
                 //console.log(res);
                 done();
@@ -23,29 +23,32 @@ describe("/SCRAPER API", () => {
         });
 
         it("Should get a result", done => {
-            /* scraper.getResult(1, 1, null, (res) => {
-
-            }); */
-            done(new Error("Test Not Implemented"));
+            scraper.get_result(458, 289, null, (res) => {
+                /* console.log(JSON.stringify(res)); */
+                res.should.be.a('object');
+                done();
+            });
+            
         });
 
-        it("Should schedule a result scrape", done =>{
-            scraper.schedule_result_scrape(44804, (res) => {
+        /* it("Should schedule a result scrape", done =>{
+            scraper.schedule_result_scrape(289, (res) => {
                 res.status.should.be.eql("200");
                 res.data.should.be.eql("Job Added Succesfully");
                 done();
             });
-        })
+        }) */
 
-        it("Should get Results", done =>{
-            /* scraper.getResults([
-                1, 2
-            ],
-            (res) => {
-                res.status.should.be.eql("200");
-                done();
-            }); */
-        })
+        describe("/GET Results", () => {
+            it("it should get all Results with these match ids", done => {                
+                scraper.get_results([512, 289], (res) => {
+                    const data = JSON.parse(res.data);
+                    data.should.be.a('array');
+                    data.length.should.eql(2);
+                    done();
+                });               
+            });
+        });
     }
 });
 

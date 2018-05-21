@@ -88,7 +88,9 @@ namespace Scraper.API.Services
                             var result = _scraper.GetMatchResult(match.RoundId, matchId, match.ParentId);
                             if (result != null)
                             {
-                                db.Results.Add(result);
+                                match.Result = result;
+                                db.Matches.Update(match);
+;                               /*db.Results.Add(result);*/
                                 await db.SaveChangesAsync();
                             }
                             // TODO: Add complete failure notifications
