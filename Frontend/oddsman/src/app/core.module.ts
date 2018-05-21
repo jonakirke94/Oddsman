@@ -27,7 +27,7 @@ import { AdminguardGuard } from './guards/adminguard.guard';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth.interceptor';
 
-/* Layout Module */ 
+/* Layout Module */
 import { FooterComponent } from './layout/footer/footer.component';
 import { HeaderComponent } from './layout/header/header.component';
 
@@ -45,22 +45,21 @@ import { HeaderComponent } from './layout/header/header.component';
 
   ],
   exports : [
-    FooterComponent,  
+    FooterComponent,
     HeaderComponent,
-    
   ],
   declarations: [
-    FooterComponent,  
+    FooterComponent,
     HeaderComponent,
     HomeComponent,
     InfoComponent,
     StatisticsComponent
   ],
-  providers: [    
+  providers: [
     AuthService,
     OddsService,
     TournamentService,
-    UserService,  
+    UserService,
     MatchService,
     SocketService,
     AuthGuard,

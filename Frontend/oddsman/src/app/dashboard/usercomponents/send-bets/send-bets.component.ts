@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators,  } from "@angular/forms";
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { flyInOut } from '../../../animations';
 import { OddsService } from '../../../services/odds.service';
 import { TournamentService } from '../../../services/tournament.service';
@@ -7,6 +6,7 @@ import * as moment from 'moment';
 import { Subscription } from 'rxjs/Subscription';
 import { SocketService} from '../../../services/socket.service';
 import { Action } from '../../../models/action';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-send-bets',
@@ -14,16 +14,16 @@ import { Action } from '../../../models/action';
   styleUrls: ['./send-bets.component.sass'],
   animations: [flyInOut]
 })
-export class SendBetsComponent implements OnInit {
+export class SendBetsComponent implements OnInit, OnDestroy {
 
-  sendbetsForm : FormGroup
-  oddsNo1 : FormControl
-  oddsNo2 : FormControl
-  oddsNo3 : FormControl
-  oddsOption1 : FormControl
-  oddsOption2 : FormControl
-  oddsOption3 : FormControl
-  options = ['1', 'X', '2']
+  sendbetsForm: FormGroup;
+  oddsNo1: FormControl;
+  oddsNo2: FormControl;
+  oddsNo3: FormControl;
+  oddsOption1: FormControl;
+  oddsOption2: FormControl;
+  oddsOption3: FormControl;
+  options = ['1', 'X', '2'];
 
   error: string;
   showMessage: boolean;
@@ -32,7 +32,7 @@ export class SendBetsComponent implements OnInit {
   private tournament;
   private currentWeek;
 
-  tournament$ : Subscription
+  tournament$: Subscription;
 
   constructor(private _odds: OddsService, private _tour: TournamentService, private _socket: SocketService) { }
 
@@ -48,28 +48,30 @@ export class SendBetsComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.tournament$ && this.tournament$ !== null) this.tournament$.unsubscribe();
+    if (this.tournament$ && this.tournament$ !== null) {
+      this.tournament$.unsubscribe();
+    }
   }
 
   createFormControls() {
-    this.oddsNo1 = new FormControl("", [
+    this.oddsNo1 = new FormControl('', [
       Validators.required,
     ]),
-    this.oddsNo2 = new FormControl("", [
+    this.oddsNo2 = new FormControl('', [
       Validators.required,
     ]),
-    this.oddsNo3 = new FormControl("", [
+    this.oddsNo3 = new FormControl('', [
       Validators.required,
     ]),
-    this.oddsOption1 = new FormControl("", [
+    this.oddsOption1 = new FormControl('', [
       Validators.required,
     ]),
-    this.oddsOption2 = new FormControl("", [
+    this.oddsOption2 = new FormControl('', [
       Validators.required,
     ]),
-    this.oddsOption3 = new FormControl("", [
+    this.oddsOption3 = new FormControl('', [
       Validators.required,
-    ])
+    ]);
   }
 
   createForm() {
@@ -95,15 +97,15 @@ export class SendBetsComponent implements OnInit {
         this.showSpinner = false;
     }, err => {
         this.showMessage = true;
-        if(err.status === 404) {     
-          this.error = 'Det ser ikke ud til du har nogle aktive turneringer. Hvis du mener det er en fejl, kontakt webmaster'
+        if (err.status === 404) {
+          this.error = 'Det ser ikke ud til du har nogle aktive turneringer. Hvis du mener det er en fejl, kontakt webmaster';
         } else {
-          this.error = 'Noget gik galt - Prøv igen senere eller kontakt webmaster'
+          this.error = 'Noget gik galt - Prøv igen senere eller kontakt webmaster';
         }
 
         this.showSpinner = false;
 
-    })
+    });
   }
 
   sendBets() {
@@ -122,11 +124,11 @@ export class SendBetsComponent implements OnInit {
       matchId: this.sendbetsForm.value.oddsNo3,
       option: this.sendbetsForm.value.oddsOption3
     },
-  ]
+  ];
 
     this._odds.sendOdds(this.tournament.id, odds).subscribe(res => {
-      //INIT SOCKET AND EMIT ACTION SO SERVER CAN TELL CLIENTS SHOULD REFRESH FEED
-      this._socket.initSocket(); 
+      // INIT SOCKET AND EMIT ACTION SO SERVER CAN TELL CLIENTS SHOULD REFRESH FEED
+      this._socket.initSocket();
       this._socket.send(Action.ODDS);
 
       this.showMessage = true;
@@ -135,19 +137,14 @@ export class SendBetsComponent implements OnInit {
     err => {
       this.showMessage = true;
 
-      if(err.status === 409) {
-        this.error = err.error.msg
+      if (err.status === 409) {
+        this.error = err.error.msg;
       } else {
-      this.error = 'Dine odds kunne ikke afsendes - Prøv igen senere eller send dine tegn til webmaster + 2 andre deltager pr mail.'     
+      this.error = 'Dine odds kunne ikke afsendes - Prøv igen senere eller send dine tegn til webmaster + 2 andre deltager pr mail.';
       }
       this.showSpinner = false;
-    })
+    });
   }
-
-  
-
-
-
 }
 
 
