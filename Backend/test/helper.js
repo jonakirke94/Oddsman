@@ -2,7 +2,7 @@ const db = require('../models');
 
 exports.clean = (done) => {
 
-  let multiQueryArr = [];
+ let multiQueryArr = [];
   multiQueryArr.push('SET FOREIGN_KEY_CHECKS = 0;');
   Object.keys(db.sequelize.models).forEach(key => {
     multiQueryArr.push('TRUNCATE ' + db.sequelize.models[key].name + ";");
@@ -11,7 +11,7 @@ exports.clean = (done) => {
 
   db.sequelize.query(multiQueryArr.join(' ')).then(function () {
     done();
-  })
+  }) 
 }
 
 exports.getTour = (options = {}) => {

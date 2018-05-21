@@ -22,6 +22,8 @@ const tournamentRoutes = require('./api/routes/tournament');
 const matchRoutes = require('./api/routes/match');
 
 
+
+
 //body parser middleware
 app.use(bodyParser.urlencoded({
     extended: false

@@ -22,6 +22,14 @@ const tokens = tokenController.generate_tokens({
     IsAdmin: false
 });
 
+seq.sequelize
+  .sync({ force: true })
+  .then(function(err) {
+    console.log('It worked!');
+  }, function (err) {
+    console.log('An error occurred while creating the table:', err);
+  });
+
 describe('BETS', () => {
     beforeEach(done => {
         helper.clean(function (result) {
