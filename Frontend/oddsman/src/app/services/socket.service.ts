@@ -31,7 +31,7 @@ export class SocketService {
     public onOddsMessage(): Observable<string> {
         return new Observable<string>(observer => {
             this.socket.on('refresh_odds', (data) => {
-                observer.next(data)
+                observer.next(data);
             });
         }).shareReplay();
     }

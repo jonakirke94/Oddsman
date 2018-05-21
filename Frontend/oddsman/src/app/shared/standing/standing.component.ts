@@ -4,16 +4,17 @@ import { TournamentService } from '../../services/tournament.service';
 
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'standing',
   templateUrl: './standing.component.html',
   styleUrls: ['./standing.component.sass']
 })
-export class StandingComponent implements OnInit {
+export class StandingComponent implements OnInit, OnChanges {
 
-  @Input() tournamentId : string
+  @Input() tournamentId: string;
 
   standings: any[];
-  tournament$ : Subscription
+  tournament$: Subscription;
 
   private tournament;
 
@@ -23,23 +24,23 @@ export class StandingComponent implements OnInit {
     this.getActiveTournament();
   }
 
-  //whenever input changes update standing to new tournament
-  ngOnChanges(change : SimpleChanges) {
-    const newTourId = change['tournamentId'].currentValue
-    if(newTourId) {
+  // whenever input changes update standing to new tournament
+  ngOnChanges(change: SimpleChanges) {
+    const newTourId = change['tournamentId'].currentValue;
+    if (newTourId) {
       this.loadData(newTourId);
     }
   }
 
   loadData(id) {
     this._tour.getStanding(id).subscribe(res => {
-      this.standings = res['data']['standings']
+      this.standings = res['data']['standings'];
       this.tournament = {};
       this.tournament.id =  res['data']['id'];
       this.tournament.name = res['data']['name'];
       this.tournament.ongoing = res['data']['ongoing'];
       this.tournament.week = res['data']['week'];
-    })
+    });
   }
 
   getActiveTournament() {
@@ -54,6 +55,6 @@ export class StandingComponent implements OnInit {
     }
   }
 
-  
+
 
 }

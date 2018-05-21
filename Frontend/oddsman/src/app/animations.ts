@@ -1,16 +1,16 @@
-import {trigger,state,style, animate, transition, stagger, keyframes, query} from "@angular/animations";
+import {trigger, state, style, animate, transition, stagger, keyframes, query} from '@angular/animations';
 
 
-export const flyInOut = trigger("flyInOut", [
-    state("in", style({ transform: "translateX(0)" })),
-    transition("void => *", [
-      style({ transform: "translateX(100%)" }),
+export const flyInOut = trigger('flyInOut', [
+    state('in', style({ transform: 'translateX(0)' })),
+    transition('void => *', [
+      style({ transform: 'translateX(100%)' }),
       animate(100)
     ]),
-    transition("* => void", [
-      animate(100, style({ transform: "translateX(100%)" }))
+    transition('* => void', [
+      animate(100, style({ transform: 'translateX(100%)' }))
     ])
-])
+]);
 
 export const listAnimations = trigger('listAnimation', [
   transition('* => *', [
@@ -24,9 +24,9 @@ export const listAnimations = trigger('listAnimation', [
       ]))
     ]), {optional: true}),
   ])
-])
+]);
 
-export const feedAnimation =  
+export const feedAnimation =
   trigger('feed', [
     transition('* => *', [
       query(':enter', style({opacity: 0}), {optional: true}),
@@ -47,4 +47,4 @@ export const feedAnimation =
         ]))
       ]), {optional: true}),
     ])
-  ])
+  ]);

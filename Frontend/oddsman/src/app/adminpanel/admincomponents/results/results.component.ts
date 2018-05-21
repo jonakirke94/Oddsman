@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { MatchService,} from '../../../services/match.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatchService} from '../../../services/match.service';
 import { Subscription } from 'rxjs/Subscription';
-import { Message } from "primeng/components/common/api";
+import { Message } from 'primeng/components/common/api';
 import { Result } from '../../../models/result';
 
 
@@ -10,7 +10,7 @@ import { Result } from '../../../models/result';
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.sass']
 })
-export class ResultsComponent implements OnInit {
+export class ResultsComponent implements OnInit, OnDestroy {
 
   results: Result[];
   displayDialog: boolean;
@@ -37,13 +37,13 @@ export class ResultsComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.loadSubscription$) this.loadSubscription$.unsubscribe();
+    if (this.loadSubscription$) { this.loadSubscription$.unsubscribe(); }
   }
 
   loadResults() {
    this._match.getMissingResults().subscribe(res => {
          this.results = res;
-     }) 
+     });
   }
 
   showDialogToAdd() {
@@ -56,8 +56,8 @@ export class ResultsComponent implements OnInit {
     this.loadSubscription$ = this._match.updateResult(this.selectedResult.Id, this.result).subscribe(res => {
       this.msgs = [];
       this.msgs.push({
-        severity: "info",
-        summary: "Indsatte resultat",
+        severity: 'info',
+        summary: 'Indsatte resultat',
       });
       this.loadResults();
     });
@@ -71,6 +71,7 @@ export class ResultsComponent implements OnInit {
   }
 
   cloneResult(r: Result): Result {
+    // tslint:disable-next-line:prefer-const
     let result = {};
     for (let prop in r) {
       result[prop] = r[prop];

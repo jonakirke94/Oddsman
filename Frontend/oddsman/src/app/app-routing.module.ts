@@ -35,7 +35,7 @@ import { StatisticsComponent } from './components/statistics/statistics.componen
 
 
 const routes: Routes = [
-  { path: '', component: HomeComponent }, //index
+  { path: '', component: HomeComponent }, // index
   { path: 'info', component: InfoComponent },
   { path: 'statistics', component: StatisticsComponent },
   { path: 'login', component: LoginComponent },

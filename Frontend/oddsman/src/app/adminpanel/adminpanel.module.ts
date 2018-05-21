@@ -16,7 +16,6 @@ import { EditMatchComponent } from './admincomponents/edit-match/edit-match.comp
 */
 
 @NgModule({
-   
     imports: [
       CommonModule,
       SharedModule,
@@ -30,8 +29,7 @@ import { EditMatchComponent } from './admincomponents/edit-match/edit-match.comp
         AdminTournamentsComponent,
         AdminRequestsComponent,
         AdminHistoryComponent,
-        EditMatchComponent,
-        
+        EditMatchComponent
     ],
     exports: [
         AdminpanelComponent,
@@ -46,4 +44,3 @@ import { EditMatchComponent } from './admincomponents/edit-match/edit-match.comp
 
   })
   export class AdminPanelModule { }
-  

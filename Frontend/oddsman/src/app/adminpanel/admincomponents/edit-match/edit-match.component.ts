@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatchService} from '../../../services/match.service';
 import { Subscription } from 'rxjs/Subscription';
-import { Message } from "primeng/components/common/api";
+import { Message } from 'primeng/components/common/api';
 import { Match } from '../../../models/match';
 
 @Component({
@@ -9,7 +9,7 @@ import { Match } from '../../../models/match';
     templateUrl: './edit-match.component.html',
     styleUrls: ['./edit-match.component.sass']
 })
-export class EditMatchComponent implements OnInit {
+export class EditMatchComponent implements OnInit, OnDestroy {
 
     matches: Match[];
     displayDialog: boolean;
@@ -40,13 +40,13 @@ export class EditMatchComponent implements OnInit {
     }
 
     ngOnDestroy() {
-        if (this.loadSubscription$) this.loadSubscription$.unsubscribe();
+        if (this.loadSubscription$) { this.loadSubscription$.unsubscribe(); }
     }
 
     loadMatches() {
         this._match.getMissingMatches().subscribe(res => {
             this.matches = res;
-        })
+        });
     }
 
     showDialogToAdd() {
@@ -59,8 +59,8 @@ export class EditMatchComponent implements OnInit {
         this.loadSubscription$ = this._match.updateMatch(this.selectedMatch.Id, this.match).subscribe(res => {
             this.msgs = [];
             this.msgs.push({
-              severity: "info",
-              summary: "Indsatte kamp",
+              severity: 'info',
+              summary: 'Indsatte kamp',
             });
             this.loadMatches();
         });
@@ -68,9 +68,9 @@ export class EditMatchComponent implements OnInit {
     }
 
     isMatchDate(col) {
-        return col.field === "MatchDate";
+        return col.field === 'MatchDate';
     }
-    
+
     onRowSelect(event) {
         this.newMatch = false;
         this.match = this.cloneMatch(event.data);
@@ -78,9 +78,10 @@ export class EditMatchComponent implements OnInit {
     }
 
     cloneMatch(m: Match): Match {
+        // tslint:disable-next-line:prefer-const
         let match = {};
-        for (let prop in m) {
-            if(prop === 'MatchDate') {
+        for (const prop in m) {
+            if (prop === 'MatchDate') {
                 match[prop] = new Date(m[prop]);
             } else {
             match[prop] = m[prop];

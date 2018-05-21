@@ -22,7 +22,6 @@ import { CoreModule } from './core.module';
     BrowserAnimationsModule,
     SharedModule,
     CoreModule,
-    
   ],
   providers: [
   ],

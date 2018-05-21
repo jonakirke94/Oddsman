@@ -6,21 +6,21 @@ import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class AdminguardGuard implements CanActivate {
-  isAdmin : boolean;
+  isAdmin: boolean;
 
-  constructor(private auth : AuthService, private router : Router) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    
+
       this.auth.isLoggedIn().subscribe(loggedIn => {
-        if(!loggedIn) {
+        if (!loggedIn) {
           this.router.navigateByUrl('/login');
-        } 
+        }
 
         this.auth.isLoggedAsAdmin().subscribe(isAdmin => {
-          if(!isAdmin) {
+          if (!isAdmin) {
             this.router.navigateByUrl('/');
           }
 

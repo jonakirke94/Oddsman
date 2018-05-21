@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SortEvent } from 'primeng/components/common/sortevent';
 import { UserService } from '../../../services/user.service';
@@ -10,13 +10,13 @@ import { User } from '../../../models/user';
   templateUrl: './adminusers.component.html',
   styleUrls: ['./adminusers.component.sass']
 })
-export class AdminusersComponent implements OnInit {
+export class AdminusersComponent implements OnInit, OnDestroy {
 
   loading: boolean;
   users: User[] = [];
   cols: any[];
 
-  getusers$ : Subscription;
+  getusers$: Subscription;
 
   constructor(private http: HttpClient, private _user: UserService) {}
 
@@ -33,13 +33,12 @@ export class AdminusersComponent implements OnInit {
       this.loading = true;
       setTimeout(() => {
       this.getusers$ = this._user.getUsers().subscribe(res => {
-          this.users = res
+          this.users = res;
           this.loading = false;
         });
     }, 500);
   }
 
-    
   createCols() {
     this.cols = [
         {field: 'id', header: '#'},
@@ -51,20 +50,21 @@ export class AdminusersComponent implements OnInit {
 
   customSort(event: SortEvent) {
     event.data.sort((data1, data2) => {
-        let value1 = data1[event.field];
-        let value2 = data2[event.field];
+        const value1 = data1[event.field];
+        const value2 = data2[event.field];
         let result = null;
 
-        if (value1 == null && value2 != null)
+        if (value1 == null && value2 != null) {
             result = -1;
-        else if (value1 != null && value2 == null)
+        } else if (value1 != null && value2 == null) {
             result = 1;
-        else if (value1 == null && value2 == null)
+             } else if (value1 == null && value2 == null) {
             result = 0;
-        else if (typeof value1 === 'string' && typeof value2 === 'string')
+             } else if (typeof value1 === 'string' && typeof value2 === 'string') {
             result = value1.localeCompare(value2);
-        else
+             } else {
             result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
+             }
 
         return (event.order * result);
     });

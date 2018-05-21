@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
+// tslint:disable-next-line:import-blacklist
 import 'rxjs/Rx';
 import * as moment from 'moment';
 import { feedAnimation } from '../../animations';
@@ -9,6 +10,7 @@ import { MatchService } from '../../services/match.service';
 
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'result-feed',
   templateUrl: './result-feed.component.html',
   styleUrls: ['./result-feed.component.sass'],
@@ -37,8 +39,7 @@ export class ResultFeedComponent implements OnInit, OnDestroy {
   }
 
   private resultPolling() {
-    //300000 = 5m
-
+    // 300000 = 5m
     this.polling$ = Observable.interval(300000).startWith(0).subscribe(res => this.getRecentResults());
   }
 
@@ -52,7 +53,7 @@ export class ResultFeedComponent implements OnInit, OnDestroy {
 
   isWithinMatchDays() {
     const weekday = moment().isoWeekday();
-    //sunday == 0
-    return weekday == 6 || weekday == 0 || weekday == 1 //sat/sun/mon
+    // sunday == 0
+    return weekday === 6 || weekday === 0 || weekday === 1; // sat/sun/mon
   }
 }

@@ -15,7 +15,7 @@ import { UserHistoryComponentComponent } from './usercomponents/user-history-com
    All feature modules are imported in the core module
 */
 @NgModule({
-   
+
     imports: [
       CommonModule,
       SharedModule,
@@ -31,7 +31,7 @@ import { UserHistoryComponentComponent } from './usercomponents/user-history-com
         SendBetsComponent,
         MyBetsComponent,
         UserHistoryComponentComponent
-        
+
     ],
     exports: [
         DashboardComponent,
@@ -46,4 +46,3 @@ import { UserHistoryComponentComponent } from './usercomponents/user-history-com
 
   })
   export class DashboardModule { }
-  

@@ -34,7 +34,6 @@ import { DropdownModule } from 'primeng/primeng';
   ],
   declarations: [],
   providers: [
-    
   ]
 })
 export class NgPrimeModule { }

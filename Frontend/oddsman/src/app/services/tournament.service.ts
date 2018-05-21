@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Request} from '../models/request'
+import { Request} from '../models/request';
 
 @Injectable()
 export class TournamentService {
 
-  baseUrl:string = "http://localhost:3000/tournament"
+  baseUrl = 'http://localhost:3000/tournament';
 
   constructor(private http: HttpClient) {
    }
@@ -15,7 +15,7 @@ export class TournamentService {
   createTournament(name: string, start: Date, end: Date) {
     return this.http
     .post(`${this.baseUrl}`, {
-      name, start, end   
+      name, start, end
     });
   }
 
@@ -41,10 +41,10 @@ export class TournamentService {
          tourName: res['data']['tourName'],
          start: res['data']['start'],
          requests: <Request[]>res['data']['users']
-      }
+      };
 
-      return tournament
-    })
+      return tournament;
+    });
   }
 
   getEnlistedTournaments() {
@@ -76,7 +76,7 @@ export class TournamentService {
     .get(`${this.baseUrl}/current`)
     .map(res => res);
   }
-  
+
   handleRequest(status, tourId, userId) {
     return this.http
     .post(`${this.baseUrl}/${tourId}/requests/${userId}`, {status: status})

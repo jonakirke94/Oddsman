@@ -9,19 +9,19 @@ export class UserService {
 
   getUsers() {
     return this.http
-      .get("http://localhost:3000/user/")
+      .get('http://localhost:3000/user/')
       .map(res => <User[]> res['data'])
       .shareReplay();
   }
-  
+
   updateUser(name, tag, email) {
     return this.http
-    .patch("http://localhost:3000/user/", {
+    .patch('http://localhost:3000/user/', {
         name,
         tag,
         email,
       })
-    .map(res => res)
+    .map(res => res);
   }
 }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation} from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy} from '@angular/core';
 import { TournamentService } from '../../../services/tournament.service';
 import { listAnimations} from '../../../animations';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -10,13 +10,12 @@ import { Router, ActivatedRoute } from '@angular/router';
   templateUrl: './admin-tournaments.component.html',
   styleUrls: ['./admin-tournaments.component.sass'],
   animations: [listAnimations]
-    
 })
-export class AdminTournamentsComponent implements OnInit {
+export class AdminTournamentsComponent implements OnInit, OnDestroy {
 
   tournaments = [];
   rangeDates: Date[];
-  name: string
+  name: string;
   error = '';
 
   private tourneysub$: any;
@@ -32,26 +31,26 @@ export class AdminTournamentsComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.tourneysub$ && this.tourneysub$ !== "undefined") this.tourneysub$.unsubscribe();
-    if (this.createsub$ && this.createsub$ !== "undefined") this.createsub$.unsubscribe();
+    if (this.tourneysub$ && this.tourneysub$ !== 'undefined') { this.tourneysub$.unsubscribe(); }
+    if (this.createsub$ && this.createsub$ !== 'undefined') { this.createsub$.unsubscribe(); }
   }
 
   openModal() {
-    document.querySelector('#modal').classList.add("is-active");
+    document.querySelector('#modal').classList.add('is-active');
   }
 
   closeModal() {
-    document.querySelector('#modal').classList.remove("is-active");
+    document.querySelector('#modal').classList.remove('is-active');
   }
 
   createTournament() {
     const button = document.querySelector('#modal-submit');
-    button.classList.add("is-loading");
+    button.classList.add('is-loading');
 
 
-    if(this.name === 'undefined' || typeof this.rangeDates === 'undefined') {
+    if (this.name === 'undefined' || typeof this.rangeDates === 'undefined') {
         this.error = 'Udfyld venligst alle felter';
-        button.classList.remove("is-loading");
+        button.classList.remove('is-loading');
         return;
     }
 
@@ -61,18 +60,18 @@ export class AdminTournamentsComponent implements OnInit {
 
     this.tourneysub$ = this._tournament.createTournament(name, start, end).subscribe(() => {
         this.getTournaments();
-        button.classList.remove("is-loading");
+        button.classList.remove('is-loading');
         this.closeModal();
     },
     err => {
-      this.error = err.status === 409 ? "Turneringsnavn skal være unikt" : "Har du sat 2 datoer?";
-      button.classList.remove("is-loading");
+      this.error = err.status === 409 ? 'Turneringsnavn skal være unikt' : 'Har du sat 2 datoer?';
+      button.classList.remove('is-loading');
     });
   }
 
   getTournaments() {
     this.createsub$ = this._tournament.getAll().subscribe(res => {
-      this.tournaments = res["data"];
+      this.tournaments = res['data'];
      });
 }
 
@@ -83,6 +82,5 @@ goToRequests(id) {
 details(id) {
   this.router.navigateByUrl(`/admin/historik/${id}`);
 }
-
 
 }

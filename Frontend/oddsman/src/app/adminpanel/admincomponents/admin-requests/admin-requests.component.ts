@@ -1,18 +1,18 @@
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { Message } from "primeng/components/common/api";
-import { Subscription } from "rxjs/Subscription";
-import { TournamentService} from "../../../services/tournament.service";
-import { Tour } from "../../../models/tour";
-import { Request } from "../../../models/request";
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Message } from 'primeng/components/common/api';
+import { Subscription } from 'rxjs/Subscription';
+import { TournamentService} from '../../../services/tournament.service';
+import { Tour } from '../../../models/tour';
+import { Request } from '../../../models/request';
 
 
 @Component({
-  selector: "app-admin-requests",
-  templateUrl: "./admin-requests.component.html",
-  styleUrls: ["./admin-requests.component.sass"]
+  selector: 'app-admin-requests',
+  templateUrl: './admin-requests.component.html',
+  styleUrls: ['./admin-requests.component.sass']
 })
-export class AdminRequestsComponent implements OnInit {
+export class AdminRequestsComponent implements OnInit, OnDestroy {
   private tourId;
 
   private params$: Subscription;
@@ -37,7 +37,7 @@ export class AdminRequestsComponent implements OnInit {
 
   ngOnInit() {
     this.params$ = this.route.params.subscribe(params => {
-      this.tourId = params["id"];
+      this.tourId = params['id'];
       if (this.tourId) {
         this.getRequests(this.tourId);
       }
@@ -48,10 +48,10 @@ export class AdminRequestsComponent implements OnInit {
 
   ngOnDestroy() {
     this.params$.unsubscribe();
-    if (this.requests$ && this.requests$ !== null) this.requests$.unsubscribe();
-    if (this.declined$ && this.declined$ !== null) this.declined$.unsubscribe();
-    if (this.accepted$ && this.accepted$ !== null) this.accepted$.unsubscribe();
-    if (this.tournaments$ && this.tournaments$ !== null) this.tournaments$.unsubscribe();
+    if (this.requests$ && this.requests$ !== null) { this.requests$.unsubscribe(); }
+    if (this.declined$ && this.declined$ !== null) { this.declined$.unsubscribe(); }
+    if (this.accepted$ && this.accepted$ !== null) { this.accepted$.unsubscribe(); }
+    if (this.tournaments$ && this.tournaments$ !== null) { this.tournaments$.unsubscribe(); }
   }
 
   getRequests(id) {
@@ -68,14 +68,14 @@ export class AdminRequestsComponent implements OnInit {
   }
 
   refresh() {
-    const id = this.selectedTour.code ? this.selectedTour.code : this.tourId
+    const id = this.selectedTour.code ? this.selectedTour.code : this.tourId;
     this.getRequests(id);
   }
 
 
   popoulateDropdown() {
     this.tournaments$ = this._tourney.getAll().subscribe(res => {
-      const tourneys = res["data"];
+      const tourneys = res['data'];
       this.tournaments = tourneys.map(tour => {
         return {
           name: tour.Name,
@@ -86,34 +86,34 @@ export class AdminRequestsComponent implements OnInit {
   }
 
   acceptRequest(request: Request) {
-    const tourId = this.selectedTour.code ? this.selectedTour.code : this.tourId
+    const tourId = this.selectedTour.code ? this.selectedTour.code : this.tourId;
     const userId = request.userId;
 
     this.accepted$ = this._tourney
-      .handleRequest("accepted", tourId, userId)
+      .handleRequest('accepted', tourId, userId)
       .subscribe(res => {
         this.msgs = [];
         this.msgs.push({
-          severity: "info",
-          summary: "Godkendte anmodning",
-          detail: "Deltager: " + request.userName
+          severity: 'info',
+          summary: 'Godkendte anmodning',
+          detail: 'Deltager: ' + request.userName
         });
         this.getRequests(tourId);
       });
   }
 
   declineRequest(request: Request) {
-    const tourId = this.selectedTour.code ? this.selectedTour.code : this.tourId
+    const tourId = this.selectedTour.code ? this.selectedTour.code : this.tourId;
     const userId = request.userId;
 
     this.declined$ = this._tourney
-      .handleRequest("declined", tourId, userId)
+      .handleRequest('declined', tourId, userId)
       .subscribe(res => {
         this.msgs = [];
         this.msgs.push({
-          severity: "warn",
-          summary: "Afviste anmodning",
-          detail: "Deltager: " + request.userName
+          severity: 'warn',
+          summary: 'Afviste anmodning',
+          detail: 'Deltager: ' + request.userName
         });
         this.getRequests(tourId);
       });

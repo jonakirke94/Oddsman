@@ -1,17 +1,16 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
+import { Injectable, OnDestroy } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import "rxjs/add/operator/do";
-import "rxjs/add/operator/shareReplay";
-import * as moment from "moment";
-import { CurrentUser } from "../models/currentUser"
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/shareReplay';
+import * as moment from 'moment';
+import { CurrentUser } from '../models/currentUser';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 
 
 @Injectable()
-export class AuthService {
-  
+export class AuthService implements OnDestroy {
   private email: string;
   loggedIn = new BehaviorSubject<boolean>(false);
   isAdmin = new BehaviorSubject<boolean>(false);
@@ -20,8 +19,8 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   ngOnDestroy() {
-    //unsubscribe to prevent memory leaks
-    if(this.login$ && this.login$ !== "undefined") {
+    // unsubscribe to prevent memory leaks
+    if (this.login$ && this.login$ !== 'undefined') {
       this.login$.unsubscribe();
     }
   }
@@ -30,7 +29,7 @@ export class AuthService {
     this.logout();
 
     return this.http
-      .post("http://localhost:3000/user/login", {
+      .post('http://localhost:3000/user/login', {
         email,
         password
       })
@@ -45,7 +44,7 @@ export class AuthService {
 
   signup(name: string, tag: string, email: string, password: string) {
     return this.http
-      .post("http://localhost:3000/user/signup", {
+      .post('http://localhost:3000/user/signup', {
         name,
         tag,
         email,
@@ -58,10 +57,10 @@ export class AuthService {
   }
 
   private setSession(authResult, email) {
-    //the user is logged in as long as a valid refreshtoken exists on the server
-    const expiresAt = moment().add(authResult.data.refresh_exp, "seconds");
-    localStorage.setItem("accesstoken", authResult.data.access_token);
-    localStorage.setItem("refresh_expiresAt", JSON.stringify(expiresAt.valueOf()));
+    // the user is logged in as long as a valid refreshtoken exists on the server
+    const expiresAt = moment().add(authResult.data.refresh_exp, 'seconds');
+    localStorage.setItem('accesstoken', authResult.data.access_token);
+    localStorage.setItem('refresh_expiresAt', JSON.stringify(expiresAt.valueOf()));
 
     authResult.data.isAdmin ? this.isAdmin.next(true) : this.isAdmin.next(false);
   }
@@ -69,8 +68,8 @@ export class AuthService {
   logout() {
     this.loggedIn.next(false);
     this.isAdmin.next(false);
-    localStorage.removeItem("accesstoken");
-    localStorage.removeItem("refresh_expiresAt");
+    localStorage.removeItem('accesstoken');
+    localStorage.removeItem('refresh_expiresAt');
   }
 
   public isLoggedIn() {
@@ -80,9 +79,9 @@ export class AuthService {
   }
 
    public isLoggedAsAdmin() {
-    const access_token = localStorage.getItem("accesstoken");
+    const access_token = localStorage.getItem('accesstoken');
 
-    if(access_token) {
+    if (access_token) {
         const helper = new JwtHelperService();
         const decodedToken = helper.decodeToken(access_token);
         decodedToken.isAdmin === 0 ? this.isAdmin.next(false) : this.isAdmin.next(true);
@@ -91,9 +90,9 @@ export class AuthService {
     }
     return this.isAdmin.asObservable();
   }
- 
+
   getExpiration() {
-    const expiration = localStorage.getItem("refresh_expiresAt");
+    const expiration = localStorage.getItem('refresh_expiresAt');
     const expiresAt = JSON.parse(expiration);
     return moment(expiresAt);
   }

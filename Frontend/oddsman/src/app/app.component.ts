@@ -10,13 +10,9 @@ import {HeaderComponent} from './layout/header/header.component';
   styleUrls: ['./app.component.sass']
 })
 export class AppComponent {
-  
+
   constructor(
   ) {}
-
-  ngOnInit() {
-
-  }
 
 
 

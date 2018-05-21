@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { trigger, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
 import { Subscription } from 'rxjs/Subscription';
 import { feedAnimation } from '../../animations';
@@ -7,12 +7,13 @@ import { OddsService } from '../../services/odds.service';
 
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'bet-feed',
   templateUrl: './bet-feed.component.html',
   styleUrls: ['./bet-feed.component.sass'],
   animations: [feedAnimation]
 })
-export class BetFeedComponent implements OnInit {
+export class BetFeedComponent implements OnInit, OnDestroy {
 
   bets = [];
   tempBet;

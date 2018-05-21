@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TournamentService} from '../../../services/tournament.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { OddsService } from '../../../services/odds.service';
@@ -12,7 +12,7 @@ import { Tour } from '../../../models/tour';
   templateUrl: './my-bets.component.html',
   styleUrls: ['./my-bets.component.sass']
 })
-export class MyBetsComponent implements OnInit {
+export class MyBetsComponent implements OnInit, OnDestroy {
 
   loading: boolean;
   tournaments: Tour[];
@@ -30,14 +30,14 @@ export class MyBetsComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.tournaments$ && this.tournaments$ !== null) this.tournaments$.unsubscribe();
-    if (this.bets$ && this.bets$ !== null) this.bets$.unsubscribe();
+    if (this.tournaments$ && this.tournaments$ !== null) { this.tournaments$.unsubscribe(); }
+    if (this.bets$ && this.bets$ !== null) { this.bets$.unsubscribe(); }
   }
 
   displayBets(tourId) {
     this.loading = true;
     this.bets$ = this._odds.getBets(tourId).subscribe(res => {
-      this.bets = res
+      this.bets = res;
       this.loading = false;
 
     });
@@ -45,7 +45,7 @@ export class MyBetsComponent implements OnInit {
 
   refresh() {
     const tourId = this.selectedTour.code;
-    this.displayBets(tourId)
+    this.displayBets(tourId);
   }
 
   populateDropdown() {
@@ -55,19 +55,19 @@ export class MyBetsComponent implements OnInit {
         return {
           name: tour.Name,
           code: tour.Id
-        }
-      })
-    })
+        };
+      });
+    });
   }
 
   calculateOddsTotal(week: string) {
     let total = 0;
 
     if (this.bets) {
-      for (let bet of this.bets) {
+      for (const bet of this.bets) {
         if (bet.week === week && bet.match.result) {
           if (bet.match.result.CorrectBet) {
-            total += bet.odds
+            total += bet.odds;
           }
         }
       }

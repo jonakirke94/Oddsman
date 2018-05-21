@@ -38,7 +38,7 @@ export class MatchService {
 
   getMissingResults() {
     return this.http
-    .get("http://localhost:3000/match/result/missing")
+    .get('http://localhost:3000/match/result/missing')
     .map(res => <Result[]>res['data'])
     .shareReplay();
   }

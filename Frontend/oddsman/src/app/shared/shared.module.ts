@@ -25,7 +25,7 @@ import { ResultsComponent } from '../adminpanel/admincomponents/results/results.
     HttpClientModule
 
   ],
-  exports: [ 
+  exports: [
     NgPrimeModule,
     FormsModule,
     ReactiveFormsModule,
@@ -33,7 +33,7 @@ import { ResultsComponent } from '../adminpanel/admincomponents/results/results.
     HttpClientModule,
     HistoryComponent,
     StandingComponent,
-    LoadingSpinnerComponent,     
+    LoadingSpinnerComponent,
     BetFeedComponent,
     ResultFeedComponent,
     ResultsComponent
@@ -41,7 +41,7 @@ import { ResultsComponent } from '../adminpanel/admincomponents/results/results.
   declarations: [
     HistoryComponent,
     StandingComponent,
-    LoadingSpinnerComponent,     
+    LoadingSpinnerComponent,
     BetFeedComponent,
     ResultFeedComponent,
     ResultsComponent

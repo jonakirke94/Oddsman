@@ -12,7 +12,7 @@ import { SignupComponent } from './signup/signup.component';
 */
 
 @NgModule({
-   
+
     imports: [
       CommonModule,
       SharedModule,
@@ -22,7 +22,7 @@ import { SignupComponent } from './signup/signup.component';
     declarations: [
         LoginComponent,
         SignupComponent
-        
+
     ],
     exports: [
         LoginComponent,
@@ -32,4 +32,3 @@ import { SignupComponent } from './signup/signup.component';
 
   })
   export class AuthenticationModule { }
-  
