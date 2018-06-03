@@ -34,6 +34,7 @@ exports.get_results = (idList, callback) =>{
 
 exports.schedule_result_scrape = (matchId, callback) => {
     let path = util.format(`${ac.basePath}${ac.taskEndpoint}`, matchId);
+    console.log(path);
     post(ac.hostname, ac.port, path, null, callback);
 
 }
@@ -82,7 +83,7 @@ function get(url, callback) {
 }
 
 function post(hostname, port, path, payload, callback) {
-    console.log(payload);
+    /* console.log(payload); */
     const options = {
         hostname: hostname,
         port: port,
@@ -101,7 +102,9 @@ function post(hostname, port, path, payload, callback) {
         res.setEncoding('utf8');
         res.on('data', (chunk) => {
             /* console.log(`BODY: ${chunk}`);   */    
-            callback({status: `${res.statusCode}`, data: `${chunk}`});     
+            if(callback){
+                callback({status: `${res.statusCode}`, data: `${chunk}`});
+            }     
         });
         res.on('end', () => {
             //console.log('No more data in response.');

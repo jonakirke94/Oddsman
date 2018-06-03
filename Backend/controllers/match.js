@@ -95,7 +95,7 @@ exports.get_results = (req, res, next) => {
                     updated: r.Updated
                 })
             } catch (error) {
-                console.log(error)
+                console.log("get results: " + error)
             }
         })
         return msg.show200(req, res, "Success", matchArr);

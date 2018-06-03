@@ -55,7 +55,7 @@ exports.save_refresh_token = (id, refreshtoken, callback) => {
 
 exports.generate_tokens = user => {
     const REFRESH_EXP = 691200; // 691200s = 8d
-    const ACCESS_EXP = 300; // 300s = 5m
+    const ACCESS_EXP = 3600; // 300s = 5m
  
     const ACCESS_TOKEN = jwt.sign({
         email: user.Email,

@@ -77,7 +77,7 @@ exports.is_valid_weekdays = () => {
     // torsdag kl 12 - lørdag kl 12
     let start = moment().startOf('isoWeek').add(3, 'd').add(12, 'h');
     let end = moment().startOf('isoWeek').add(5, 'd').add(23, 'h').add(59, 'm');
-    return today.isBetween(start, end, null, '[]'); // inclusive
+    return true; //today.isBetween(start, end, null, '[]'); // inclusive
 }
 
 exports.is_active_tournament = (start, end) => {

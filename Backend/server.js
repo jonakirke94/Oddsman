@@ -18,7 +18,7 @@ server.listen(port, function () {
         case 'new_odds':
           odds.get_recent_bets(null, function(bets) {
             if(bets) {
-              io.emit('refresh_odds', bets[0])
+              io.emit('refresh_odds', bets[0] || [])
             }
           }) 
         

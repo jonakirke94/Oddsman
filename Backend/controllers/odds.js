@@ -35,7 +35,7 @@ exports.send_odds = (req, res, next) => {
                 model: BetTable,
                 attributes: ['userId', 'tournamentId', 'week'],
                 where: {
-                    Week: today.isoWeek(),
+                    /* Week: today.isoWeek(), */
                     userId: userId
                 },
                 required: false
@@ -70,6 +70,7 @@ exports.send_odds = (req, res, next) => {
                     let option = o.option;
 
                     scraper.get_match(matchId, null, (m) => {
+                        /* console.log(`match is:  ${JSON.stringify(m)}`); */
                         if (m === null) {
                             m = {
                                 MatchId: matchId,
@@ -77,13 +78,18 @@ exports.send_odds = (req, res, next) => {
                             }
                         }
 
-                        if (!m.Missing) {
-                            scraper.schedule_result_scrape(m.MatchId);
-                        }
+                        /* if (!m.Missing) {
+                            scraper.schedule_result_scrape(matchId);
+                        } */
 
-                        MatchTable.create(m)
+                        m = keysToUpper(m);
+                        console.log(`upper keyed match: ${JSON.stringify(m)}`)
+
+                        try {
+                            MatchTable.create(m)
                             .then(match => {
 
+                                console.log(`created match: ${JSON.stringify(match)}`);
                                 BetTable.create({
                                     matchId: match.Id,
                                     userId: userId,
@@ -91,13 +97,17 @@ exports.send_odds = (req, res, next) => {
                                     Week: moment().isoWeek(),
                                     Option: option,
                                     OptionNo: get_option_number(option)
-                                }).then(() => {
+                                }).then((bet) => {
+                                    console.log(`created bet ${JSON.stringify(bet)}`);
                                     ctr++;
                                     if (ctr === odds.length) {
                                         return msg.show200(req, res, next);
                                     }
                                 });
                             });
+                        } catch (error) {
+                            console.log(`failed adding matches and bets : ${error}`);
+                        }
                     });
 
                 });
@@ -216,4 +226,16 @@ exports.get_recent_bets = (limit = 3, callback) => {
     }).catch(err => {
         console.log(err);
     });
+}
+
+
+function keysToUpper(obj) {
+    let key, keys = Object.keys(obj);
+    let n = keys.length;
+    let newObj = {}
+    while (n--) {
+        key = keys[n];
+        newObj[key.substr(0, 1).toUpperCase() + key.substr(1, key.length)] = obj[key];
+    }
+    return newObj;
 }
