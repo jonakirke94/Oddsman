@@ -18,10 +18,8 @@
           <div class="feed-table-container">
             <table>
               <tr *ngFor="let m of bet.matches">
-                <td>{{m.match}}</td>
-                <td >{{m.id}}</td>
-                <td >{{m.bet}}</td>
-                <td >{{m.odds}}</td>
+                <td width="90%" class="match-info">{{m.match}}</td>
+                <td width="10%">{{m.bet}}</td>
               </tr>
             </table>
           </div>
