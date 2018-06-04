@@ -221,7 +221,7 @@ exports.bets = (req, res, next) => {
       let results = [];
       for (let i = 0; i < bets.length; i++) {
         let b = JSON.parse(JSON.stringify(bets[i]));
-        switch (b.optionNo) {
+        switch (b.option) {
           case "1":
             b.odds = b.match.Option1Odds;
             break;

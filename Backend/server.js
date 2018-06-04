@@ -14,22 +14,22 @@ server.listen(port, function () {
     console.log('Connected client on port %s.', port);
     socket.on('action', (data) => {
 
-     switch (data) {
+      switch (data) {
         case 'new_odds':
-          odds.get_recent_bets(null, function(bets) {
-            if(bets) {
-              io.emit('refresh_odds', bets[0])
+          odds.get_recent_bets(null, function (bets) {
+            if (bets) {
+              io.emit('refresh_odds', bets[0] || [])
             }
-          }) 
-        
+          })
+
           break;
         case 'new_results':
           break;
-      } 
+      }
     });
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected');
+      console.log('Client disconnected');
     });
   })
 });

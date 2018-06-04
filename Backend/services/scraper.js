@@ -27,10 +27,10 @@ exports.get_result = (matchRoundId, matchId, parentMatchId = null, callback) => 
     get(url, callback);
 }
 
-exports.get_results = (idList, callback) =>{
+exports.get_results = (idList, callback) => {
     let path = util.format(`${baseUrl}${ac.resultsEndpoint}`);
     post(ac.hostname, ac.port, path, JSON.stringify(idList), callback)
-} 
+}
 
 exports.schedule_result_scrape = (matchId, callback) => {
     let path = util.format(`${ac.basePath}${ac.taskEndpoint}`, matchId);
@@ -100,13 +100,18 @@ function post(hostname, port, path, payload, callback) {
         //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
         res.setEncoding('utf8');
         res.on('data', (chunk) => {
-            /* console.log(`BODY: ${chunk}`);   */    
-            callback({status: `${res.statusCode}`, data: `${chunk}`});     
+            /* console.log(`BODY: ${chunk}`);   */
+            if (callback) {
+                callback({
+                    status: `${res.statusCode}`,
+                    data: `${chunk}`
+                });
+            }
         });
         res.on('end', () => {
             //console.log('No more data in response.');
-        });        
-        
+        });
+
     });
 
     req.on('error', (e) => {

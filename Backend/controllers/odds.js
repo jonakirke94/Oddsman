@@ -18,7 +18,7 @@ const {
 const scraper = require('../services/scraper');
 
 
-let today = moment()/* .add(2, 'd').add(12, 'h'); */ // used for faking a valid bet day
+let today = moment() /* .add(2, 'd').add(12, 'h'); */ // used for faking a valid bet day
 
 exports.send_odds = (req, res, next) => {
     const tourId = req.params.tourid;
@@ -35,7 +35,7 @@ exports.send_odds = (req, res, next) => {
                 model: BetTable,
                 attributes: ['userId', 'tournamentId', 'week'],
                 where: {
-                    Week: today.isoWeek(),
+                    /* Week: today.isoWeek(), */
                     userId: userId
                 },
                 required: false
@@ -77,11 +77,11 @@ exports.send_odds = (req, res, next) => {
                             }
                         }
 
-                        if (!m.Missing) {
+                        /* if (!m.Missing) {
                             scraper.schedule_result_scrape(m.MatchId);
-                        }
+                        } */
 
-                        MatchTable.create(m)
+                        MatchTable.create(keysToUpper(m))
                             .then(match => {
 
                                 BetTable.create({
@@ -216,4 +216,15 @@ exports.get_recent_bets = (limit = 3, callback) => {
     }).catch(err => {
         console.log(err);
     });
+}
+
+function keysToUpper(obj) {
+    let key, keys = Object.keys(obj);
+    let n = keys.length;
+    let newObj = {}
+    while (n--) {
+        key = keys[n];
+        newObj[key.substr(0, 1).toUpperCase() + key.substr(1, key.length)] = obj[key];
+    }
+    return newObj;
 }
